@@ -1,0 +1,79 @@
+// S7 ( / ) — ORDERED VARIANT for the bounded review-chain composite forcing.
+//
+// Identical to `review_chain_leaf.neu` EXCEPT the award is guarded by the bounded
+// assessor-before-reviewer dependency: the reviewer sign-off may release the award
+// only AFTER the assessor stage accepts (ordered escalation, finite two-stage
+// bound, terminal accept/refuse). This is the review-chain orchestration
+// obligation. The current coordination language has no construct to sequence one
+// stage after another, so the front end refuses this guard BEFORE any lowering,
+// coordination plan, backend dispatch, trace, or effect — the composite forcing observes
+// refusal together with (a) the leaf primitives reducing cleanly and (b) the
+// reduced coordination plan carrying no concept->concept ordering edge, and only then
+// the earned `forcing.missing_orchestration_stratum` (LAYER_DECISION_REQUIRED).
+procedure review_chain_ordered {
+    trigger submitted
+    version "1.0.0"
+
+    participant Submitter {
+        role = "submitter"
+        org  = "applicantco"
+    }
+    participant Board {
+        role = "board"
+        org  = "boardco"
+    }
+    allow "applicantco" with "boardco" {
+        "applicantco" as "submitter"
+        "boardco" as "board"
+    }
+
+    input case_id          : string
+    input submitter_id     : party
+    input board_id         : party
+    input amount           : money
+    input currency         : currency
+    input assessor_report  : evidence
+    input reviewer_signoff : evidence
+
+    attest assessor_report {
+        quorum           = 1
+        observer_set     = "assessors"
+        assurance        = "A2"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT72H"
+        fallback         = "abort"
+    }
+    attest reviewer_signoff {
+        quorum           = 1
+        observer_set     = "reviewers"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT72H"
+        fallback         = "abort"
+    }
+
+    debit award_out {
+        ledger          = "board.reserve"
+        owner           = "board"
+        participant     = "Board"
+        party           = %board_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = accepted(reviewer_signoff) after accepted(assessor_report)
+    }
+    credit award_in {
+        ledger          = "applicant.wallet"
+        owner           = "submitter"
+        participant     = "Submitter"
+        party           = %submitter_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = accepted(reviewer_signoff) after accepted(assessor_report)
+    }
+
+    assert balanced
+}

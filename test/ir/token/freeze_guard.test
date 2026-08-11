@@ -1,0 +1,37 @@
+// M5 token S2 (): the account-freeze guard SUPPRESSES a token transfer when either party is
+// frozen (or its flag is malformed) and posts it when neither is — one spec-level `when
+// freeze_signal == 0` rule (guard-over-existing-model, no token primitive), exercised via the
+// guard-aware realization event chain. "Suppressed" = neither leg posts, so NO value moves (the
+// coordination reconciles as a no-op — there is no abort primitive); it is not a hard denial/abort.
+// Complements the Solidity + PostgreSQL byte-goldens (the same guard renders to both — backend
+// goldens diff those). freeze_signal = s*s + r*r is zero IFF both flags are exactly zero, so the
+// guard is SOUND against invalid flags: a negative that would cancel a plain sum still suppresses.
+//
+// DEFINE: %{src}  = %S/Inputs/core_freeze_guard_fixture.neu
+// DEFINE: %{scen} = %S/Inputs/core_freeze_guard_fixture.scn.json
+//
+// UNFROZEN -> the transfer POSTS: both legs are in the realized event chain.
+// RUN: %neutrino-gen --target=test-realization --scenario=%{scen} %{src} -o %t.ok
+// RUN: %FileCheck %s --check-prefix=ALLOW < %t.ok/test-realization.json
+// ALLOW: "eventChain"
+// ALLOW: SenderDebitDebited
+// ALLOW: ReceiverCreditCredited
+//
+// FROZEN SENDER -> suppressed: neither transfer leg posts (no value moves).
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/frozen_sender.json %{src} -o %t.fs
+// RUN: %FileCheck %s --check-prefix=DENY_S < %t.fs/test-realization.json
+// DENY_S-NOT: SenderDebitDebited
+// DENY_S-NOT: ReceiverCreditCredited
+//
+// FROZEN RECEIVER -> suppressed: neither transfer leg posts.
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/frozen_receiver.json %{src} -o %t.fr
+// RUN: %FileCheck %s --check-prefix=DENY_R < %t.fr/test-realization.json
+// DENY_R-NOT: SenderDebitDebited
+// DENY_R-NOT: ReceiverCreditCredited
+//
+// COMPENSATING INVALID FLAG -> suppressed: sender_frozen=-1, receiver_frozen=1 would
+// cancel to 0 under a plain sum and post while the receiver is frozen; sum-of-squares = 2 suppresses.
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/frozen_compensating.json %{src} -o %t.fc
+// RUN: %FileCheck %s --check-prefix=DENY_C < %t.fc/test-realization.json
+// DENY_C-NOT: SenderDebitDebited
+// DENY_C-NOT: ReceiverCreditCredited

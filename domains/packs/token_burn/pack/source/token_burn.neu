@@ -1,0 +1,67 @@
+// M5 token S5 (): BURN on the approved supply-as-a-ledger model (decision ,
+// docs/process/SUPPLY_LEDGER_DECISION.md). Burn is the mirror of mint — it destroys circulating value —
+// and modeling it as a bare debit with NO counterparty would break `assert balanced`. So supply is
+// an explicit ledger (`token.supply`) and burn is an ordinary BALANCED debit/credit pair:
+//   burn = debit token.balance (the holder) / credit token.supply (the reserve).
+// `assert balanced` holds BY CONSTRUCTION — every unit removed from a holder returns to the supply
+// reserve, so debits equal credits per transaction. Feature-by-balanced-composition over the
+// existing effect model (like compliance  / freeze  / memo ), NOT a new token
+// primitive: `token.supply` is a reserved LEDGER-NAME convention, not new schema. Circulating
+// supply is `initial(token.supply) - balance(token.supply)`, so a burn returns units to the reserve
+// and reduces circulation — the supply ledger IS the audit trail.
+//
+// AUTHORITY (fail-closed): burn is gated on a SupplyAuthority via the existing  conditional
+// guard `when supply_approved == 1` on BOTH legs (the  guarded-balance verifier refuses split
+// guards, keeping the pair atomic). Any value other than exactly 1 — a denial 0 or an out-of-range
+// 2 — suppresses BOTH legs, so unauthorized/invalid burn moves no value (SUPPRESSION, not abort;
+// the coordination reconciles as a no-op). Renders the same spec to Solidity AND PostgreSQL
+// byte-goldens.
+
+procedure token_burn {
+    trigger burn_requested
+    version "1.0.0"
+
+    participant SupplyAuthority {
+        role = "supply_authority"
+        org  = "issuerco"
+    }
+    participant Holder {
+        role = "holder"
+        org  = "walletco"
+    }
+    allow "issuerco" with "walletco" {
+        "issuerco" as "supply_authority"
+        "walletco" as "holder"
+    }
+
+    input burn_id         : string
+    input supply_id       : party
+    input holder_id       : party
+    input amount          : money
+    input currency        : currency
+    input supply_approved : number
+
+    // debit the holder's balance — the units leaving circulation.
+    debit holder_debit {
+        ledger          = "token.balance"
+        owner           = "holder"
+        participant     = "Holder"
+        party           = %holder_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %burn_id
+        when            = supply_approved == 1
+    }
+    // credit the supply reserve — the counterparty that keeps burn balanced (units return to reserve).
+    credit supply_credit {
+        ledger          = "token.supply"
+        owner           = "supply"
+        participant     = "SupplyAuthority"
+        party           = %supply_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %burn_id
+        when            = supply_approved == 1
+    }
+    assert balanced
+}

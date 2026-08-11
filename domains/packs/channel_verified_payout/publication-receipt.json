@@ -1,0 +1,96 @@
+{
+  "contentDigest": "sha256:4e7cf7376af1d580f6f6a418ee10e355aa8ddc709d03b0bdeffdd23a22684843",
+  "coreContractBundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+  "declaredPackDigest": "sha256:bba74010871eba6dea5e83b7ec0953edb3106452d8163a3d7e611842c06c92c3",
+  "kind": "neutrino.public-pack-receipt/1",
+  "members": [
+    {
+      "bytes": 3659,
+      "mode": "100644",
+      "path": "pack.json",
+      "sha256": "9dc148a0b5055506fb2544273f618de6283f84736e6fe9087357ec3f768acc0c"
+    },
+    {
+      "bytes": 9346,
+      "mode": "100644",
+      "path": "generated/capability-spec/capability-spec.json",
+      "sha256": "4167c1c2c13bf8436971a9365d9a941e10b807d0b2c49e175a9bb99e3ca9c6b0"
+    },
+    {
+      "bytes": 3389,
+      "mode": "100644",
+      "path": "generated/postgres/procedure.sql",
+      "sha256": "2fd84c8b585eb025976b2a38749179fff9787d5533fdbfc2a138f0fbf1963f26"
+    },
+    {
+      "bytes": 265,
+      "mode": "100644",
+      "path": "generated/postgres/reconciliation.sql",
+      "sha256": "9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "bytes": 3889,
+      "mode": "100755",
+      "path": "generated/postgres/run_db_test.sh",
+      "sha256": "12038f43c6a686c7bf6dc59d6ca7d2c9dff3d5e079a4b22c755b0f92259568fc"
+    },
+    {
+      "bytes": 1909,
+      "mode": "100644",
+      "path": "generated/postgres/schema.sql",
+      "sha256": "a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "bytes": 160,
+      "mode": "100644",
+      "path": "generated/solidity/foundry.toml",
+      "sha256": "d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "bytes": 2312,
+      "mode": "100644",
+      "path": "generated/solidity/src/ChannelVerifiedPayout.sol",
+      "sha256": "6580786ef112c3b2f23422173c29f35f7674fde350ce35543aaedc595b60213f"
+    },
+    {
+      "bytes": 3817,
+      "mode": "100644",
+      "path": "generated/solidity/test/ChannelVerifiedPayout.t.sol",
+      "sha256": "54e84a3d67d6fec12463fea08bd2727219e13a0902310e61bf37573b93f15ca1"
+    },
+    {
+      "bytes": 706,
+      "mode": "100644",
+      "path": "generated/test-realization/test-realization.json",
+      "sha256": "b70a49c50ba1db00a74a911c5e5d03d85c084218e851d300e11ff22bc6560b56"
+    },
+    {
+      "bytes": 1352,
+      "mode": "100644",
+      "path": "generated/views/Payer.json",
+      "sha256": "8b6154555247ab0f6802af59ca2dd3e0314bcffdc47f90ee1972b7aa96b1e61a"
+    },
+    {
+      "bytes": 1517,
+      "mode": "100644",
+      "path": "generated/views/Recipient.json",
+      "sha256": "96f8c4a86b1f6df1a4f0c54c2dfa1dbafe0651d47ca18cfdcdacb749f13fb62b"
+    },
+    {
+      "bytes": 422,
+      "mode": "100644",
+      "path": "scenario/channel_verified_payout_happy_path.json",
+      "sha256": "adf81ef951496f032573ed7e592657552512fdd6eb64cdee9d70b6bd191bd6cc"
+    },
+    {
+      "bytes": 2267,
+      "mode": "100644",
+      "path": "source/channel_verified_payout.neu",
+      "sha256": "804ecc11cd180f498a16e82dd6aa9986875bbe47b0cdd816d0f3fd2c7071e439"
+    }
+  ],
+  "packId": "channel_verified_payout",
+  "packPath": "domains/packs/channel_verified_payout/pack",
+  "receiptIdentity": "sha256:1036a4d126a45228d07cbeb1bef2a31d370898ed4ef48a7e6da5eddd2a9209e6",
+  "schemaVersion": 1
+}

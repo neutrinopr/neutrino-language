@@ -1,0 +1,6 @@
+//  repairs the curated sponsored-offer authorization topology without
+// changing the architect-frozen corpus membership or variance-pair identities.
+// Both affected pairs must project the same canonical topology, and deleting
+// either participant binding or the single allowed-org edge must break it.
+//
+// RUN: python3 %S/check_curated_authorization_topology.py %neutrino-gen %examples %S/../..

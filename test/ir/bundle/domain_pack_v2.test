@@ -1,0 +1,8 @@
+// Complete domain-pack v2 contract: deterministic production, closed byte
+// inventory, opaque payload integrity, selective semantic validation, and stable
+// fail-closed diagnostics.
+//
+// RUN: python3 %S/check_domain_pack_v2.py %examples/.. \
+// RUN:   %S/Inputs/pack-v2 %S/Inputs/pack-v2-spec.json \
+// RUN:   %scripts/validators/verify_domain_pack.py \
+// RUN:   %scripts/generators/make_domain_pack.py

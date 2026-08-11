@@ -1,0 +1,42 @@
+{
+  "contentDigest": "sha256:b3d5916f7e193068add3ad05fffc6f48c73f624781ce3a5ef8aec561c0a705a2",
+  "coreContractBundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+  "declaredPackDigest": "sha256:be1e7ca78fd6894f8faf4bce84db18d8f978808c84762ad674da9c7bc1f20b39",
+  "kind": "neutrino.public-pack-receipt/1",
+  "members": [
+    {
+      "bytes": 1427,
+      "mode": "100644",
+      "path": "pack.json",
+      "sha256": "71282018cf825bd45f32b496baa5e905ab5bd5483547c464c3198773d1e9e1ec"
+    },
+    {
+      "bytes": 9241,
+      "mode": "100644",
+      "path": "generated/capability-spec/capability-spec.json",
+      "sha256": "73502d9e5eb04485882de61679e9dc3896b892235cf3fc2f915da110662e5039"
+    },
+    {
+      "bytes": 3497,
+      "mode": "100644",
+      "path": "generated/postgres/procedure.sql",
+      "sha256": "5bb566329466cf32de60492b960348fea981ae5a75e2c5a9fae91b12b37ed64e"
+    },
+    {
+      "bytes": 2422,
+      "mode": "100644",
+      "path": "generated/solidity/src/DeadlineGuardedTransfer.sol",
+      "sha256": "0a1422d31e7bf7b7e83fbe546ca0c8ff541ccfed7bfa8d05b57eaab267e63310"
+    },
+    {
+      "bytes": 1258,
+      "mode": "100644",
+      "path": "source/deadline_guarded_transfer.neu",
+      "sha256": "904ea72d696fa266a836db6cfa28f1c55ab17e4c8361af6edadaab128a512895"
+    }
+  ],
+  "packId": "deadline_guarded_transfer",
+  "packPath": "domains/packs/deadline_guarded_transfer/pack",
+  "receiptIdentity": "sha256:504b4da20141b08c2a1cd63da5fb82a6388b05fae4a193cb4db12eb1ce856082",
+  "schemaVersion": 1
+}

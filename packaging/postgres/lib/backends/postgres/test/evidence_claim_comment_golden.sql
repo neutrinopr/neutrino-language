@@ -1,0 +1,7 @@
+--  byte-faithful fixture: the evidence-only legalization's claim comment.
+-- Pins the EXACT single production line the generated EvidenceClaimComment
+-- handler (a 0-operand constant `line`) must render — the fixed banner marking
+-- the atomic terminal claim that moves NO ledger value. The node projects NO
+-- operands, so the LINE SHAPE itself is the byte anchor for the
+-- .td->generated->golden render pair (mirroring idempotent_return_golden.sql).
+    -- Evidence-only: atomically CLAIM the accepted terminal; move NO ledger value.

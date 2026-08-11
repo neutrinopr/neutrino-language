@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-corpus-manifest/v1",
+  "title": "Neutrino Domain Corpus Manifest",
+  "description": "Declares the source corpus an AI-assisted domain analysis is allowed to read, with per-source ownership, sensitivity, allowed-use policy, content hash, and source type. Fail-closed (additionalProperties:false). Validated by scripts/corpus/validate_domain_proposal.py. See docs/domains/DOMAIN_PROPOSAL.md and TRANSLATOR_IMPLEMENTATION_PHASES Phase 22A.",
+  "type": "object",
+  "required": ["kind", "corpusId", "sources"],
+  "additionalProperties": false,
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["id", "owner", "sensitivity", "allowedUse", "contentHash", "sourceType"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "sensitivity": { "enum": ["public", "internal", "confidential"] },
+        "allowedUse": {
+          "enum": ["domain-authority", "reference-only", "excluded"],
+          "description": "domain-authority: may justify accepted domain logic. reference-only: context, not authority. excluded: must not be used."
+        },
+        "contentHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "sourceType": {
+          "enum": [
+            "official-public-repository",
+            "official-source-jar",
+            "reputable-public-implementation-source-jar",
+            "generated-source",
+            "binary-metadata",
+            "decompiled-binary"
+          ]
+        },
+        "artifactCoordinates": { "type": "string", "minLength": 1, "description": "e.g. Maven GAV for an SDK-derived source." },
+        "license": { "type": "string", "minLength": 1 },
+        "licenseApproved": { "type": "boolean", "description": "Explicit license review outcome. Required true for a decompiled-binary source." }
+      }
+    }
+  },
+  "properties": {
+    "kind": { "const": "neutrino.domain-corpus-manifest" },
+    "corpusId": { "type": "string", "minLength": 1 },
+    "sources": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/source" } }
+  }
+}

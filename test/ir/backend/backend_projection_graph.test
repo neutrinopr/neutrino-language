@@ -1,0 +1,78 @@
+// The complete backend projection graph ( /  P1-A) is a deterministic,
+// domain-blind function of the verified coordination plan (Property P1): the
+// emitted backend-projection.json is BYTE-IDENTICAL whether the CoordinationPlan is built
+// from the source MLIR or reconstructed from a round-tripped capability-spec
+// (the waist round-trip), and it reproduces every node + typed edge of the
+// three bound traces (docs/process/m6_backend_projection_traces.json).
+//
+// This is the end-to-end complement to the unit assertions in
+// unittests/BackendProjectionTest.cpp (structure + verifier on hand-built
+// CoordinationPlans): here the projection runs over the REAL fixtures the traces pin.
+//
+// RUN: rm -rf %t && mkdir -p %t
+//
+// ---- evidence-only-acceptance : source vs waist-round-trip ----------------
+// RUN: %neutrino-gen --target=coordination-plan --scenario=%S/../evidence/shipment_evidence_anchor.scn.json %S/../evidence/shipment_evidence_anchor.neu -o %t/ev
+// RUN: %neutrino-gen --target=capability-spec %S/../evidence/shipment_evidence_anchor.neu -o %t/ev.spec
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t/ev.spec/capability-spec.json -o %t/ev.rt
+// RUN: diff %t/ev/backend-projection.json %t/ev.rt/backend-projection.json
+//
+// ---- multi-policy-partial-execution : source vs waist-round-trip ----------
+// RUN: %neutrino-gen --target=coordination-plan --scenario=%S/../oracle/accepted_multi_policy.scn.json %S/../oracle/accepted_multi_policy.neu -o %t/mp
+// RUN: %neutrino-gen --target=capability-spec %S/../oracle/accepted_multi_policy.neu -o %t/mp.spec
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t/mp.spec/capability-spec.json -o %t/mp.rt
+// RUN: diff %t/mp/backend-projection.json %t/mp.rt/backend-projection.json
+//
+// ---- balanced-ledger-effect : source vs waist-round-trip ------------------
+// RUN: %neutrino-gen --target=coordination-plan --scenario=%S/../oracle/oracle_delivery_scenario.json %S/../oracle/oracle_delivery.neu -o %t/bl
+// RUN: %neutrino-gen --target=capability-spec %S/../oracle/oracle_delivery.neu -o %t/bl.spec
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t/bl.spec/capability-spec.json -o %t/bl.rt
+// RUN: diff %t/bl/backend-projection.json %t/bl.rt/backend-projection.json
+//
+// ---- every bound trace is reproduced by the real projection (subset) ------
+// RUN: python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json evidence-only-acceptance=%t/ev/backend-projection.json multi-policy-partial-execution=%t/mp/backend-projection.json balanced-ledger-effect=%t/bl/backend-projection.json
+//
+// ---- deletion probes: the comparison is NON-VACUOUS ------------------------
+// Dropping a node or a typed edge from the projection must make the trace
+// comparison FAIL (otherwise it would pass an incomplete graph).
+// RUN: python3 -c "import json;d=json.load(open('%t/bl/backend-projection.json'));d['nodes']=[n for n in d['nodes'] if n['kind']!='LedgerPosting'];json.dump(d,open('%t/bl/no-node.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json balanced-ledger-effect=%t/bl/no-node.json
+// RUN: python3 -c "import json;d=json.load(open('%t/bl/backend-projection.json'));d['edges']=[e for e in d['edges'] if e['name']!='assertsRefs'];json.dump(d,open('%t/bl/no-edge.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json balanced-ledger-effect=%t/bl/no-edge.json
+// A perturbed field value (canonical operand relabel dropped) must also FAIL.
+// RUN: python3 -c "import json;d=json.load(open('%t/bl/backend-projection.json'));[n.update(value='WRONG') for n in d['nodes'] if n['kind']=='TypedOperand' and n['operandKind']=='amount'];json.dump(d,open('%t/bl/bad-value.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json balanced-ledger-effect=%t/bl/bad-value.json
+//
+// ---- S0.1 biting witnesses: Reference.bindingValue is pinned ---------------
+// Substituting the structural ordinal `ref` for the lossless bindingValue (the
+// exact mistake S0.1 forbids) must FAIL — the trace pins the raw observer-set
+// name, not the ordinal.
+// RUN: python3 -c "import json;d=json.load(open('%t/bl/backend-projection.json'));[n.update(bindingValue=n['ref']) for n in d['nodes'] if n['kind']=='Reference' and n.get('role')=='observerSet'];json.dump(d,open('%t/bl/sub-binding.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json balanced-ledger-effect=%t/bl/sub-binding.json
+// Dropping the bindingValue entirely (missing-binding) must FAIL.
+// RUN: python3 -c "import json;d=json.load(open('%t/bl/backend-projection.json'));[n.pop('bindingValue',None) for n in d['nodes'] if n['kind']=='Reference'];json.dump(d,open('%t/bl/no-binding.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json balanced-ledger-effect=%t/bl/no-binding.json
+// The accepted-input materialization operand is independent of the node ID.
+// RUN: python3 -c "import json;d=json.load(open('%t/mp/backend-projection.json'));[n.update(bindingValue='WRONG') for n in d['nodes'] if n['kind']=='EvidenceAcceptance'];json.dump(d,open('%t/mp/bad-input-binding.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json multi-policy-partial-execution=%t/mp/bad-input-binding.json
+// The temporal rail must consume temporal per-group guard application; flipping
+// it to the otherwise-closed atomic mode must fail the bound trace.
+// RUN: python3 -c "import json;d=json.load(open('%t/mp/backend-projection.json'));[n.update(applicationMode='atomic-refuse') for n in d['nodes'] if n['kind']=='GuardObligation'];json.dump(d,open('%t/mp/bad-guard-mode.json','w'))"
+// RUN: ! python3 %S/check_backend_projection_traces.py %S/../../../docs/process/m6_backend_projection_traces.json multi-policy-partial-execution=%t/mp/bad-guard-mode.json
+//
+// ---- end-to-end no-partial-artifact witness ( fail-closed ordering) -----
+// The projection is validated BEFORE any artifact is written, so a projection
+// failure leaves NO partial output. The hidden --projection-fault-selftest seam
+// forces the projection to fail; assert exit 4, a stable diagnostic, and that
+// NEITHER coordination-plan.json NOR backend-projection.json was written.
+// RUN: %neutrino-gen --target=coordination-plan --projection-fault-selftest --scenario=%S/../evidence/shipment_evidence_anchor.scn.json %S/../evidence/shipment_evidence_anchor.neu -o %t/fault; [ $? -eq 4 ]
+// RUN: test ! -e %t/fault/coordination-plan.json
+// RUN: test ! -e %t/fault/backend-projection.json
+// RUN: %FileCheck --check-prefix=FAULT %s < %t/fault/diagnostics.json
+// The same holds on the --from-spec path (validate before writing the
+// CoordinationPlan).
+// RUN: %neutrino-gen --target=capability-spec %S/../evidence/shipment_evidence_anchor.neu -o %t/fault.spec
+// RUN: %neutrino-gen --target=coordination-plan --projection-fault-selftest --from-spec %t/fault.spec/capability-spec.json -o %t/fault.rt; [ $? -eq 4 ]
+// RUN: test ! -e %t/fault.rt/coordination-plan.json
+// RUN: test ! -e %t/fault.rt/backend-projection.json
+// FAULT: forced-projection-failure

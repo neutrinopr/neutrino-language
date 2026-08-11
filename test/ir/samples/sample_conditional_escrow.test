@@ -1,0 +1,3 @@
+// [66] M3 sample: core_document_escrow L1/L2/L3 + branch-compat () — release+refund L2 validate and compose; document evidence distinct from proof_of_delivery; targeted L2/L3 + incompatible-outcome negatives fail closed; L3 EscrowAgent -> complete. See check_sample_conditional_escrow.py (shared M3 L1/L2/L3 harness in m3lib.py).
+//
+// RUN: python3 %S/check_sample_conditional_escrow.py %scripts %examples %neutrino-translate %neutrino-gen

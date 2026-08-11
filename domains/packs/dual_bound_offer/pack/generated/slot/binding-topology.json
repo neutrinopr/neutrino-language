@@ -1,0 +1,48 @@
+{
+  "kind": "neutrino.slot-binding-topology",
+  "schemaVersion": 1,
+  "capability": "coordinate.dual_bound_offer",
+  "capabilityVersion": "1.0.0",
+  "procedure": "dual_bound_offer",
+  "organizations": [
+    {
+      "organizationId": "sponsorco",
+      "participants": [
+        {
+          "participantId": "Sponsor",
+          "role": "sponsor",
+          "slots": [
+            {
+              "slotId": "coordinate.dual_bound_offer#Sponsor",
+              "lateBindingMode": "to_be_bound",
+              "allowedRuntimes": ["evm", "jvm"],
+              "minAssurance": "A2",
+              "evidenceProfile": null,
+              "authorizedBinder": "sponsorco"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organizationId": "acme",
+      "participants": [
+        {
+          "participantId": "Merchant",
+          "role": "merchant",
+          "slots": [
+            {
+              "slotId": "coordinate.dual_bound_offer#Merchant",
+              "lateBindingMode": "to_be_bound",
+              "allowedRuntimes": ["evm"],
+              "minAssurance": "A2",
+              "evidenceProfile": null,
+              "authorizedBinder": "acme"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "crossOrganization": true
+}

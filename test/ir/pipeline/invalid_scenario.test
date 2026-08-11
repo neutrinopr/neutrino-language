@@ -1,0 +1,6 @@
+// [6] invalid scenario -> exit 3 + machine-readable diagnostics: a bad scenario (scenario.invalid); a
+// non-string invariant (scenario.schema); a money-typed idempotency_key and divergent per-leg keys
+// (exit 3, no artifacts). See check_invalid_scenario.py.
+//
+// RUN: python3 %S/check_invalid_scenario.py %neutrino-gen %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu \
+// RUN:   %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json %S/../../bad_scenario.json

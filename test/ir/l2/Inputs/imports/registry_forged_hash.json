@@ -1,0 +1,10 @@
+{
+  "fixtures": [
+    {
+      "capabilityId": "coordinate.b",
+      "capabilityVersion": "1.0.0",
+      "l2v2": "test/ir/l2/Inputs/imports/sidecar_b.json",
+      "l2v2Hash": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ]
+}

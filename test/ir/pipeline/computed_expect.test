@@ -1,0 +1,5 @@
+// RUN: python3 %S/check_computed_expect.py %neutrino-gen %examples
+//
+// : declared expect.computed must match evaluation in validateScenario.
+// A wrong non-negative computed value fails closed (scenario.invalid); see
+// check_computed_expect.py.

@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "neutrino.slot.envelope",
+  "title": "Neutrino Slot Operation Envelope",
+  "description": "Canonical envelope for one slot operation. Business-coordination operations only (not arbitrary RPC).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sessionId", "operationId", "operation", "capability", "capabilityVersion", "participant", "counterparty", "payload", "payloadHash", "previousTranscriptHash", "signature"],
+  "allOf": [
+    {"if": {"properties": {"operation": {"enum": ["COMMIT", "REJECT", "COMPENSATE"]}}},
+     "then": {"required": ["correlationId"]}}
+  ],
+  "properties": {
+    "sessionId": {"type": "string"},
+    "operationId": {"type": "string"},
+    "operation": {"type": "string", "enum": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"]},
+    "correlationId": {"type": "string"},
+    "capability": {"type": "string"},
+    "capabilityVersion": {"type": "string"},
+    "participant": {"type": "string"},
+    "counterparty": {"type": "string"},
+    "payload": {"type": "object"},
+    "payloadHash": {"type": "string"},
+    "previousTranscriptHash": {"type": "string"},
+    "signature": {"type": "string"},
+    "diagnostics": {"type": "array", "items": {"type": "object", "required": ["severity", "code", "message"], "properties": {"severity": {"type": "string"}, "code": {"type": "string"}, "message": {"type": "string"}}}},
+    "anchorRef": {"type": "object", "properties": {"chain": {"type": "string"}, "address": {"type": "string"}, "commitmentHash": {"type": "string"}}}
+  }
+}

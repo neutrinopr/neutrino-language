@@ -1,0 +1,13 @@
+// Explicit reference-only mode must not fabricate structural backend rows or
+// produce backend artifacts. The integration-only equiv-target-catalog test
+// proves structural comparison of verified manifests.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: %neutrino-equiv --reference-only --scenario=%{msi}/scenario/core_sample_installment_happy_path.json %{msi}/source/core_sample_installment.neu --report=%t.r
+// RUN: %FileCheck %s < %t.r/equivalence.json
+//
+// CHECK: "backends": [
+// CHECK-NEXT: {
+// CHECK: "name": "reference"
+// CHECK: "mode": "reference-only"
+// CHECK: "specStructural": []

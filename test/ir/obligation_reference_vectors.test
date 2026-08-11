@@ -1,0 +1,5 @@
+// Independent obligation acceptance vectors. The checker runs the real
+// ObligationOp verifier, target-neutral CoordinationPlan lowering, and reference evaluator;
+// its self-test proves every governed mutation and non-vacuity condition bites.
+//
+// RUN: python3 %scripts/gates/check_obligation_reference.py --selftest --opt %neutrino-opt --gen %neutrino-gen --fixture %S/obligation_plan.mlir --verifier-fixture %S/obligation_verifier.mlir --vectors %S/Inputs/obligation_reference_vectors.json --work %t

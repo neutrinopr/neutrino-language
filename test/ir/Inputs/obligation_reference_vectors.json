@@ -1,0 +1,93 @@
+{
+  "kind": "neutrino.obligation-reference-vectors",
+  "schemaVersion": 1,
+  "reviewedVectorSha256": "25a88eaa64cb856677512130d05ddb085d1f2383a72bd165fe0b2a4b3550cadb",
+  "source": {
+    "repository": "urn:neutrino:evidence:obligation-reference-vectors-v1",
+    "commit": "0ac46077477c7d6b485d727d9df39d9c73c5c08f",
+    "proposal": {
+      "path": "proposals/orthogonal-l1-algebra/README.md",
+      "sha256": "ac9f2c2ddd0fc9e75be07b0abe1c9e343491b7edccf4bdaa42268865c942a551"
+    },
+    "evaluator": {
+      "path": "proposals/orthogonal-l1-algebra/spike_eval.py",
+      "sha256": "a0110f58ae31f53fbb3d42803504d92569c93201330f0899e01f48eb8d314f4f"
+    },
+    "expectedTrace": {
+      "path": "proposals/orthogonal-l1-algebra/expected-trace.txt",
+      "sha256": "f14870594c18eac012f0c0af6ef1294f320b62ac7d47a588b99dc21e550a6950"
+    },
+    "selection": "Case A release obligation rows realized by the pinned target-neutral CoordinationPlan contract"
+  },
+  "fixture": "test/ir/obligation_plan.mlir",
+  "procedure": "core_document_escrow",
+  "obligation": {
+    "version": 1,
+    "name": "conditional_release",
+    "obligor": "EscrowAgent",
+    "beneficiary": "Seller",
+    "authority": "Regulator",
+    "predicate": {
+      "source": "amount >= agreed",
+      "canonical": "(>= $amount $agreed)"
+    },
+    "effects": [
+      "escrow_release",
+      "seller_settlement"
+    ],
+    "statuses": [
+      "eligible",
+      "fired",
+      "refused"
+    ]
+  },
+  "productionMutations": {
+    "predicate": {
+      "source": "amount < agreed",
+      "operator": "<"
+    }
+  },
+  "vectors": [
+    {
+      "id": "release-positive",
+      "strategyRow": "amount>=agreed",
+      "inputs": {
+        "amount": 100,
+        "agreed": 50,
+        "currency": "USD",
+        "payee": "reference-seller",
+        "flow_id": "reference-positive"
+      },
+      "expectedObservation": {
+        "eligible": true,
+        "kind": "obligation",
+        "name": "conditional_release",
+        "obligor": "EscrowAgent",
+        "status": "fired"
+      },
+      "expectedCommittedEffects": [
+        "escrow_release",
+        "seller_settlement"
+      ]
+    },
+    {
+      "id": "release-refusal",
+      "strategyRow": "amount<agreed",
+      "inputs": {
+        "amount": 30,
+        "agreed": 50,
+        "currency": "USD",
+        "payee": "reference-seller",
+        "flow_id": "reference-refusal"
+      },
+      "expectedObservation": {
+        "eligible": false,
+        "kind": "obligation",
+        "name": "conditional_release",
+        "obligor": "EscrowAgent",
+        "status": "refused"
+      },
+      "expectedCommittedEffects": []
+    }
+  ]
+}

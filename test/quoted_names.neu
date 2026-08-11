@@ -1,0 +1,32 @@
+// Regression: DSL string literals with characters that are unsafe in generated
+// SQL/Solidity (here, a single quote in ledger names AND a posting memo).
+// Generators must escape them. The `out` debit carries a quoted memo (its
+// postings INSERT renders the WithMemo variant); the `inc` credit has none
+// (no-memo variant), so the fixture also witnesses the FinalizedPostingMemo
+// present/absent selection alongside the postgres.string.escape leaf hook.
+procedure quoted_names {
+    input txn : string
+    input amt : money
+    input p   : string
+
+    debit out {
+        ledger          = "acq's.balance"
+        owner           = "o"
+        party           = %p
+        amount          = %amt
+        currency        = "EUR"
+        idempotency_key = %txn
+        memo            = "note's"
+    }
+
+    credit inc {
+        ledger          = "iss's.balance"
+        owner           = "o2"
+        party           = %p
+        amount          = %amt
+        currency        = "EUR"
+        idempotency_key = %txn
+    }
+
+    assert balanced
+}

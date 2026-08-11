@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/participant-view/v0.2",
+  "title": "Neutrino Participant View",
+  "description": "A per-participant narrowed view (M5 ), emitted by `neutrino-gen --target=views`. Each view is a PROJECTION of the canonical capability spec: it carries the capability identity (`capabilityHash`, equal to the spec's), spec-derived coordination operations, and per-field D11 provenance (`specPath` + DSL `source`) so a consumer/ can trace source -> spec -> view and verify a view came from a compatible spec. Scenario-independent. Fail-closed (additionalProperties:false). Validated by scripts/validators/validate_participant_view.py, which mirrors this schema AND enforces the beyond-schema invariant a JSON-Schema cannot: capabilityHash matches the referenced spec, every specPath resolves in it, specContract matches. See docs/binding/PARTICIPANT_VIEWS.md.",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "procedure", "dslVersion", "capability",
+               "participant", "visibleOperations", "requiredInputs",
+               "permittedCounterparties", "evidenceObligations", "provenance"],
+  "additionalProperties": false,
+  "$defs": {
+    "sourceSpan": {
+      "type": "object",
+      "required": ["line", "column"],
+      "additionalProperties": false,
+      "properties": {
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "properties": {
+    "kind": { "const": "neutrino.participant-view" },
+    "schemaVersion": { "const": "0.2.0" },
+    "procedure": { "type": "string" },
+    "dslVersion": { "type": "string" },
+    "capability": {
+      "type": "object",
+      "required": ["capabilityHash", "specVersion"],
+      "additionalProperties": false,
+      "properties": {
+        "capabilityHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "specVersion": { "type": "string" }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "required": ["name", "role", "slotId"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "org": { "type": "string" },
+        "slotId": { "type": "string" }
+      }
+    },
+    "visibleOperations": { "type": "array", "items": { "type": "string" } },
+    "requiredInputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "specPath"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "specPath": { "type": "string" },
+          "source": { "$ref": "#/$defs/sourceSpan" }
+        }
+      }
+    },
+    "permittedCounterparties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["org"],
+        "additionalProperties": false,
+        "properties": {
+          "org": { "type": "string" },
+          "role": { "type": "string" }
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "description": "present only for a to_be_bound participant",
+      "required": ["mode", "runtimes"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "const": "to_be_bound" },
+        "runtimes": { "type": "array", "items": { "type": "string" } },
+        "minAssurance": { "type": "string" },
+        "authorizedBinder": { "type": "string" }
+      }
+    },
+    "evidenceObligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["leg", "kind", "ledger", "specPath"],
+        "additionalProperties": false,
+        "properties": {
+          "leg": { "type": "string" },
+          "kind": { "type": "string" },
+          "ledger": { "type": "string" },
+          "specPath": { "type": "string" },
+          "source": { "$ref": "#/$defs/sourceSpan" }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["derivedFrom", "specContract"],
+      "additionalProperties": false,
+      "properties": {
+        "derivedFrom": { "type": "string" },
+        "specContract": {
+          "type": "object",
+          "required": ["kind", "schemaVersion"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": { "const": "neutrino.capability-spec" },
+            "schemaVersion": { "type": "integer" }
+          }
+        }
+      }
+    }
+  }
+}

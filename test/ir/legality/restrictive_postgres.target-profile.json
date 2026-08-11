@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "neutrino.target-profile",
+  "profileId": "target.postgres.v1",
+  "profileVersion": 1,
+  "target": "postgres",
+  "runtimeFamily": "relational",
+  "executionMode": "simulated",
+  "supportedFeatures": [
+    "binding:flexible",
+    "effect:credit",
+    "effect:debit",
+    "guard:conditional",
+    "topology:org_coordination",
+    "topology:participants",
+    "value_category:currency",
+    "value_category:decimal",
+    "value_category:evidence",
+    "value_category:money",
+    "value_category:party",
+    "value_category:string"
+  ],
+  "unsupportedConstructs": [],
+  "fallbackPolicy": "fail_closed",
+  "capabilitySpecVersion": "v1"
+}

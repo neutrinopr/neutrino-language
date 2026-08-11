@@ -1,0 +1,7 @@
+// [42] T0/T2: binding-manifest validated against the D1b slot binding-topology ( diagnostic
+// taxonomy) — the reviewed realized manifest validates (exit 0 + ok=true JSON report); every diagnostic
+// family (NEU-1001..1004 / 2001..2003 / 3000..3001) is produced with BOTH its code AND category and
+// exits 1; and malformed/null topology containers report NEU-1001, never a traceback. See
+// check_binding_manifest.py.
+//
+// RUN: python3 %S/check_binding_manifest.py %scripts/validators/validate_binding_manifest.py %examples

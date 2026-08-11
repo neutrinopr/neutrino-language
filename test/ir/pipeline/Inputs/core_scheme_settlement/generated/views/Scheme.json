@@ -1,0 +1,25 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_scheme_settlement",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "a7d13f77ac53d203317c6c26562a77bf7979ea93b0d9cc7cf155e9abe568a255", "specVersion": "1.0.0" },
+  "participant": { "name": "Scheme", "role": "scheme", "org": "scheme-net", "slotId": "coordinate.core_scheme_settlement#Scheme" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "settlement_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 52, "column": 1 } },
+    { "name": "scheme_id", "type": "party", "specPath": "inputs[1]", "source": { "line": 53, "column": 1 } },
+    { "name": "gross_position", "type": "money", "specPath": "inputs[4]", "source": { "line": 56, "column": 1 } },
+    { "name": "fee_bps", "type": "decimal", "specPath": "inputs[5]", "source": { "line": 57, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[6]", "source": { "line": 58, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "bankco", "role": "settlement_bank" },
+    { "org": "treasuryco", "role": "treasury" }
+  ],
+  "evidenceObligations": [
+    { "leg": "scheme_principal", "kind": "debit", "ledger": "scheme.net_payable", "specPath": "effects[0]", "source": { "line": 63, "column": 1 } },
+    { "leg": "scheme_fee", "kind": "debit", "ledger": "scheme.fee_payable", "specPath": "effects[2]", "source": { "line": 83, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

@@ -1,0 +1,25 @@
+// M5 token S1 (): the compliance gate ALLOWS a token transfer when a ComplianceAuthority has
+// approved it (compliance_approved == 1) and SUPPRESSES it otherwise — synthetic core fixture
+// (production domain externalized  train1).
+//
+// DEFINE: %{src}  = %S/Inputs/core_compliance_guard_fixture.neu
+// DEFINE: %{scen} = %S/Inputs/core_compliance_guard_fixture.scn.json
+//
+// APPROVED (compliance_approved == 1) -> the transfer POSTS: both legs are in the realized event chain.
+// RUN: %neutrino-gen --target=test-realization --scenario=%{scen} %{src} -o %t.ok
+// RUN: %FileCheck %s --check-prefix=ALLOW < %t.ok/test-realization.json
+// ALLOW: "eventChain"
+// ALLOW: SenderDebitDebited
+// ALLOW: ReceiverCreditCredited
+//
+// UNAPPROVED (compliance_approved == 0) -> suppressed: neither transfer leg posts (no value moves).
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/unapproved.json %{src} -o %t.no
+// RUN: %FileCheck %s --check-prefix=DENY < %t.no/test-realization.json
+// DENY-NOT: SenderDebitDebited
+// DENY-NOT: ReceiverCreditCredited
+//
+// MALFORMED APPROVAL (compliance_approved == 2, out of range) -> suppressed fail-closed.
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/malformed_approval.json %{src} -o %t.bad
+// RUN: %FileCheck %s --check-prefix=DENY_M < %t.bad/test-realization.json
+// DENY_M-NOT: SenderDebitDebited
+// DENY_M-NOT: ReceiverCreditCredited

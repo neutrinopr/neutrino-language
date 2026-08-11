@@ -1,0 +1,6 @@
+{
+  "mode": "to_be_bound",
+  "authorizedBinder": "example-consumer-org",
+  "runtimes": ["evm", "jvm"],
+  "minAssurance": "A2"
+}

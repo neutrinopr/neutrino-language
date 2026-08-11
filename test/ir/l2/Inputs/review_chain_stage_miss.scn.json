@@ -1,0 +1,16 @@
+{
+  "scenario": "review_chain_stage_miss",
+  "procedure": "review_chain_stage",
+  "inputs": {
+    "case_id": "C-1",
+    "submitter_id": "sub-1",
+    "board_id": "brd-1",
+    "amount": 1000,
+    "currency": "EUR",
+    "assessor_report": "sha256:aa"
+  },
+  "accepted": {
+    "assessor_report": false
+  },
+  "expect": {}
+}

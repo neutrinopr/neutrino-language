@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/m7-core-installed-export.schema.json",
+  "title": "M7 backend-free core installed export manifest",
+  "description": "Shape and policy contract for the backend-free core installation: which paths are installed, that no C++ ABI is exported, and which protocol binding applies. Artifact *identity* is deliberately not declared here. Digests over installed binaries cannot live in a tracked file, because BuildInfo.h bakes the source commit and platform triple into those bytes, so a digest committed in commit C would have to be the digest of a binary built at C. That is a strict fixed point. Identity is carried instead by the release-time core receipt (docs/schemas/m7-core-release-receipt.schema.json), produced after the final commit is built and delivered independently of the admitted prefix.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "cppAbiPolicy",
+    "protocolContract",
+    "runtimeArtifacts",
+    "dataArtifacts",
+    "internalTargets",
+    "internalSourceHeaders",
+    "internalGeneratedHeaders",
+    "publicTargets",
+    "publicHeaders",
+    "cmakeExports"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.m7-core-installed-export/1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "cppAbiPolicy": {
+      "const": "forbidden"
+    },
+    "protocolContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundary",
+        "canonicalProjectionSchema",
+        "protocol",
+        "startup"
+      ],
+      "properties": {
+        "boundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonicalProjectionSchema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "protocol": {
+          "const": "neutrino.backend-protocol/1"
+        },
+        "startup": {
+          "const": "neutrino.backend-startup/1"
+        }
+      }
+    },
+    "runtimeArtifacts": {
+      "description": "Installed runtime executable paths. Identity (sha256, mode) is carried by the release receipt, not here — see this schema's top-level description.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^bin/[^/]+$"
+      }
+    },
+    "dataArtifacts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^share/"
+      }
+    },
+    "internalTargets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "internalSourceHeaders": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^include/Neutrino/"
+      }
+    },
+    "internalGeneratedHeaders": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^include/Neutrino/"
+      }
+    },
+    "publicTargets": {
+      "description": "Must stay empty: the boundary is bytes over the versioned subprocess protocol, never a C++ ABI.",
+      "type": "array",
+      "maxItems": 0
+    },
+    "publicHeaders": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "cmakeExports": {
+      "type": "array",
+      "maxItems": 0
+    }
+  }
+}

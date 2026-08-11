@@ -1,0 +1,85 @@
+{
+  "capabilities": [
+    {
+      "category": "primitive",
+      "dimension": "attestation",
+      "id": "attestation:quorum",
+      "value": "quorum"
+    },
+    {
+      "category": "primitive",
+      "dimension": "authorization",
+      "id": "authorization:explicit",
+      "value": "explicit"
+    },
+    {
+      "category": "primitive",
+      "dimension": "coordination",
+      "id": "coordination:evidence_acceptance",
+      "value": "evidence_acceptance"
+    },
+    {
+      "category": "primitive",
+      "dimension": "effect",
+      "id": "effect:credit",
+      "value": "credit"
+    },
+    {
+      "category": "primitive",
+      "dimension": "effect",
+      "id": "effect:debit",
+      "value": "debit"
+    },
+    {
+      "category": "primitive",
+      "dimension": "guard",
+      "id": "guard:conditional",
+      "value": "conditional"
+    },
+    {
+      "category": "primitive",
+      "dimension": "identity",
+      "id": "identity:explicit_instance_key",
+      "value": "explicit_instance_key"
+    },
+    {
+      "category": "obligation",
+      "dimension": "invariant",
+      "id": "invariant:balanced",
+      "value": "balanced"
+    },
+    {
+      "category": "obligation",
+      "dimension": "replay",
+      "id": "replay:idempotent",
+      "value": "idempotent"
+    },
+    {
+      "category": "primitive",
+      "dimension": "terminal",
+      "id": "terminal:aborted",
+      "value": "aborted"
+    },
+    {
+      "category": "primitive",
+      "dimension": "terminal",
+      "id": "terminal:contested",
+      "value": "contested"
+    },
+    {
+      "category": "primitive",
+      "dimension": "terminal",
+      "id": "terminal:success",
+      "value": "success"
+    },
+    {
+      "category": "primitive",
+      "dimension": "time",
+      "id": "time:explicit_input",
+      "value": "explicit_input"
+    }
+  ],
+  "kind": "neutrino.semantic-capability-registry",
+  "schemaVersion": 1,
+  "semanticProfileVersion": 3
+}

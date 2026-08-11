@@ -1,0 +1,20 @@
+// [31] backend validation report: an empty/missing backend dir is SKIPPED, never a false 'pass', and a
+// present-but-broken OPTIONAL tool (Slither exits non-zero with no JSON) surfaces as a WARNING
+// diagnostic rather than being silently dropped.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// Render a real solidity artifact to validate; leave the postgres dir empty.
+// RUN: %neutrino-gen --target=solidity --scenario=%{msi}/scenario/core_sample_installment_happy_path.json %{msi}/source/core_sample_installment.neu -o %t.sol
+// RUN: rm -rf %t.pgempty %t.fakebin && mkdir -p %t.pgempty %t.fakebin
+// A present-but-broken Slither: no JSON, non-zero exit.
+// RUN: printf '#!/bin/sh\necho broken >&2\nexit 1\n' > %t.fakebin/slither && chmod +x %t.fakebin/slither
+// RUN: env PATH="%t.fakebin:$PATH" python3 %scripts/validators/validate_backends.py --solidity %t.sol --postgres %t.pgempty --out %t.rep || true
+// RUN: %FileCheck --check-prefix=VAL %s < %t.rep/validation.json
+// RUN: %FileCheck --check-prefix=DIAG %s < %t.rep/diagnostics.json
+//
+// The empty postgres dir is 'skipped' (a real status), NOT a false 'pass'.
+// VAL: "backend": "postgres"
+// VAL: "status": "skipped"
+// The optional tool's error is a warning diagnostic naming the tool.
+// DIAG-DAG: "severity": "warning"
+// DIAG-DAG: slither

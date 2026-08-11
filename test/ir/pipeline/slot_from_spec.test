@@ -1,0 +1,6 @@
+// [80] M5 WP3 (): slot renders from the spec lifecycle — slot emits with no --scenario; is
+// byte-identical with vs without a scenario (no scenario dependency); and its capability/operations/
+// compensation/envelope lifecycle vocabulary all project from the spec's canonical machine (a slot can't
+// advertise/compensate an operation the spec lifecycle doesn't define). See check_slot_from_spec.py.
+//
+// RUN: python3 %S/check_slot_from_spec.py %neutrino-gen %examples

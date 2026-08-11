@@ -1,0 +1,27 @@
+// [84] Solidity is an EXTERNAL target bound to its verified package profile, so a caller may not
+// supply `--profile` at all: the refusal boundary itself is what core lit asserts. Per
+// M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9 (2026-07-31), package-specific restrictive-profile
+// behaviour belongs to the receiving package's own tests; the generic profile schema/version
+// contract stays under check_spec_legality.py below, where `--profile` is the declared subject.
+//
+// DEFINE: %{soa} = %curated3
+// DEFINE: %{src} = %curated3-source
+// DEFINE: %{scn} = %curated3-scenario
+// DEFINE: %{prof} = %examples/target-profiles/solidity.target-profile.json
+// (a) a caller-supplied profile is REFUSED for the external target — the package profile is
+//     authoritative and cannot be overridden, restrictive or not, and nothing is emitted.
+// RUN: %not %neutrino-gen --target=solidity --scenario=%{scn} --profile=%S/restrictive_solidity.target-profile.json %{src} -o %t.neg 2>&1 | %FileCheck --check-prefix=BOUND %s
+// RUN: test ! -e %t.neg/src
+// (b) the refusal is about the override boundary, not about which profile was named: a wrong-target
+//     (postgres) profile is refused by the SAME boundary, before any target-mismatch reasoning.
+// RUN: %not %neutrino-gen --target=solidity --scenario=%{scn} --profile=%examples/target-profiles/postgres.target-profile.json %{src} -o %t.mis 2>&1 | %FileCheck --check-prefix=BOUND %s
+// RUN: test ! -e %t.mis/src
+// (c) with no caller profile the verified package profile governs and the contract still renders.
+// RUN: %neutrino-gen --target=solidity --scenario=%{scn} %{src} -o %t.pos
+// RUN: test -e %t.pos/src
+// (d) the generic profile contract is still exercised where `--profile` remains valid: the canonical
+//     Python gate agrees on the SAME capability-spec.json (reject / accept).
+// RUN: %neutrino-gen --target=capability-spec %{src} -o %t.spec
+// RUN: %not python3 %scripts/gates/check_spec_legality.py %t.spec/capability-spec.json --profile=%S/restrictive_solidity.target-profile.json --target=solidity
+// RUN: python3 %scripts/gates/check_spec_legality.py %t.spec/capability-spec.json --profile=%{prof} --target=solidity
+// BOUND: bound to its verified package profile

@@ -1,0 +1,97 @@
+// [30] but the loosened "match any allowed role" check still rejects a role NO coordinating pair
+// permits ("thief" matches neither merchant nor auditor): exit 5, ok:false, the allowed-roles finding.
+// RUN: %neutrino-gen --target=security --scenario=%test/ir/security/Inputs/core_multi_pair_role/scenario/core_multi_pair_role_happy_path.json %s -o %t.d; [ $? -eq 5 ]
+// RUN: %FileCheck %s < %t.d/security.json
+// CHECK: "ok": false
+// CHECK: requires role 'merchant' or 'auditor'
+
+// Per-pair role scoping regression — an organization that takes a *different*
+// role in each of its coordinating pairs.
+//
+// acme coordinates with two orgs and fields a distinct actor for each:
+//   - with bankco, acme acts as "merchant"   (MerchantA)
+//   - with auditorco, acme acts as "auditor"  (AuditorA)
+//
+// The role constraint must be scoped to the *actual* coordinating pair: the
+// acme<->auditorco policy ("acme as auditor") must NOT reject acme's merchant
+// leg in the acme<->bankco relationship, and vice versa. Both legs are valid,
+// so the capability passes. (A naive "match the participant's org against every
+// policy mentioning that org" check would falsely reject both legs.)
+
+procedure core_multi_pair_role {
+    trigger thing_happened
+    version "1.0.0"
+
+    participant MerchantA {
+        role = "thief"
+        org  = "acme"
+    }
+    participant AuditorA {
+        role = "auditor"
+        org  = "acme"
+    }
+    participant Bank {
+        role = "settler"
+        org  = "bankco"
+    }
+    participant Auditor {
+        role = "reviewer"
+        org  = "auditorco"
+    }
+
+    allow "acme" with "bankco" {
+        "acme" as "merchant"
+    }
+    allow "acme" with "auditorco" {
+        "acme" as "auditor"
+    }
+    allow "bankco" with "auditorco" {
+    }
+
+    input workflow_key : string
+    input merchant_id : party
+    input bank_id     : party
+    input acme_id     : party
+    input auditor_id  : party
+    input amount      : money
+    input currency    : currency
+
+    debit settle_out {
+        ledger          = "acme.settlement_out"
+        owner           = "acme"
+        participant     = "MerchantA"
+        party           = %merchant_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %workflow_key
+    }
+    credit settle_in {
+        ledger          = "bankco.settlement_in"
+        owner           = "bankco"
+        participant     = "Bank"
+        party           = %bank_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %workflow_key
+    }
+    debit audit_out {
+        ledger          = "acme.audit_out"
+        owner           = "acme"
+        participant     = "AuditorA"
+        party           = %acme_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %workflow_key
+    }
+    credit audit_in {
+        ledger          = "auditorco.audit_in"
+        owner           = "auditorco"
+        participant     = "Auditor"
+        party           = %auditor_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %workflow_key
+    }
+
+    assert balanced
+}

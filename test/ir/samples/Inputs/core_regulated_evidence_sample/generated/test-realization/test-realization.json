@@ -1,0 +1,29 @@
+{
+  "capabilityHash": "d95998903b40c53b9ecfb044ac7864b933379928d7946e8c4e07ae1bab514f0b",
+  "computed": {},
+  "eventChain": [
+    "EvidenceAccessRequested",
+    "ConsumerAccessFeeDebited",
+    "ControllerEvidenceRevenueCredited",
+    "CoreRegulatedEvidenceSampleReconciled"
+  ],
+  "inputs": {
+    "consumer_id": "consumer-001",
+    "controller_id": "controller-001",
+    "currency": "EUR",
+    "evidence_ref": "sha256:9f2c1a7e6d4b2f0c8a1e5d3b7f9c2a4e6d8b0f1a3c5e7d9b1f3a5c7e9d0b2f4a",
+    "fee": 250
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "consumer.access_fee": -250,
+    "controller.evidence_revenue": 250
+  },
+  "procedure": "core_regulated_evidence_sample",
+  "scenario": "core_regulated_evidence_sample_happy_path",
+  "schemaVersion": 1
+}

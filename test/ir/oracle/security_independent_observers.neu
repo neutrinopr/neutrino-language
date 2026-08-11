@@ -1,0 +1,68 @@
+// Oracle trust-boundary security surfacing (M5 oracle S6, ) — the WELL-CONFIGURED sample.
+//
+// The same oracle-settled escrow, but the observer set declares assurance A3 (runtime evidence) and
+// independence "independent" (diverse sources/operators). The observation is still surfaced as a
+// trust-boundary crossing WITH its metadata, but nothing is flagged: a strong, independent observer
+// set is not an advisory. The trustBoundary category stays `pass`. This proves the surfacing does not
+// cry wolf — only a weak/non-independent set (see security_weak_observers.neu) raises an advisory.
+//
+// RUN: %neutrino-gen --target=security --scenario=%S/security_scenario.json %s -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+//
+// `ok` precedes the categories and FileCheck is forward-only, so check it first.
+// CHECK: "ok": true
+// CHECK: "category": "trustBoundary"
+// CHECK: "status": "pass"
+// CHECK: oracle attestation on evidence 'delivery_proof': observation crosses a trust boundary, admitted by an M-of-N quorum (M=2) over observer-set 'delivery_oracles' (assurance A3, independence independent)
+// A3/independent is NOT flagged — no "below A2" advisory, no independence advisory (to end of file).
+// CHECK-NOT: is below A2
+// CHECK-NOT: single point of failure wearing N hats
+procedure oracle_settled_escrow {
+    trigger delivery_reported
+    version "1.0.0"
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

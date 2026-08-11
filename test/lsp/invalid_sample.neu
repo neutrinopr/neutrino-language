@@ -1,0 +1,18 @@
+// LSP smoke fixture: an INVALID .neu — the debit is missing its required `party`
+// field, so the compiler emits a coded diagnostic the LSP maps to an LSP Diagnostic.
+procedure lsp_invalid_sample {
+    trigger sample_event
+    version "1.0.0"
+
+    input account_id : string
+    input amount     : money
+    input ccy        : currency
+
+    debit missing_party {
+        ledger          = "a.ledger"
+        owner           = "orgco"
+        amount          = %amount
+        currency        = %ccy
+        idempotency_key = %account_id
+    }
+}

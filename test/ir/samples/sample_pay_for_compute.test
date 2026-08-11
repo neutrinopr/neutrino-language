@@ -1,0 +1,3 @@
+// [70] M3 sample: core_hybrid_compute_sample L1/L2/L3 () — L2 validates with input_hash/compute_output/verification_proof evidence; L3 status deferred (EVM core concrete + jvm adapters deferred); targeted negatives + a concrete jvm binding under evm.v1 (NEU-3002) fail closed. See check_sample_pay_for_compute.py (shared M3 L1/L2/L3 harness in m3lib.py).
+//
+// RUN: python3 %S/check_sample_pay_for_compute.py %scripts %examples %neutrino-translate %neutrino-gen

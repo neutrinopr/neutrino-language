@@ -1,0 +1,54 @@
+// Conformance: version, participant declarations (role/org/capabilities + late
+// binding fields), an `allow` org-pair policy with per-org roles, `decimal` and
+// `evidence` inputs, `compute`, and the optional leg `participant` binding.
+procedure conformance_participants {
+    trigger sponsored_offer_proposed
+    version "1.2.3"
+
+    participant Sponsor {
+        role               = "sponsor"
+        org                = "sponsorco"
+        capabilities       = ["fund"]
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm", "jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant Merchant {
+        role = "merchant"
+        org  = "acme"
+    }
+    allow "sponsorco" with "acme" {
+        "sponsorco" as "sponsor"
+        "acme" as "merchant"
+    }
+
+    input base        : money
+    input rate_bps    : decimal
+    input cur         : currency
+    input sponsor_id  : party
+    input merchant_id : party
+    input doc         : evidence
+    input k           : string
+
+    compute fee = base * rate_bps / 10000
+
+    debit sponsor_leg {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %fee
+        currency        = %cur
+        idempotency_key = %k
+    }
+    credit merchant_leg {
+        ledger          = "merchant.expected"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %fee
+        currency        = %cur
+        idempotency_key = %k
+    }
+    assert balanced
+}

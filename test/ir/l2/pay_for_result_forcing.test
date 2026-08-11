@@ -1,0 +1,72 @@
+//  /  S8 — built-tool witness for the pay-for-result forcing.
+//
+// Direct and capability-spec reconstruction produce the same exact coordination
+// artifact, including the guarded balanced effect group and replay identity.
+// RUN: %neutrino-gen --target=coordination-plan %S/Inputs/pay_for_result.neu -o %t.direct
+// RUN: %neutrino-gen --target=capability-spec %S/Inputs/pay_for_result.neu -o %t.spec
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.spec/capability-spec.json -o %t.fromspec
+// RUN: diff %t.direct/coordination-plan.json %t.fromspec/coordination-plan.json
+// RUN: %FileCheck %s --check-prefix=COORDINATION < %t.direct/coordination-plan.json
+//
+// The source-neutral L2 model covers the same normalized requirement graph through
+// both source and capability-spec reduction.
+// RUN: %neutrino-emit --kind=domain-reduction %S/Inputs/pay_for_result.l2.mlir --reduce-against %S/Inputs/pay_for_result.neu > %t.l2.source
+// RUN: %neutrino-emit --kind=domain-reduction %S/Inputs/pay_for_result.l2.mlir --reduce-against %t.spec/capability-spec.json > %t.l2.spec
+// RUN: diff %t.l2.source %t.l2.spec
+// RUN: %FileCheck %s --check-prefix=L2 < %t.l2.source
+//
+// Accepted execution posts the exact key and deltas; direct/from-spec traces agree.
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/Inputs/pay_for_result_accepted.scn.json %S/Inputs/pay_for_result.neu -o %t.acc
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%S/Inputs/pay_for_result_accepted.scn.json %t.spec/capability-spec.json -o %t.accspec
+// RUN: diff %t.acc/coordination-trace.json %t.accspec/coordination-trace.json
+// RUN: %FileCheck %s --check-prefix=ACCEPT < %t.acc/coordination-trace.json
+//
+// Unaccepted evidence has source/from-spec parity and posts no settlement. This is
+// not a deadline execution claim.
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/Inputs/pay_for_result_rejected.scn.json %S/Inputs/pay_for_result.neu -o %t.rej
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%S/Inputs/pay_for_result_rejected.scn.json %t.spec/capability-spec.json -o %t.rejspec
+// RUN: diff %t.rej/coordination-trace.json %t.rejspec/coordination-trace.json
+// RUN: %FileCheck %s --check-prefix=UNACCEPTED < %t.rej/coordination-trace.json
+//
+// Narrow negative: an unguarded debit plus guarded credit is refused as unbalanced.
+// RUN: %not %neutrino-gen --target=coordination-plan %S/Inputs/pay_for_result_two_phase.neu -o %t.mixed 2>&1 | %FileCheck %s --check-prefix=MIXED
+// RUN: test ! -e %t.mixed/coordination-plan.json
+//
+// Derive the three rows and full evidence with the built tools.
+// RUN: python3 %scripts/generators/run_pressure_loop_forcing.py %examples/pressure-loop-forcing/s8-pay-for-result-fixtures.json --out %t.reg --evidence-dir %t.ev --neutrino-gen %neutrino-gen --neutrino-emit %neutrino-emit
+// RUN: diff %t.ev/plf-s8-pay-for-result-core.pay-for-result.json %examples/pressure-loop-forcing/evidence/plf-s8-pay-for-result-core.pay-for-result.json
+// RUN: %FileCheck %s --check-prefix=ROW < %t.reg
+//
+// COORDINATION: "attestationPolicies": [
+// COORDINATION-NEXT: "result_proof"
+// COORDINATION: "balanced": true
+// COORDINATION: "credits": 1
+// COORDINATION: "debits": 1
+// COORDINATION: "key": "job_id"
+//
+// L2-DAG: "feature": "attestation:quorum"
+// L2-DAG: "feature": "effect:credit"
+// L2-DAG: "feature": "effect:debit"
+// L2-DAG: "feature": "guard:conditional"
+// L2-DAG: "feature": "identity:explicit_instance_key"
+// L2-DAG: "feature": "invariant:balanced"
+// L2-DAG: "feature": "replay:idempotent"
+//
+// ACCEPT: "postedKeys": [
+// ACCEPT-NEXT: "J-1"
+// ACCEPT: "outcome": "terminal"
+// ACCEPT: "delta": -1000
+// ACCEPT: "effect": "bounty_out"
+// ACCEPT: "delta": 1000
+// ACCEPT: "effect": "bounty_in"
+// UNACCEPTED: "balances": []
+// UNACCEPTED: "postedKeys": []
+// UNACCEPTED: "outcome": "no-progress"
+// MIXED: kernel.balance.unbalanced
+//
+// ROW: "rowId": "plf-s8-pay-for-result-core"
+// ROW: "supportStatus": "partial"
+// ROW: "class": "1"
+// ROW: "rowId": "plf-s8-pay-for-result-execution-gap"
+// ROW: "disposition": "L3_RUNTIME"
+// ROW: "rowId": "plf-s8-pay-for-result-runtime"

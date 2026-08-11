@@ -1,0 +1,26 @@
+// Explicit reference-only mode reports the core-owned trace deterministically.
+// Default backend-equivalence fail-closed behavior and package invocation are
+// covered by the equiv-target-catalog integration test.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// DEFINE: %{src} = %{msi}/source/core_sample_installment.neu
+// DEFINE: %{scn} = %{msi}/scenario/core_sample_installment_happy_path.json
+//
+// RUN: env SOURCE_DATE_EPOCH=1700000000 %neutrino-equiv --reference-only --scenario=%{scn} %{src} --report=%t.r1
+// RUN: test -f %t.r1/diagnostics.json
+// RUN: %FileCheck --check-prefix=REPORT %s < %t.r1/equivalence.json
+// RUN: env SOURCE_DATE_EPOCH=1700000000 %neutrino-equiv --reference-only --scenario=%{scn} %{src} --report=%t.r2
+// RUN: diff %t.r1/equivalence.json %t.r2/equivalence.json
+// RUN: %not %neutrino-equiv --reference-only --scenario=%S/bad_scenario.json %{src} --report=%t.r3
+// RUN: %FileCheck --check-prefix=BAD %s < %t.r3/equivalence.json
+// RUN: %FileCheck --check-prefix=BADDIAG %s < %t.r3/diagnostics.json
+//
+// REPORT-DAG: "kind": "neutrino.equivalence-report"
+// REPORT-DAG: "mode": "reference-only"
+// REPORT-DAG: "resultCode": 0
+// REPORT-DAG: "sha256"
+// REPORT-DAG: "name": "reference"
+// REPORT-DAG: "specStructural": []
+// BAD: "ok": false
+// BADDIAG-DAG: "ok": false
+// BADDIAG-DAG: scenario.invalid

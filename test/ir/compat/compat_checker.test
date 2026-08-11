@@ -1,0 +1,7 @@
+// [54] M2 compatibility checker (): the current surface (from --version-json AND a generated
+// manifest.json translatorVersion) satisfies the example component-compatibility-manifest; dialect /
+// schema / tool-major drift + a truncated or typoed (additionalProperties:false, incl. nested
+// agents/network) requirement each fail closed. See check_compat_checker.py.
+//
+// RUN: python3 %S/check_compat_checker.py %scripts/gates/check_compatibility.py %neutrino-translate %neutrino-gen \
+// RUN:   %docs/schemas/examples/component-compatibility-manifest.json %examples

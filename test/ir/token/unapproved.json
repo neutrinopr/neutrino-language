@@ -1,0 +1,22 @@
+{
+  "scenario": "core_compliance_unapproved",
+  "procedure": "core_compliance_guard_fixture",
+  "inputs": {
+    "transfer_id": "xfer-002",
+    "sender_id": "sender-001",
+    "receiver_id": "receiver-001",
+    "amount": 2500,
+    "currency": "EUR",
+    "compliance_approved": 0
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "token.balance": 0
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "attestations": [
+    {
+      "canonicalization": {
+        "mode": "exact",
+        "tolerance": null
+      },
+      "fallback": "abort",
+      "input": "milestone_evidence",
+      "observerSet": {
+        "assurance": "A3",
+        "independence": "independent",
+        "ref": "fixture_oracles",
+        "role": null
+      },
+      "quorum": {
+        "threshold": 2
+      },
+      "timeout": "PT48H"
+    }
+  ],
+  "computes": [],
+  "effects": [],
+  "identity": {
+    "capabilityHash": "ecd5b540c4167465ed241b16273409e814f3ab5cd8cccab5b6ecdc40f76aca9e",
+    "specHash": "1182bae70a063a850eb2d37a2b4137c61cb19ff2a8b3f46ba199a389e676d2a0"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "milestone_id",
+      "type": "string"
+    },
+    {
+      "category": "string",
+      "name": "shipment_id",
+      "type": "string"
+    },
+    {
+      "category": "string",
+      "name": "milestone_kind",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "custody_from",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "custody_to",
+      "type": "party"
+    },
+    {
+      "category": "evidence",
+      "name": "milestone_evidence",
+      "type": "evidence"
+    }
+  ],
+  "invariants": [],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "declared": "milestone_id",
+      "fields": []
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_PENDING",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_MET",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_TIMEOUT",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "AWAIT_QUORUM",
+        "to": "QUORUM_PENDING"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REACH_QUORUM",
+        "to": "QUORUM_MET"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "TIMEOUT",
+        "to": "QUORUM_TIMEOUT"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "QUORUM_MET",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_TIMEOUT",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "ABORT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [],
+  "procedure": "core_evidence_only_milestone",
+  "schemaVersion": 3,
+  "sourceMap": [
+    {
+      "construct": "input milestone_id",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input shipment_id",
+      "source": {
+        "column": 1,
+        "line": 20
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input milestone_kind",
+      "source": {
+        "column": 1,
+        "line": 21
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input custody_from",
+      "source": {
+        "column": 1,
+        "line": 22
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input custody_to",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input milestone_evidence",
+      "source": {
+        "column": 1,
+        "line": 24
+      },
+      "specPath": "inputs[5]"
+    }
+  ],
+  "specVersion": "0.1.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input milestone_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 19
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input custody_from",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 22
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:evidence",
+        "primitive": "input milestone_evidence",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 24
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "attestation:quorum",
+        "primitive": "attest milestone_evidence",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 28
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": []
+  },
+  "trigger": "milestone_reported"
+}

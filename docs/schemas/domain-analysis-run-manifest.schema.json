@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-analysis-run-manifest/v1",
+  "title": "Neutrino Domain Analysis Run Manifest",
+  "description": "Records one AI-assisted dataset-analysis run: analyzer identity, model/tool + prompt version, input hashes, output hash, and review status. Fail-closed (additionalProperties:false). The translator validates shape only and never calls external AI tools. See docs/domains/DOMAIN_PROPOSAL.md and Phase 22A.",
+  "type": "object",
+  "required": ["kind", "runId", "analyzer", "promptVersion", "corpusRef", "inputs", "outputHash", "reviewStatus"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": { "const": "neutrino.domain-analysis-run-manifest" },
+    "runId": { "type": "string", "minLength": 1 },
+    "analyzer": {
+      "type": "object",
+      "required": ["identity"],
+      "additionalProperties": false,
+      "properties": {
+        "identity": { "type": "string", "minLength": 1, "description": "e.g. an external tool name." },
+        "modelVersion": { "type": "string", "minLength": 1 },
+        "toolVersion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "promptVersion": { "type": "string", "minLength": 1 },
+    "corpusRef": { "type": "string", "minLength": 1, "description": "corpusId of the corpus manifest this run read." },
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["ref", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "ref": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "outputHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "reviewStatus": { "enum": ["proposed", "under-review", "accepted", "rejected"] },
+    "createdAt": { "type": "string", "minLength": 1 }
+  }
+}

@@ -1,0 +1,107 @@
+// An evidence-only coordination: it accepts attested delivery evidence for a
+// shipment and moves no ledger value. Its identity is an explicit instance key
+// (the shipment reference), declared independently of any effect — an effectless
+// coordination has no effect to derive a key from. The reference evaluator
+// realizes it (zero ledger deltas), and the Solidity + PostgreSQL rails now
+// realize it too (): each records ACCEPTED attested evidence keyed by the
+// instance key and moves NO ledger value.
+//
+// (1) The capability-spec carries the explicit instance key and no effects:
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.spec/capability-spec.json
+// SPEC: "effects": []
+// SPEC: "instanceKey": {
+// SPEC-NEXT: "declared": "shipment_ref"
+//
+// (2) The reference evaluator ACCEPTS it, with attestation + acceptance event +
+// terminal observations and NO ledger delta:
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/shipment_evidence_anchor.scn.json %s -o %t.ev
+// RUN: %FileCheck %s --check-prefix=EVAL < %t.ev/coordination-trace.json
+// EVAL: "outcome": "terminal"
+// EVAL: "kind": "attestation"
+// EVAL: "ShipmentEvidenceAnchorAccepted"
+// EVAL-NOT: "kind": "ledger-delta"
+//
+// (3) The external-spec path reconstructs the IDENTICAL trace (direct-MLIR,
+// source, and from-spec all normalize to one verified semantics):
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%S/shipment_evidence_anchor.scn.json %t.spec/capability-spec.json -o %t.ev2
+// RUN: diff %t.ev/coordination-trace.json %t.ev2/coordination-trace.json
+//
+// (4) Solidity and PostgreSQL now REALIZE the evidence-only coordination ().
+// (4a) BYTE-GOLDEN: the evidence contract + Foundry harness render byte-
+// identically to the committed goldens (deterministic render):
+// RUN: rm -rf %t.sol && %neutrino-gen --target=solidity --scenario=%S/shipment_evidence_anchor.scn.json %s -o %t.sol
+// RUN: diff %S/golden/solidity/src/ShipmentEvidenceAnchor.sol %t.sol/src/ShipmentEvidenceAnchor.sol
+// The golden Foundry harness diff was re-homed to the Web3 runtime/demo layer by
+// M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9 (2026-07-31); evidence semantics stay below.
+// (4b) STRUCTURAL — the contract records an Accepted terminal keyed by the
+// instance key; the Accepted event carries ONLY that key (the evidence payload
+// is not re-logged on-chain, since the guard can't bind it):
+// RUN: %FileCheck %s --check-prefix=SOL < %t.sol/src/ShipmentEvidenceAnchor.sol
+// SOL: enum Status { None, Accepted }
+// SOL: event ShipmentEvidenceAnchorAccepted(string shipment_ref);
+// SOL: function accept(string calldata u_shipment_ref, string calldata) external {
+// SOL: require(acceptanceGuard.isAccepted(_k), "quorum not accepted");
+// SOL: emit ShipmentEvidenceAnchorAccepted(u_shipment_ref);
+// It moves NO ledger value: a SEPARATE whole-file pass (only CHECK-NOT lines, so
+// FileCheck scans the ENTIRE contract, not just the tail after the last match):
+// RUN: %FileCheck %s --check-prefix=SOLNOLEDGER < %t.sol/src/ShipmentEvidenceAnchor.sol
+// (ledger MECHANICS tokens, not the word "ledger" — the header comment says
+// "moves NO ledger value"; these accessors exist only in the effectful contract)
+// SOLNOLEDGER-NOT: debitTotal
+// SOLNOLEDGER-NOT: creditTotal
+// SOLNOLEDGER-NOT: net(
+// SOLNOLEDGER-NOT: int256
+//
+// (4c) BYTE-GOLDEN: the PostgreSQL schema/procedure/reconciliation/harness
+// render byte-identically to the committed goldens:
+// RUN: rm -rf %t.pg && %neutrino-gen --target=postgres --scenario=%S/shipment_evidence_anchor.scn.json %s -o %t.pg
+// RUN: diff %S/golden/postgres/schema.sql %t.pg/schema.sql
+// RUN: diff %S/golden/postgres/procedure.sql %t.pg/procedure.sql
+// RUN: diff %S/golden/postgres/reconciliation.sql %t.pg/reconciliation.sql
+// RUN: diff %S/golden/postgres/run_db_test.sh %t.pg/run_db_test.sh
+// (4d) STRUCTURAL — the procedure records the accepted terminal gated by the
+// quorum, replay-locked atomically:
+// RUN: %FileCheck %s --check-prefix=PG < %t.pg/procedure.sql
+// PG: FUNCTION execute_shipment_evidence_anchor(p_shipment_ref text, p_delivery_proof text)
+// PG: FROM quorum_acceptance WHERE claim_id = p_shipment_ref AND procedure = 'shipment_evidence_anchor'
+// PG: RAISE EXCEPTION 'quorum not accepted';
+// PG: INSERT INTO coordination_status(procedure, idempotency_key, reconciled)
+// PG: ON CONFLICT (procedure, idempotency_key) DO NOTHING;
+// PG: RAISE EXCEPTION 'replay';
+// It writes NO ledger rows — whole-file CHECK-NOT passes over BOTH the procedure
+// and the schema (each with only NOT lines, so the whole file is scanned):
+// RUN: %FileCheck %s --check-prefix=PGNOLEDGER < %t.pg/procedure.sql
+// PGNOLEDGER-NOT: INSERT INTO postings
+// PGNOLEDGER-NOT: ledger_balance
+// RUN: %FileCheck %s --check-prefix=PGSCHEMA < %t.pg/schema.sql
+// PGSCHEMA-NOT: CREATE TABLE IF NOT EXISTS postings
+// PGSCHEMA-NOT: CREATE TABLE IF NOT EXISTS ledger_balance
+// PGSCHEMA-NOT: CREATE TABLE IF NOT EXISTS posting_idempotency
+//
+// (5) NON-VACUOUS mutation: drop the explicit instance key and the effectless
+// coordination no longer resolves an identity — it fails before dispatch (it
+// does NOT silently key on the first input):
+// RUN: grep -v "instance_key" %s > %t.nokey.neu
+// RUN: %not %neutrino-gen --target=capability-spec %t.nokey.neu -o %t.nokey 2>&1 | %FileCheck %s --check-prefix=NOKEY
+// NOKEY: requires an explicit instance key
+// RUN: test ! -e %t.nokey/capability-spec.json
+procedure shipment_evidence_anchor {
+    trigger evidence_submitted
+    version "0.1.0"
+
+    input shipment_ref  : string
+    input delivery_proof : evidence
+
+    instance_key shipment_ref
+
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "logistics_oracles"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT48H"
+        fallback         = "abort"
+    }
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/backend-package-target-profile/v1",
+  "title": "Verified Backend Package Target Profile",
+  "description": "The closed target-profile admission contract embedded as profileSummary in a verified neutrino.backend-package/1 descriptor. This contract strengthens, but does not replace or narrow, the published target-profile/v1 compatibility baseline.",
+  "$comment": "Beyond JSON Schema, package admission requires profileId's vN to equal profileVersion, profileId and target to equal the descriptor identities, all three feature arrays to be lexicographically ordered, semanticProfile.features to use the live closed vocabulary, and supportedFeatures to be disjoint from unsupportedConstructs.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "kind",
+    "profileId",
+    "profileVersion",
+    "target",
+    "runtimeFamily",
+    "executionMode",
+    "supportedFeatures",
+    "unsupportedConstructs",
+    "fallbackPolicy",
+    "capabilitySpecVersion",
+    "semanticProfile"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "feature": {
+      "type": "string",
+      "pattern": "^[a-z][a-z_]*:[a-z][a-z0-9_]*$"
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9223372036854775807
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "neutrino.target-profile"
+    },
+    "profileId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+\\.v([0-9]+)$"
+    },
+    "profileVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runtimeFamily": {
+      "enum": [
+        "on_chain",
+        "relational",
+        "off_chain"
+      ]
+    },
+    "executionMode": {
+      "enum": [
+        "deterministic",
+        "simulated",
+        "real"
+      ]
+    },
+    "supportedFeatures": {
+      "type": "array",
+      "description": "Lexicographically ordered at package admission.",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/feature"
+      }
+    },
+    "unsupportedConstructs": {
+      "type": "array",
+      "description": "Lexicographically ordered and disjoint from supportedFeatures at package admission.",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/feature"
+      }
+    },
+    "fallbackPolicy": {
+      "enum": [
+        "fail_closed",
+        "advisory"
+      ]
+    },
+    "capabilitySpecVersion": {
+      "const": "v1"
+    },
+    "semanticProfile": {
+      "type": "object",
+      "required": [
+        "version",
+        "features",
+        "limits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 3
+        },
+        "features": {
+          "type": "array",
+          "description": "Lexicographically ordered and closed-vocabulary at package admission.",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        },
+        "limits": {
+          "type": "object",
+          "required": [
+            "maxExpressionDepth",
+            "maxEffects",
+            "maxEffectGroups",
+            "maxAttestations",
+            "maxComputes",
+            "maxOperationSteps"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "maxExpressionDepth": {
+              "$ref": "#/$defs/limit"
+            },
+            "maxEffects": {
+              "$ref": "#/$defs/limit"
+            },
+            "maxEffectGroups": {
+              "$ref": "#/$defs/limit"
+            },
+            "maxAttestations": {
+              "$ref": "#/$defs/limit"
+            },
+            "maxComputes": {
+              "$ref": "#/$defs/limit"
+            },
+            "maxOperationSteps": {
+              "$ref": "#/$defs/limit"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+// [9] neutrino-bundle input->output bundle (agent contract): ok:true + per-target manifests + input
+// hashes; unknown target -> not-ok; malformed entry / path-traversal -> exit 2 (nothing written outside);
+// a signal-killed generator is not success (synthesized ok:false + generator.aborted). See check_bundle.py.
+//
+// RUN: python3 %S/check_bundle.py %neutrino-bundle %neutrino-gen %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu \
+// RUN:   %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

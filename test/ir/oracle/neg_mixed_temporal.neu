@@ -1,0 +1,127 @@
+// A temporal per-policy coordination is fully claim-gated: every effect must
+// depend on its required accepted() policy. This fixture mixes an accepted()
+// pair with an unconditional pair. The shared coordination-plan legality seam
+// rejects it before any target can write an artifact.
+//
+// RUN: rm -rf %t.plan %t.spec %t.sol %t.pg %t.seed %t.rtplan %t.rtsol %t.rtpg
+//
+// RUN: %neutrino-gen --target=coordination-plan %s -o %t.plan > %t.plan.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.plan.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.plan/diagnostics.json
+// RUN: test ! -e %t.plan/coordination-plan.json
+// RUN: test ! -e %t.plan/backend-projection.json
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec > %t.spec.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.spec.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.spec/diagnostics.json
+// RUN: test ! -e %t.spec/capability-spec.json
+//
+// RUN: %neutrino-gen --target=solidity --scenario=%S/neg_mixed_temporal.scn.json %s -o %t.sol > %t.sol.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.sol.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.sol/diagnostics.json
+// RUN: test ! -d %t.sol/src
+//
+// RUN: %neutrino-gen --target=postgres --scenario=%S/neg_mixed_temporal.scn.json %s -o %t.pg > %t.pg.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.pg.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.pg/diagnostics.json
+// RUN: test ! -e %t.pg/procedure.sql
+// RUN: test ! -e %t.pg/schema.sql
+//
+// Build an externally supplied mixed capability-spec from a valid temporal
+// spec. Reconstruction must reach the same shared refusal before any target
+// writes an artifact.
+// RUN: %neutrino-gen --target=capability-spec %S/accepted_multi_policy.neu -o %t.seed
+// RUN: python3 -c "import copy,json,sys; p=json.load(open(sys.argv[1])); d=copy.deepcopy(p['effects'][0]); c=copy.deepcopy(p['effects'][2]); d.pop('when',None); c.pop('when',None); d.update(name='mixed_fee_debit',ledger='payer.fee'); c.update(name='mixed_fee_credit',ledger='payee.fee'); p['effects'] += [d,c]; json.dump(p,open(sys.argv[2],'w'),indent=2)" %t.seed/capability-spec.json %t.mixed.json
+//
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.mixed.json -o %t.rtplan > %t.rtplan.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.rtplan.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.rtplan/diagnostics.json
+// RUN: test ! -e %t.rtplan/coordination-plan.json
+// RUN: test ! -e %t.rtplan/backend-projection.json
+//
+// RUN: %neutrino-gen --target=solidity --from-spec %t.mixed.json -o %t.rtsol > %t.rtsol.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.rtsol.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.rtsol/diagnostics.json
+// RUN: test ! -d %t.rtsol/src
+//
+// RUN: %neutrino-gen --target=postgres --from-spec %t.mixed.json -o %t.rtpg > %t.rtpg.stderr 2>&1; [ $? -eq 4 ]
+// RUN: %FileCheck %s --check-prefix=MIXED < %t.rtpg.stderr
+// RUN: %FileCheck %s --check-prefix=DIAG < %t.rtpg/diagnostics.json
+// RUN: test ! -e %t.rtpg/procedure.sql
+// RUN: test ! -e %t.rtpg/schema.sql
+//
+// MIXED: is not gated on an accepted() policy, but the coordination has accepted() groups
+// DIAG: "code": "attest.temporal.mixed"
+// DIAG: "ok": false
+procedure neg_mixed_temporal {
+    trigger settlement_proposed
+    version "1.0.0"
+
+    participant Payer {
+        role = "payer"
+        org  = "payerco"
+    }
+    participant Payee {
+        role = "payee"
+        org  = "payeeco"
+    }
+    allow "payerco" with "payeeco" {
+        "payerco" as "payer"
+        "payeeco" as "payee"
+    }
+
+    input settlement_id : string
+    input payer_id      : party
+    input payee_id      : party
+    input amount        : money
+    input fee           : money
+    input currency      : currency
+    input alpha_proof   : evidence
+
+    attest alpha_proof {
+        quorum           = 2
+        observer_set     = "alpha_oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+
+    debit alpha_debit {
+        ledger          = "payer.alpha"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(alpha_proof)
+    }
+    credit alpha_credit {
+        ledger          = "payee.alpha"
+        owner           = "payee"
+        participant     = "Payee"
+        party           = %payee_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(alpha_proof)
+    }
+    debit fee_debit {
+        ledger          = "payer.fee"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %settlement_id
+    }
+    credit fee_credit {
+        ledger          = "payee.fee"
+        owner           = "payee"
+        participant     = "Payee"
+        party           = %payee_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %settlement_id
+    }
+    assert balanced
+}

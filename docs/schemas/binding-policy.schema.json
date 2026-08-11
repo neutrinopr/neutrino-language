@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/binding-policy/v1",
+  "title": "Binding Policy",
+  "description": "Agreement-time constraint on a flexible (to_be_bound) slot. Emitted by the translator into slot capability.json (covered by capabilityHash). See docs/binding/TRUST_LATE_BINDING_CONTRACT.md.",
+  "type": "object",
+  "required": ["mode", "runtimes", "authorizedBinder"],
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "const": "to_be_bound",
+      "description": "Present only for a late-bound slot; a fixed participant carries no binding object."
+    },
+    "authorizedBinder": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Org permitted to bind this slot (defaults to the participant's org)."
+    },
+    "runtimes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Allowed runtime/backend families (the allow-list a binding is checked against). Vocabulary intentionally open in v1; empties rejected."
+    },
+    "minAssurance": {
+      "enum": ["A1", "A2", "A3", "A4"],
+      "description": "Minimum assurance tier a binding must meet. Optional."
+    },
+    "evidenceProfile": {
+      "type": "string",
+      "description": "RESERVED (not yet emitted): required runtime-evidence profile a binding must produce."
+    },
+    "rebinding": {
+      "enum": ["none", "reapproval"],
+      "description": "RESERVED (not yet emitted): whether/how a bound slot may be rebound."
+    },
+    "compliance": {
+      "type": "object",
+      "description": "RESERVED (not yet emitted): data-residency / compliance tier constraints.",
+      "additionalProperties": true
+    }
+  }
+}

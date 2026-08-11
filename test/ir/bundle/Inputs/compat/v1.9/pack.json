@@ -1,0 +1,29 @@
+{
+  "kind": "neutrino.domain-pack",
+  "packId": "example.external-pack",
+  "targetsBundle": {
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.9.0",
+    "bundleDigest": "sha256:f623a4808353bf31e09b667427a0aa8b0b5cf1788b14e72869376cdcc8ad808e"
+  },
+  "translatorPins": {
+    "toolVersion": "0.2.0",
+    "mlirDialectVersion": "0.1.0",
+    "capabilitySpecVersion": "v1"
+  },
+  "requiredContracts": [
+    "binding-policy",
+    "target-profile"
+  ],
+  "optionalContracts": [],
+  "artifacts": [
+    {
+      "contract": "binding-policy",
+      "path": "artifacts/policy.json"
+    },
+    {
+      "contract": "target-profile",
+      "path": "artifacts/profile.json"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "kind": "neutrino.target-profile",
+  "profileId": "target.evm.v1",
+  "profileVersion": 1,
+  "target": "solidity",
+  "runtimeFamily": "on_chain",
+  "executionMode": "simulated",
+  "supportedFeatures": [
+    "attestation:quorum",
+    "binding:flexible",
+    "effect:credit",
+    "effect:debit",
+    "guard:conditional",
+    "invariant:balanced",
+    "topology:org_coordination",
+    "topology:participants",
+    "value_category:currency",
+    "value_category:decimal",
+    "value_category:evidence",
+    "value_category:money",
+    "value_category:party",
+    "value_category:string",
+    "value_extension:temporal"
+  ],
+  "unsupportedConstructs": [
+    "value_category:extension"
+  ],
+  "fallbackPolicy": "fail_closed",
+  "capabilitySpecVersion": "v1",
+  "semanticProfile": {
+    "features": [
+      "attestation:quorum",
+      "authorization:explicit",
+      "coordination:evidence_acceptance",
+      "effect:credit",
+      "effect:debit",
+      "guard:conditional",
+      "identity:explicit_instance_key",
+      "invariant:balanced",
+      "replay:idempotent",
+      "terminal:aborted",
+      "terminal:contested",
+      "terminal:success",
+      "time:explicit_input"
+    ],
+    "limits": {
+      "maxAttestations": 8,
+      "maxComputes": 32,
+      "maxEffectGroups": 16,
+      "maxEffects": 32,
+      "maxExpressionDepth": 16,
+      "maxOperationSteps": 64
+    },
+    "version": 3
+  }
+}

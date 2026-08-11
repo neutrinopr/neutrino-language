@@ -1,0 +1,18 @@
+// An explicit instance key that names no declared input fails before dispatch.
+// RUN: %not %neutrino-gen --target=capability-spec %s -o %t 2>&1 | %FileCheck %s
+// CHECK: names no declared input
+// It fails BEFORE dispatch — no capability-spec artifact is emitted.
+// RUN: test ! -e %t/capability-spec.json
+procedure bad_key_undeclared {
+    input shipment_ref  : string
+    input delivery_proof : evidence
+
+    instance_key not_an_input
+
+    attest delivery_proof {
+        quorum           = 1
+        observer_set     = "oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+}

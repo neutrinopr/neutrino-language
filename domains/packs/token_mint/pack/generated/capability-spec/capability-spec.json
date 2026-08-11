@@ -1,0 +1,504 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "mint_id"
+      },
+      "kind": "debit",
+      "ledger": "token.supply",
+      "name": "supply_debit",
+      "owner": "supply",
+      "participant": "SupplyAuthority",
+      "party": {
+        "kind": "ref",
+        "value": "supply_id"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "decimal",
+            "kind": "var",
+            "name": "supply_approved"
+          },
+          "op": "==",
+          "rhs": {
+            "dtype": "decimal",
+            "kind": "num",
+            "num": 1
+          }
+        },
+        "expr": "supply_approved == 1"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "mint_id"
+      },
+      "kind": "credit",
+      "ledger": "token.balance",
+      "name": "holder_credit",
+      "owner": "holder",
+      "participant": "Holder",
+      "party": {
+        "kind": "ref",
+        "value": "holder_id"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "decimal",
+            "kind": "var",
+            "name": "supply_approved"
+          },
+          "op": "==",
+          "rhs": {
+            "dtype": "decimal",
+            "kind": "num",
+            "num": 1
+          }
+        },
+        "expr": "supply_approved == 1"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "08149cc148fa6c9d97c2c168e65956e2f08c668b06fab0655cc76ee7f11200e3",
+    "specHash": "d7fed5836cca7d34dc5196c992adb902b3aef0f934844b04278109c458344ab8"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "mint_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "supply_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "holder_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    },
+    {
+      "category": "decimal",
+      "name": "supply_approved",
+      "type": "number"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "mint_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "SupplyAuthority",
+      "org": "issuerco",
+      "role": "supply_authority"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Holder",
+      "org": "walletco",
+      "role": "holder"
+    }
+  ],
+  "procedure": "token_mint",
+  "schemaVersion": 2,
+  "sourceMap": [
+    {
+      "construct": "input mint_id",
+      "source": {
+        "column": 1,
+        "line": 36
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input supply_id",
+      "source": {
+        "column": 1,
+        "line": 37
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input holder_id",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 39
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 40
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input supply_approved",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "debit supply_debit",
+      "source": {
+        "column": 1,
+        "line": 44
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit holder_credit",
+      "source": {
+        "column": 1,
+        "line": 55
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "participant SupplyAuthority",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Holder",
+      "source": {
+        "column": 1,
+        "line": 27
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "allow issuerco with walletco",
+      "source": {
+        "column": 1,
+        "line": 31
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 65
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input mint_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 36
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input supply_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 37
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 39
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 40
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:decimal",
+        "primitive": "input supply_approved",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 41
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit supply_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 44
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit holder_credit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 55
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "guard:conditional",
+        "primitive": "when supply_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 44
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 65
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant SupplyAuthority",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 23
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow issuerco with walletco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 31
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "issuerco",
+        "orgB": "walletco",
+        "roleA": "supply_authority",
+        "roleB": "holder"
+      }
+    ]
+  },
+  "trigger": "mint_requested"
+}

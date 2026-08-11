@@ -1,0 +1,235 @@
+// The  coordination-plan fixture: an unconditional balanced pair plus a
+// guarded balanced pair (identical guard) sharing one workflow key, and a typed
+// compute. The `coordination-plan` target exposes the target-neutral
+// CoordinationPlan the renderers consume — built DIRECTLY from the verified MLIR
+// (normalizePlan). This test pins the normalized form AND proves the three
+// construction paths agree: `.neu` (MLIR) == its `.mlir` == the artifact
+// RECONSTRUCTED from the emitted capability-spec (planFromSpec).
+//
+// RUN: %neutrino-translate %s > %t.mlir
+// RUN: %neutrino-gen --target=coordination-plan %s -o %t.neu
+// RUN: %neutrino-gen --target=coordination-plan %t.mlir -o %t.ir
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.spec/capability-spec.json -o %t.fromspec
+// RUN: diff %t.neu/coordination-plan.json %t.ir/coordination-plan.json
+// RUN: diff %t.neu/coordination-plan.json %t.fromspec/coordination-plan.json
+// RUN: %FileCheck %s < %t.neu/coordination-plan.json
+//
+// The plan serializes each compute's expression as a canonical structural key,
+// so the equivalence above is NON-VACUOUS: a tampered external-spec compute AST
+// (num 1 -> 9, still well-typed) produces a DIFFERENT artifact — the equality breaks
+// ( P1). This proves the compute expression, not just its name/category/deps.
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); rhs=o["computes"][0]["ast"]["rhs"]; assert rhs.get("kind") == "num" and rhs.get("num") == 1, rhs; rhs["num"] = 9; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.tamper.json
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.tamper.json -o %t.tampered
+// RUN: %not diff %t.neu/coordination-plan.json %t.tampered/coordination-plan.json
+//
+// : transition idempotency is now consumed by the coordination artifact. A
+// schema-valid spec-side change must rebuild into a different artifact.
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][0]["idempotency"] = "noop_on_identical"; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.idem.json
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.idem.json -o %t.idem
+// RUN: %not diff %t.neu/coordination-plan.json %t.idem/coordination-plan.json
+// : transition effects are also consumed by the normalized coordination
+// artifact. A schema-valid spec-side effect change must rebuild into a different
+// artifact.
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); effects=o["lifecycle"]["transitions"][3]["effects"]; assert effects == ["post"], effects; o["lifecycle"]["transitions"][3]["effects"] = ["reserve"]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.effect.json
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.effect.json -o %t.effect
+// RUN: %not diff %t.neu/coordination-plan.json %t.effect/coordination-plan.json
+// : transition guards are consumed at their content-located transition and
+// carried byte-for-byte into the normalized coordination artifact.
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["guards"] = [{"kind":"participant","detail":"payer-authorized"}]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.guard-kind.json
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.guard-kind.json -o %t.guard-kind
+// RUN: %not diff %t.neu/coordination-plan.json %t.guard-kind/coordination-plan.json
+// : transition evidence is a distinct target-neutral object. Style is
+// carried byte-for-byte while `chained` remains an independent boolean.
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["evidence"] = {"style":"single_hash","chained":True}; o["targetRequirements"]["evidenceStyle"] = "single_hash"; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.evidence-single.json
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.evidence-single.json -o %t.evidence-single
+// RUN: %FileCheck %s --check-prefix=EVIDENCE < %t.evidence-single/coordination-plan.json
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["evidence"]["style"] = "batched_root"; o["targetRequirements"]["evidenceStyle"] = "batched_root"; json.dump(o, open(sys.argv[2], "w"))' %t.evidence-single.json %t.evidence-batched.json
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.evidence-batched.json -o %t.evidence-batched
+// RUN: %not diff %t.evidence-single/coordination-plan.json %t.evidence-batched/coordination-plan.json
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][0]["idempotency"] = "bogus"; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.bad-idem.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.bad-idem.json -o %t.bad-idem 2>&1 | %FileCheck %s --check-prefix=BADIDEM
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["effects"] = ["bogus"]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.bad-effect.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.bad-effect.json -o %t.bad-effect 2>&1 | %FileCheck %s --check-prefix=BADEFFECT
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3].pop("effects", None); json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.missing-effect.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.missing-effect.json -o %t.missing-effect 2>&1 | %FileCheck %s --check-prefix=MISSINGEFFECT
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["effects"] = "post"; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.scalar-effect.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.scalar-effect.json -o %t.scalar-effect 2>&1 | %FileCheck %s --check-prefix=SCALAREFFECT
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["effects"] = [7]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.nonstring-effect.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.nonstring-effect.json -o %t.nonstring-effect 2>&1 | %FileCheck %s --check-prefix=NONSTRINGEFFECT
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["guards"] = [{"kind":"bogus"}]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.bad-guard-kind.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.bad-guard-kind.json -o %t.bad-guard-kind 2>&1 | %FileCheck %s --check-prefix=BADGUARD
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["guards"] = [{}]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.missing-guard-kind.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.missing-guard-kind.json -o %t.missing-guard-kind 2>&1 | %FileCheck %s --check-prefix=MISSINGGUARD
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3].pop("guards", None); json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.missing-guards.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.missing-guards.json -o %t.missing-guards 2>&1 | %FileCheck %s --check-prefix=MISSINGGUARDS
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["guards"] = {}; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.scalar-guards.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.scalar-guards.json -o %t.scalar-guards 2>&1 | %FileCheck %s --check-prefix=SCALARGUARDS
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["guards"] = [7]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.nonobject-guard.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.nonobject-guard.json -o %t.nonobject-guard 2>&1 | %FileCheck %s --check-prefix=NONOBJECTGUARD
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["guards"] = [{"kind":"participant","detail":7}]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.nonstring-guard-detail.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.nonstring-guard-detail.json -o %t.nonstring-guard-detail 2>&1 | %FileCheck %s --check-prefix=NONSTRINGGUARDDETAIL
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["evidence"] = {"style":"bogus","chained":True}; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.bad-evidence-style.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.bad-evidence-style.json -o %t.bad-evidence-style 2>&1 | %FileCheck %s --check-prefix=BADEVIDENCESTYLE
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["evidence"] = {"chained":True}; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.missing-evidence-style.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.missing-evidence-style.json -o %t.missing-evidence-style 2>&1 | %FileCheck %s --check-prefix=MISSINGEVIDENCESTYLE
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["evidence"] = {"style":"single_hash","chained":"yes"}; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.nonbool-evidence-chained.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.nonbool-evidence-chained.json -o %t.nonbool-evidence-chained 2>&1 | %FileCheck %s --check-prefix=NONBOOLEVIDENCECHAINED
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"][3]["evidence"] = "single_hash"; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.scalar-evidence.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.scalar-evidence.json -o %t.scalar-evidence 2>&1 | %FileCheck %s --check-prefix=SCALAREVIDENCE
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"].pop("transitions", None); json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.missing-transitions.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.missing-transitions.json -o %t.missing-transitions 2>&1 | %FileCheck %s --check-prefix=MISSINGTRANSITIONS
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"] = {}; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.scalar-transitions.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.scalar-transitions.json -o %t.scalar-transitions 2>&1 | %FileCheck %s --check-prefix=SCALARTRANSITIONS
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"] = []; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.empty-transitions.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.empty-transitions.json -o %t.empty-transitions 2>&1 | %FileCheck %s --check-prefix=EMPTYTRANSITIONS
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["lifecycle"]["transitions"] = [7]; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.nonobject-transition.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.nonobject-transition.json -o %t.nonobject-transition 2>&1 | %FileCheck %s --check-prefix=NONOBJECTTRANSITION
+// RUN: python3 -c 'import json,sys; p=sys.argv[1]; o=json.load(open(p)); o["lifecycle"].pop("states", None); json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.no-states.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.no-states.json -o %t.no-states 2>&1 | %FileCheck %s --check-prefix=BADSTATES
+// RUN: python3 -c 'import json,sys; p=sys.argv[1]; o=json.load(open(p)); o["lifecycle"]["states"] = []; json.dump(o, open(sys.argv[2], "w"))' %t.spec/capability-spec.json %t.empty-states.json
+// RUN: %not %neutrino-gen --target=coordination-plan --from-spec %t.empty-states.json -o %t.empty-states 2>&1 | %FileCheck %s --check-prefix=BADSTATES
+//
+// The workflow key is resolved + verified once; each guard group carries its
+// balance obligation + debit/credit shape; the compute is typed; the replay
+// obligation and the verified terminal projection are explicit.
+//
+// CHECK: "attested": false
+// CHECK: "balanced": true
+// CHECK: "category": "money"
+// The compute expression is observable as a canonical structural key.
+// CHECK: "exprKey": "(+ $amount )"
+// CHECK: "credits": 1
+// CHECK: "debits": 1
+// CHECK: "mustBalance": true
+// The attestation gate mode is observable (): this comparison-guarded, un-
+// attested coordination gates on no policy — atomic-refuse vs temporal-suppress
+// is thus distinguishable in the artifact, and reconstructs identically from spec.
+// CHECK: "gateMode": "none"
+// CHECK: "gatePolicy": ""
+// CHECK: "guard": "amount >= threshold"
+// The SEMANTIC guard key is structural ( amendment 4), distinct from the
+// source text — this is what guard partitioning keys on.
+// CHECK: "guardKey": "(>= $amount $threshold)"
+// CHECK: "lifecycleTransitions": [
+// CHECK: "effects": [
+// CHECK: "post"
+// CHECK: "idempotency": "reject"
+// EVIDENCE: "evidence": {
+// EVIDENCE-NEXT: "chained": true
+// EVIDENCE-NEXT: "style": "single_hash"
+// BADIDEM: spec.transition_idempotency
+// BADIDEM: unsupported idempotency
+// BADEFFECT: spec.transition_effect
+// BADEFFECT: unsupported effect
+// MISSINGEFFECT: spec.transition_effect
+// MISSINGEFFECT: missing effects array
+// SCALAREFFECT: spec.transition_effect
+// SCALAREFFECT: effects must be an array
+// NONSTRINGEFFECT: spec.transition_effect
+// NONSTRINGEFFECT: effects must be an array of strings
+// BADGUARD: spec.transition_guard
+// BADGUARD: unsupported guard kind
+// MISSINGGUARD: spec.transition_guard
+// MISSINGGUARD: guard kind must be a string
+// MISSINGGUARDS: spec.transition_guard
+// MISSINGGUARDS: missing guards array
+// SCALARGUARDS: spec.transition_guard
+// SCALARGUARDS: guards must be an array
+// NONOBJECTGUARD: spec.transition_guard
+// NONOBJECTGUARD: guards must contain only objects
+// NONSTRINGGUARDDETAIL: spec.transition_guard
+// NONSTRINGGUARDDETAIL: guard detail must be a string
+// BADEVIDENCESTYLE: spec.transition_evidence
+// BADEVIDENCESTYLE: unsupported evidence style
+// MISSINGEVIDENCESTYLE: spec.transition_evidence
+// MISSINGEVIDENCESTYLE: evidence style must be a string
+// NONBOOLEVIDENCECHAINED: spec.transition_evidence
+// NONBOOLEVIDENCECHAINED: evidence chained must be a boolean
+// SCALAREVIDENCE: spec.transition_evidence
+// SCALAREVIDENCE: evidence must be null or an object
+// MISSINGTRANSITIONS: spec.bad_transition
+// MISSINGTRANSITIONS: transitions array is missing
+// SCALARTRANSITIONS: spec.bad_transition
+// SCALARTRANSITIONS: transitions must be an array
+// EMPTYTRANSITIONS: spec.bad_transition
+// EMPTYTRANSITIONS: transitions must be a non-empty array
+// NONOBJECTTRANSITION: spec.bad_transition
+// NONOBJECTTRANSITION: transitions must contain only objects
+// BADSTATES: spec.bad_transition
+// BADSTATES: non-empty lifecycle states set
+// CHECK: "procedure": "plan_probe"
+// CHECK: "replay": {
+// CHECK: "idempotent": true
+// CHECK: "key": "flow_id"
+// CHECK: "terminal": {
+// CHECK: "success": "CLOSED"
+// CHECK: "workflowKey": "flow_id"
+
+procedure plan_probe {
+    trigger opened
+    version "1.0.0"
+
+    participant A {
+        role = "buyer"
+        org  = "aco"
+    }
+    participant B {
+        role = "seller"
+        org  = "bco"
+    }
+    allow "aco" with "bco" {
+        "aco" as "buyer"
+        "bco" as "seller"
+    }
+
+    input flow_id   : string
+    input payer     : party
+    input payee     : party
+    input amount    : money
+    input threshold : money
+    input currency  : currency
+
+    compute bonus_amount = amount + 1
+
+    debit pay_out {
+        ledger          = "a.src"
+        owner           = "buyer"
+        participant     = "A"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    credit pay_in {
+        ledger          = "b.dst"
+        owner           = "seller"
+        participant     = "B"
+        party           = %payee
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    debit bonus_out {
+        ledger          = "a.src"
+        owner           = "buyer"
+        participant     = "A"
+        party           = %payer
+        amount          = %bonus_amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = amount >= threshold
+    }
+    credit bonus_in {
+        ledger          = "b.dst"
+        owner           = "seller"
+        participant     = "B"
+        party           = %payee
+        amount          = %bonus_amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = amount >= threshold
+    }
+
+    assert balanced
+}

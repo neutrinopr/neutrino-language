@@ -1,0 +1,277 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neutrino/contracts/l2-domain-semantics/v3",
+  "title": "L2 Domain Semantics (v3 \u2014 executable reduction graph + required intake versioning)",
+  "description": "v3 of the domain-semantics contract (): IDENTICAL to v2's executable reduction graph and cross-record contract, plus a REQUIRED intakeVersioning object binding the artifact to the capability-vocabulary (semanticProfileVersion) and reduction-semantics (reductionSemanticsVersion) contract versions it was produced under. Distinct /v3 contract id; v2 is retained UNCHANGED as the legacy compatibility baseline. domainSemanticsHash covers intakeVersioning, so a version claim cannot be altered without re-signing. The M7 intake seam admits v3 only; the shared cross-record contract is enforced by validate_l2_domain_semantics_v2.py (parameterized).  byte-reproducible: sorted keys, records sorted by full canonical form, no timestamps. domainSemanticsHash = lowercase sha256 over the compact canonical JSON (sort_keys, separators=(',',':')) of this object with the hash field removed. A conforming consumer MUST additionally enforce the cross-record contract (identity uniqueness, endpoint resolution, per-concept supported traceability, descriptive/executable restriction, accepted provenance for behaviour-driving edges, provenance subject resolution, invariant failure-mode references) \u2014 see validate_l2_domain_semantics_v2.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "domain",
+    "version",
+    "implements",
+    "l1Features",
+    "concepts",
+    "reductions",
+    "failureModes",
+    "invariants",
+    "provenance",
+    "domainSemanticsHash",
+    "intakeVersioning"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.l2-domain-semantics"
+    },
+    "schemaVersion": {
+      "const": 3
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "implements": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coverage": {
+      "enum": [
+        "full",
+        "partial"
+      ]
+    },
+    "l1Features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "kind"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "primitive",
+              "obligation"
+            ]
+          }
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "kind",
+          "classification"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "state",
+              "action",
+              "concept"
+            ]
+          },
+          "classification": {
+            "enum": [
+              "executable",
+              "descriptive"
+            ]
+          }
+        }
+      }
+    },
+    "reductions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "from",
+          "to",
+          "relation",
+          "lossiness"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "relation": {
+            "enum": [
+              "expands",
+              "discharges",
+              "protects",
+              "failure"
+            ]
+          },
+          "lossiness": {
+            "enum": [
+              "lossless",
+              "lossy_preserved",
+              "unsupported"
+            ]
+          }
+        }
+      }
+    },
+    "failureModes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "compensation": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "predicate"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "predicate": {
+            "type": "string",
+            "minLength": 1
+          },
+          "onFailure": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subject",
+          "source",
+          "status"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "accepted",
+              "rejected"
+            ]
+          },
+          "standardVersion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "excerptHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "reviewer": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "imports": {
+      "type": "array",
+      "description": "Versioned imports of OTHER L2 domains (l2.import records): a foreign capability at a required version, resolved against a domain registry by the import resolver. Part of the hashed contract, so an import change bites domainSemanticsHash. A capability is imported at most once.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "version"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          }
+        }
+      }
+    },
+    "intakeVersioning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semanticProfileVersion",
+        "reductionSemanticsVersion"
+      ],
+      "description": "REQUIRED (): the capability-vocabulary + reduction-semantics contract versions this artifact was produced under; covered by domainSemanticsHash. The M7 intake profile exact-matches both against the live vocabulary + its reduction-semantics pin before reduction.",
+      "properties": {
+        "semanticProfileVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reductionSemanticsVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "domainSemanticsHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

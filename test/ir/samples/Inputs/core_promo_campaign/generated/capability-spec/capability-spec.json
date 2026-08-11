@@ -1,0 +1,580 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "commission"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "redemption_id"
+      },
+      "kind": "debit",
+      "ledger": "sponsor.promo_pool",
+      "name": "sponsor_commission_funding",
+      "owner": "sponsor",
+      "participant": "Sponsor",
+      "party": {
+        "kind": "ref",
+        "value": "sponsor_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "commission"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "redemption_id"
+      },
+      "kind": "credit",
+      "ledger": "promoter.commission",
+      "name": "promoter_commission",
+      "owner": "promoter",
+      "participant": "Promoter",
+      "party": {
+        "kind": "ref",
+        "value": "promoter_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "reimbursement"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "redemption_id"
+      },
+      "kind": "debit",
+      "ledger": "sponsor.promo_pool",
+      "name": "sponsor_reimbursement_funding",
+      "owner": "sponsor",
+      "participant": "Sponsor",
+      "party": {
+        "kind": "ref",
+        "value": "sponsor_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "reimbursement"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "redemption_id"
+      },
+      "kind": "credit",
+      "ledger": "fulfiller.reimbursement",
+      "name": "fulfiller_reimbursement",
+      "owner": "fulfiller",
+      "participant": "Fulfiller",
+      "party": {
+        "kind": "ref",
+        "value": "fulfiller_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "8daf46a13e1f4ce5fada3e3dcfaff5dff0cb5eebc5caf41d12b6a1f666ce0e03",
+    "specHash": "91a63c1584810eb7f50d596161b204554ce64dbba86346a47866375f1416cbdc"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "redemption_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "sponsor_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "promoter_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "fulfiller_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "commission",
+      "type": "money"
+    },
+    {
+      "category": "money",
+      "name": "reimbursement",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "redemption_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "evm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "Sponsor",
+      "org": "sponsorco",
+      "role": "sponsor"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Promoter",
+      "org": "promoterco",
+      "role": "promoter"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Fulfiller",
+      "org": "fulfillerco",
+      "role": "fulfiller"
+    }
+  ],
+  "procedure": "core_promo_campaign",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input redemption_id",
+      "source": {
+        "column": 1,
+        "line": 51
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input sponsor_id",
+      "source": {
+        "column": 1,
+        "line": 52
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input promoter_id",
+      "source": {
+        "column": 1,
+        "line": 53
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input fulfiller_id",
+      "source": {
+        "column": 1,
+        "line": 54
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input commission",
+      "source": {
+        "column": 1,
+        "line": 55
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input reimbursement",
+      "source": {
+        "column": 1,
+        "line": 56
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 57
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "debit sponsor_commission_funding",
+      "source": {
+        "column": 1,
+        "line": 59
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit promoter_commission",
+      "source": {
+        "column": 1,
+        "line": 69
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "debit sponsor_reimbursement_funding",
+      "source": {
+        "column": 1,
+        "line": 79
+      },
+      "specPath": "effects[2]"
+    },
+    {
+      "construct": "credit fulfiller_reimbursement",
+      "source": {
+        "column": 1,
+        "line": 89
+      },
+      "specPath": "effects[3]"
+    },
+    {
+      "construct": "participant Sponsor",
+      "source": {
+        "column": 1,
+        "line": 22
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Promoter",
+      "source": {
+        "column": 1,
+        "line": 29
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "participant Fulfiller",
+      "source": {
+        "column": 1,
+        "line": 33
+      },
+      "specPath": "participants[2]"
+    },
+    {
+      "construct": "allow sponsorco with promoterco",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "allow sponsorco with fulfillerco",
+      "source": {
+        "column": 1,
+        "line": 42
+      },
+      "specPath": "topology.allowedOrgPairs[1]"
+    },
+    {
+      "construct": "allow promoterco with fulfillerco",
+      "source": {
+        "column": 1,
+        "line": 46
+      },
+      "specPath": "topology.allowedOrgPairs[2]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 99
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input redemption_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 51
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input sponsor_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 52
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input commission",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 55
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 57
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit sponsor_commission_funding",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 59
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit promoter_commission",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 69
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 99
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant Sponsor",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 22
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Sponsor",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 22
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow sponsorco with promoterco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 38
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "sponsorco",
+        "orgB": "promoterco",
+        "roleA": "sponsor",
+        "roleB": "promoter"
+      },
+      {
+        "orgA": "sponsorco",
+        "orgB": "fulfillerco",
+        "roleA": "sponsor",
+        "roleB": "fulfiller"
+      },
+      {
+        "orgA": "promoterco",
+        "orgB": "fulfillerco",
+        "roleA": "promoter",
+        "roleB": "fulfiller"
+      }
+    ]
+  },
+  "trigger": "promo_redemption_reported"
+}

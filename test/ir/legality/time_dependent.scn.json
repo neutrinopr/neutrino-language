@@ -1,0 +1,13 @@
+{
+  "scenario": "time_probe_run",
+  "procedure": "time_probe",
+  "inputs": {
+    "flow_id": "F-1",
+    "payer": "buyer-1",
+    "amount": 100,
+    "currency": "EUR",
+    "now": 10,
+    "deadline": 5
+  },
+  "expect": {}
+}

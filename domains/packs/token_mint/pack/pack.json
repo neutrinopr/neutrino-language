@@ -1,0 +1,106 @@
+{
+  "kind": "neutrino.domain-pack",
+  "packDigest": "sha256:476387fda9d8114bf206e635637c46e7695a10f035981693c09c33b662cbb645",
+  "packId": "token_mint",
+  "payloads": [
+    {
+      "contract": "capability-spec",
+      "mediaType": "application/json",
+      "path": "generated/capability-spec/capability-spec.json",
+      "role": "capability-spec",
+      "sha256": "sha256:c707fc39128c81d44755e60420de3734ab4ea2c966e6b119265b344a9920838d"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/procedure.sql",
+      "role": "postgres-procedure",
+      "sha256": "sha256:ad635d363b9e15afddbf0fd331de244868627e9970dd645bb5340d859d5a4b2a"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/reconciliation.sql",
+      "role": "postgres-reconciliation",
+      "sha256": "sha256:9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "mediaType": "application/x-sh",
+      "path": "generated/postgres/run_db_test.sh",
+      "role": "postgres-test-helper",
+      "sha256": "sha256:54ce3c02ab95d904c4ef2c78cb6af202913ceda01e1266993760033109935adc"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/schema.sql",
+      "role": "postgres-schema",
+      "sha256": "sha256:a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/security/security.json",
+      "role": "security-report",
+      "sha256": "sha256:245ab0e655bf9453646d16e6eff8b501877f8a1151c42efbfcac21ecf1283861"
+    },
+    {
+      "mediaType": "application/toml",
+      "path": "generated/solidity/foundry.toml",
+      "role": "solidity-config",
+      "sha256": "sha256:d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/src/TokenMint.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:f9e58e354221071e3eca26d882349a7ac0c250a1115987a9043dcf9fb3e902e5"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/test/TokenMint.t.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:cb503ac2278070a667d3dda535921a26359225670a29aa495b9f1a21908f04e7"
+    },
+    {
+      "contract": "test-realization",
+      "mediaType": "application/json",
+      "path": "generated/test-realization/test-realization.json",
+      "role": "test-realization",
+      "sha256": "sha256:d3143ecf76d39ff30876919a33320b307d8acef77b871d51e30835fdd9ebf223"
+    },
+    {
+      "contract": "participant-view",
+      "mediaType": "application/json",
+      "path": "generated/views/Holder.json",
+      "role": "participant-view",
+      "sha256": "sha256:8bbd4c799cbe3045ad90519fc3e58359c129ae4e13f828737158baae37e8337b"
+    },
+    {
+      "contract": "participant-view",
+      "mediaType": "application/json",
+      "path": "generated/views/SupplyAuthority.json",
+      "role": "participant-view",
+      "sha256": "sha256:081bff9fb6cc9f365d1b132ec74cb0c059fc1de9dca2cc5c8dbf2441edb46ec4"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "scenario/token_mint_happy_path.json",
+      "role": "scenario",
+      "sha256": "sha256:8ccee61bf5befc3123ada15f63e7910f8e211a37e02c514b8e2372371c491359"
+    },
+    {
+      "mediaType": "text/x-neutrino",
+      "path": "source/token_mint.neu",
+      "role": "source",
+      "sha256": "sha256:973d47bed99c351e76d40d7425bbb1b4474fe3ce526af8ea30cee16f6bf0315e"
+    }
+  ],
+  "requiredContracts": [
+    "capability-spec",
+    "participant-view",
+    "test-realization"
+  ],
+  "schemaVersion": 2,
+  "targetsBundle": {
+    "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.10.0"
+  }
+}

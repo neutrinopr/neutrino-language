@@ -1,0 +1,18 @@
+{
+  "kind": "neutrino.domain-pack",
+  "packId": "compat.v1_0-consumer",
+  "targetsBundle": {
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.0.0",
+    "bundleDigest": "sha256:38e11a7b3ed8250bf2c6cef25fae40d678ef847fb14f16f37d938980c03a02a5"
+  },
+  "requiredContracts": [
+    "binding-policy"
+  ],
+  "artifacts": [
+    {
+      "contract": "binding-policy",
+      "path": "artifacts/policy.json"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/forge-toolchain-receipt.v1.schema.json",
+  "title": "Neutrino Forge toolchain provisioning receipt (v1)",
+  "description": "What ONE machine provisioned for the `requires-forge` acceptance rows: OS/arch, the Foundry `forge` identity (version, upstream commit, binary digest), the native dependencies of its Mach-O closure with the prefix they actually resolve from and their digests, and the LLVM/MLIR + solc coordinates that produced the artifacts forge consumes. The absolute paths RECORD a machine; they are never the mechanism — scripts/gates/check_forge_toolchain.py derives them (NEUTRINO_FORGE_LIBRARY_PATH, else `brew --prefix <declaredNativeFormula>`/lib on Darwin). Emitted by `--emit-receipt`, re-checked by `--verify-receipt` ().",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "machine", "forge", "declaredNativeLibraryPath", "nativeDependencies"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"const": "neutrino.forge-toolchain-receipt.v1"},
+    "schemaVersion": {"const": 1},
+    "issue": {"type": "integer"},
+    "note": {"type": "string"},
+    "machine": {
+      "type": "object",
+      "required": ["os", "arch"],
+      "additionalProperties": false,
+      "properties": {
+        "os": {"type": "string", "description": "platform.system(), e.g. Darwin / Linux"},
+        "osRelease": {"type": "string"},
+        "osVersion": {"type": "string"},
+        "arch": {"type": "string"}
+      }
+    },
+    "forge": {
+      "type": "object",
+      "required": ["path", "version", "digest"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string"},
+        "version": {"type": "string"},
+        "commitSha": {"type": "string", "description": "upstream Foundry commit the release was cut from"},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "declaredNativeLibraryPath": {
+      "type": "string",
+      "description": "The prefix handed to the dynamic loader at the direct forge spawn boundary. Empty when the closure resolves without one (Linux)."
+    },
+    "declaredNativeFormula": {
+      "type": "string",
+      "description": "The package NAME the declared prefix is derived from, never a literal path."
+    },
+    "nativeDependencies": {
+      "type": "array",
+      "description": "Non-system Mach-O load commands of the forge binary — the closure this receipt provisions.",
+      "items": {
+        "type": "object",
+        "required": ["recordedInstallName", "resolvedPath", "digest", "resolvedVia"],
+        "additionalProperties": false,
+        "properties": {
+          "recordedInstallName": {"type": "string", "description": "the absolute path baked into the binary by its builder"},
+          "resolvedPath": {"type": ["string", "null"], "description": "where the loader actually finds it on this machine; null = unresolved (infrastructure failure)"},
+          "digest": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+          "resolvedVia": {"enum": ["declaredLibraryPath", "recordedInstallName"]}
+        }
+      }
+    },
+    "llvm": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "prefix": {"type": "string"},
+        "version": {"type": "string"},
+        "mlirDir": {"type": "string"}
+      }
+    },
+    "solc": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string"},
+        "version": {"type": "string"}
+      }
+    }
+  }
+}

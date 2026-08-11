@@ -1,0 +1,16 @@
+{
+  "scenario": "token_mint_unauthorized",
+  "procedure": "token_mint",
+  "inputs": {
+    "mint_id": "mint-001",
+    "supply_id": "token-reserve",
+    "holder_id": "holder-001",
+    "amount": 2500,
+    "currency": "EUR",
+    "supply_approved": 0
+  },
+  "expect": {
+    "ledger": { "token.supply": 0, "token.balance": 0 },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

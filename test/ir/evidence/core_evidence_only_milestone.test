@@ -1,0 +1,127 @@
+// Evidence-only cross-border logistics milestone — trace-equivalence + fail-closed driver.
+//
+// Exercises the committed core-owned fixture `test/ir/evidence/Inputs/core_evidence_only_milestone`
+// (migrated out of `examples/domains/` by  train1 `029579fa`; referenced via %S/Inputs, never
+// re-authored here) end to end: it proves the three milestone instances share one
+// shipment yet key on distinct milestone_ids with independent replay state, that the reference evaluator
+// and both rails agree on the normalized observations, that a consumer reproduces the rails from the
+// committed capability-spec alone (the simulator's public-artifact contract), and that the milestone
+// record's identity + event are load-bearing (a backend that drops them, or reuses the shipment id as the
+// replay identity, diverges). Accepted evidence records the milestone and moves no ledger value.
+//
+// DEFINE: %{d} = %S/Inputs/core_evidence_only_milestone
+// DEFINE: %{src} = %{d}/source/core_evidence_only_milestone.neu
+// DEFINE: %{scn} = %{d}/scenario
+//
+// (1) The capability-spec is EVIDENCE-ONLY: no effects, an explicit instance key on milestone_id, and an
+// attestation policy (so it is attested-but-effectless).
+// RUN: rm -rf %t.spec && %neutrino-gen --target=capability-spec %{src} -o %t.spec
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.spec/capability-spec.json
+// SPEC: "observerSet": {
+// SPEC: "fixture_oracles"
+// SPEC: "effects": []
+// SPEC: "instanceKey": {
+// SPEC-NEXT: "declared": "milestone_id"
+//
+// (2) THREE milestone instances of ONE shipment: the reference evaluator commits each with its OWN
+// milestone_id as the posted (replay) key, an acceptance event, a terminal, and NO ledger delta — while
+// shipment_id is shared correlation, never the identity.
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %{src} -o %t.origin
+// RUN: %FileCheck %s --check-prefix=ORIGIN < %t.origin/coordination-trace.json
+// ORIGIN: "postedKeys": [
+// ORIGIN-NEXT: "ms-il-it-001-origin"
+// ORIGIN: "outcome": "terminal"
+// ORIGIN: "kind": "attestation"
+// ORIGIN: "CoreEvidenceOnlyMilestoneAccepted"
+// RUN: %FileCheck %s --check-prefix=NOLEDGER < %t.origin/coordination-trace.json
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%{scn}/core_evidence_only_milestone_instance_last_mile.json %{src} -o %t.lastmile
+// RUN: %FileCheck %s --check-prefix=LASTMILE < %t.lastmile/coordination-trace.json
+// LASTMILE: "postedKeys": [
+// LASTMILE-NEXT: "ms-il-it-001-lastmile"
+// RUN: %FileCheck %s --check-prefix=NOLEDGER < %t.lastmile/coordination-trace.json
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%{scn}/core_evidence_only_milestone_instance_final_delivery.json %{src} -o %t.final
+// RUN: %FileCheck %s --check-prefix=FINAL < %t.final/coordination-trace.json
+// FINAL: "postedKeys": [
+// FINAL-NEXT: "ms-il-it-001-delivery"
+// RUN: %FileCheck %s --check-prefix=NOLEDGER < %t.final/coordination-trace.json
+// A milestone commit moves NO ledger value: no ledger-delta observation, balances stay empty.
+// NOLEDGER-NOT: ledger-delta
+// NOLEDGER: "balances": []
+//
+// (3) The three instances are INDEPENDENT: no two posted keys coincide (distinct replay state), yet the
+// shipment id is the SAME correlation string across all three.
+// RUN: cat %t.origin/coordination-trace.json %t.lastmile/coordination-trace.json %t.final/coordination-trace.json > %t.all
+// RUN: %FileCheck %s --check-prefix=KEYS < %t.all
+// KEYS: "ms-il-it-001-origin"
+// KEYS: "ms-il-it-001-lastmile"
+// KEYS: "ms-il-it-001-delivery"
+//
+// (4) SIMULATOR CONTRACT — a consumer reproduces the reference trace AND both rails from the COMMITTED
+// capability-spec alone (--from-spec, no translator internals), byte-identically to the committed goldens.
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %t.spec/capability-spec.json -o %t.fromspec
+// RUN: diff %t.origin/coordination-trace.json %t.fromspec/coordination-trace.json
+// RUN: rm -rf %t.fsol && %neutrino-gen --target=solidity --from-spec --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %t.spec/capability-spec.json -o %t.fsol
+// RUN: diff %{d}/generated/solidity/src/CoreEvidenceOnlyMilestone.sol %t.fsol/src/CoreEvidenceOnlyMilestone.sol
+// RUN: rm -rf %t.fpg && %neutrino-gen --target=postgres --from-spec --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %t.spec/capability-spec.json -o %t.fpg
+// RUN: diff %{d}/generated/postgres/procedure.sql %t.fpg/procedure.sql
+//
+// (5) Both rails record the milestone keyed on the instance key and move NO ledger value. Dedicated
+// whole-file CHECK-NOT passes (only NOT lines, so FileCheck scans the ENTIRE artifact) — ledger MECHANICS
+// tokens, not the word "ledger" (which the header comment carries).
+// RUN: %FileCheck %s --check-prefix=SOL < %{d}/generated/solidity/src/CoreEvidenceOnlyMilestone.sol
+// SOL: enum Status { None, Accepted }
+// SOL: event CoreEvidenceOnlyMilestoneAccepted(string milestone_id);
+// SOL: require(acceptanceGuard.isAccepted(_k), "quorum not accepted");
+// SOL: emit CoreEvidenceOnlyMilestoneAccepted(u_milestone_id);
+// RUN: %FileCheck %s --check-prefix=SOLNOLEDGER < %{d}/generated/solidity/src/CoreEvidenceOnlyMilestone.sol
+// SOLNOLEDGER-NOT: debitTotal
+// SOLNOLEDGER-NOT: creditTotal
+// SOLNOLEDGER-NOT: net(
+// SOLNOLEDGER-NOT: int256
+// RUN: %FileCheck %s --check-prefix=PG < %{d}/generated/postgres/procedure.sql
+// PG: FUNCTION execute_core_evidence_only_milestone(p_milestone_id text
+// PG: FROM quorum_acceptance WHERE claim_id = p_milestone_id AND procedure = 'core_evidence_only_milestone'
+// PG: RAISE EXCEPTION 'quorum not accepted';
+// PG: INSERT INTO coordination_status(procedure, idempotency_key, reconciled)
+// PG: ON CONFLICT (procedure, idempotency_key) DO NOTHING;
+// PG: RAISE EXCEPTION 'replay';
+// RUN: %FileCheck %s --check-prefix=PGNOLEDGER < %{d}/generated/postgres/procedure.sql
+// PGNOLEDGER-NOT: INSERT INTO postings
+// PGNOLEDGER-NOT: ledger_balance
+// RUN: %FileCheck %s --check-prefix=PGSCHEMA < %{d}/generated/postgres/schema.sql
+// PGSCHEMA-NOT: CREATE TABLE IF NOT EXISTS postings
+// PGSCHEMA-NOT: CREATE TABLE IF NOT EXISTS ledger_balance
+//
+// (6) FAIL CLOSED (compile-time): dropping the explicit instance key leaves the effectless coordination
+// with no identity — it does NOT silently key on shipment_id (the first input) — and an unsupported
+// profile (one that does not advertise evidence acceptance) is refused before dispatch. (The runtime
+// fail-closed cases these rails enforce — missing quorum and replay — are proven by the committed Foundry
+// + docker/psql harnesses this domain ships. The rails do NOT parse or validate the evidence PAYLOAD:
+// its well-formedness is verified OFF-CHAIN by the quorum, and the record keys only on the instance key,
+// so malformed-evidence rejection is a network/verifier concern, not a backend guarantee of this slice.)
+// RUN: grep -v "instance_key" %{src} > %t.nokey.neu
+// RUN: %not %neutrino-gen --target=capability-spec %t.nokey.neu -o %t.nokey 2>&1 | %FileCheck %s --check-prefix=NOKEY
+// NOKEY: requires an explicit instance key
+// RUN: sed '/coordination:evidence_acceptance/d' %examples/target-profiles/solidity.target-profile.json > %t.badprofile.json
+// Solidity is an EXTERNAL target: a caller-supplied profile is refused outright, so this
+// negative control asserts the refusal boundary rather than a profile-gated legality verdict
+// (M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9, 2026-07-31).
+// RUN: %not %neutrino-gen --target=solidity --from-spec --profile %t.badprofile.json %t.spec/capability-spec.json -o %t.badp 2>&1 | %FileCheck %s --check-prefix=UNSUP
+// UNSUP: bound to its verified package profile
+//
+// (7) NORMALIZED TRACE-EQUIVALENCE: the reference evaluator and both realizations agree on the observable
+// trace (forge/docker skipped here; rail agreement on bytes/behavior is proven by the committed goldens +
+// harnesses). Then the NON-VACUOUS tampers: a backend that DROPS the milestone acceptance event, or that
+// alters the posted milestone identity (e.g. reuses the shipment id as the replay key), DIVERGES.
+// RUN: rm -rf %t.eq && %neutrino-equiv --reference-only --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %{src} --report=%t.eq
+// RUN: %FileCheck %s --check-prefix=EQUIV < %t.eq/equivalence.json
+// EQUIV: "traceEquivalence"
+// EQUIV: "ok": true
+// RUN: rm -rf %t.td && %not %neutrino-equiv --reference-only --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %{src} --report=%t.td --tamper=drop_effect
+// RUN: %FileCheck %s --check-prefix=TAMPEVENT < %t.td/equivalence.json
+// TAMPEVENT: "ok": false
+// TAMPEVENT: "field": "events"
+// RUN: rm -rf %t.tk && %not %neutrino-equiv --reference-only --scenario=%{scn}/core_evidence_only_milestone_happy_path.json %{src} --report=%t.tk --tamper=replay_omission
+// RUN: %FileCheck %s --check-prefix=TAMPKEY < %t.tk/equivalence.json
+// TAMPKEY: "ok": false
+// TAMPKEY: "field": "postedKeys"

@@ -1,0 +1,6 @@
+// [15] capability claims: every v1 model is authenticated against the trusted
+// verified-profile catalog, source witness, exact filename/model bijection, and
+// manifest byte hash. Nested substitutions, missing/extra/renamed models,
+// malformed data, stale versions, and digest tampering fail closed.
+//
+// RUN: python3 %S/check_capability_claims.py %neutrino-gen %scripts/gates/check_capability_claims.py %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json %examples/../lib/policy/capability-profile/backend-capability-model-v1.schema.json

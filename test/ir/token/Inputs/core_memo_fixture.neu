@@ -1,0 +1,46 @@
+// Synthetic compiler-conformance fixture. This is not a production domain pack.
+procedure core_memo_fixture {
+    trigger memo_fixture_requested
+    version "1.0.0"
+
+    participant Origin {
+        role = "fixture_origin"
+        org  = "fixture-a"
+    }
+    participant Destination {
+        role = "fixture_destination"
+        org  = "fixture-b"
+    }
+    allow "fixture-a" with "fixture-b" {
+        "fixture-a" as "fixture_origin"
+        "fixture-b" as "fixture_destination"
+    }
+
+    input proof_id       : string
+    input origin_id      : party
+    input destination_id : party
+    input amount         : money
+    input currency       : currency
+
+    debit memo_debit {
+        ledger          = "core.fixture.balance"
+        owner           = "origin"
+        participant     = "Origin"
+        party           = %origin_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %proof_id
+        memo            = "core-memo-proof"
+    }
+    credit memo_credit {
+        ledger          = "core.fixture.balance"
+        owner           = "destination"
+        participant     = "Destination"
+        party           = %destination_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %proof_id
+        memo            = "core-memo-proof"
+    }
+    assert balanced
+}

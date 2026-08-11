@@ -1,0 +1,6 @@
+# House C++ style: LLVM (2-space indent, 80 columns) — matches the existing
+# C++/MLIR sources. Enforced on CHANGED LINES via `make fmt-check`
+# (git clang-format against the PR base); existing code is grandfathered and
+# reformatted only when touched, so adopting the policy needs no mass reformat.
+# See docs/testing/STATIC_ANALYSIS.md.
+BasedOnStyle: LLVM

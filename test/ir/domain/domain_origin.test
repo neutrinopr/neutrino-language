@@ -1,0 +1,8 @@
+// [40] D3: domain-origin diagnostics (core .neu errors -> domain term/template; hashes stay
+// presentation-independent) — each construct's sourceSpan begins that construct in the generated .neu; a
+// stale/mismatched manifest attaches no origin while a matching one maps the leg error to its domain
+// term/template/dialect-hash; a valid source invents no diagnostics; and the capabilityHash is
+// independent of .neu presentation comments. See check_domain_origin.py.
+//
+// RUN: python3 %S/check_domain_origin.py %scripts/domain/domain_diagnostics.py \
+// RUN:   %neutrino-translate %neutrino-gen %examples

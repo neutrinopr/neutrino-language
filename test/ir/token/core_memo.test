@@ -1,0 +1,71 @@
+// Core conformance fixture for optional effect memo metadata. The synthetic source proves the
+// memo is preserved and non-droppable across Solidity and PostgreSQL without depending on a
+// production domain pack. The paired memo-less synthetic source proves the surfaces are
+// conditional rather than hardcoded.
+//
+// DEFINE: %{src}   = %S/Inputs/core_memo_fixture.neu
+// DEFINE: %{scen}  = %S/Inputs/core_memo_fixture.scn.json
+// DEFINE: %{plain} = %S/Inputs/core_memoless_fixture.neu
+// DEFINE: %{pscen} = %S/Inputs/core_memoless_fixture.scn.json
+//
+// CAPABILITY-SPEC PROJECTION — the sibling projection carries the same memo on each effect that
+// both backends consume through the verified CoordinationPlan path.
+// RUN: %neutrino-gen --target=capability-spec %{src} -o %t.spec
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.spec/capability-spec.json
+// SPEC: "kind": "debit"
+// SPEC: "memo": "core-memo-proof"
+// SPEC-NEXT: "name": "memo_debit"
+// SPEC: "kind": "credit"
+// SPEC: "memo": "core-memo-proof"
+// SPEC-NEXT: "name": "memo_credit"
+//
+// PLANTED REMOVAL: deleting both authored memo fields must make the positive
+// memo proof fail, even though the otherwise-identical source still compiles.
+// RUN: sed '/memo            =/d' %{src} > %t.memo-removed.neu
+// RUN: %neutrino-gen --target=capability-spec %t.memo-removed.neu -o %t.memo-removed
+// RUN: %not %FileCheck %s --check-prefix=MEMO-PROOF < %t.memo-removed/capability-spec.json
+// MEMO-PROOF: "memo": "core-memo-proof"
+//
+// SOLIDITY: the transfer event DECLARES a trailing `string memo` param and EMITS the reference —
+// same field name, same value, on both legs. A drop or rename breaks these lines.
+// RUN: %neutrino-gen --target=solidity --scenario=%{scen} %{src} -o %t.sol
+// RUN: %FileCheck %s --check-prefix=SOL < %t.sol/src/CoreMemoFixture.sol
+// SOL: event MemoDebitDebited(string party, uint256 amount, string currency, string memo);
+// SOL: event MemoCreditCredited(string party, uint256 amount, string currency, string memo);
+// SOL: emit MemoDebitDebited(u_origin_id, u_amount, u_currency, "core-memo-proof");
+// SOL: emit MemoCreditCredited(u_destination_id, u_amount, u_currency, "core-memo-proof");
+//
+// The Foundry harness assertions for this fixture were re-homed to the Web3 runtime/demo
+// layer by M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9 (2026-07-31): the external Solidity
+// package emits compilable sources + manifest, not execution scaffolding. The core
+// semantics below remain asserted here.
+//
+// POSTGRES SCHEMA: the postings table gains a nullable `memo` column (additive; only because an
+// effect declares a memo).
+// RUN: %neutrino-gen --target=postgres --scenario=%{scen} %{src} -o %t.pg
+// RUN: %FileCheck %s --check-prefix=PGSCHEMA < %t.pg/schema.sql
+// PGSCHEMA: CREATE TABLE IF NOT EXISTS postings (
+// PGSCHEMA: idempotency_key text  NOT NULL,
+// PGSCHEMA-NEXT: memo           text
+//
+// POSTGRES PROCEDURE: each posting INSERT names `memo` in the column list AND supplies the value —
+// same field name, same reference, on both legs.
+// RUN: %FileCheck %s --check-prefix=PGPROC < %t.pg/procedure.sql
+// PGPROC: INSERT INTO postings(procedure, entry, ledger, party, amount, currency, signed_amount, idempotency_key, memo)
+// PGPROC-NEXT: VALUES ('core_memo_fixture', 'memo_debit', 'core.fixture.balance', p_origin_id, p_amount, p_currency, -(p_amount), p_proof_id, 'core-memo-proof');
+// PGPROC: INSERT INTO postings(procedure, entry, ledger, party, amount, currency, signed_amount, idempotency_key, memo)
+// PGPROC-NEXT: VALUES ('core_memo_fixture', 'memo_credit', 'core.fixture.balance', p_destination_id, p_amount, p_currency, p_amount, p_proof_id, 'core-memo-proof');
+//
+// NON-VACUOUS (rename/drop guard is CONDITIONAL): a memo-LESS domain must NOT grow a memo param,
+// column, or value in either backend — so the positive checks above prove a real declared memo,
+// not an emitter that always writes "memo".
+// RUN: %neutrino-gen --target=solidity --scenario=%{pscen} %{plain} -o %t.nsol
+// RUN: %FileCheck %s --check-prefix=NEG < %t.nsol/src/CoreMemolessFixture.sol
+// NEG-NOT: , string memo)
+// NEG-NOT: "core-memo-proof"
+// RUN: %neutrino-gen --target=postgres --scenario=%{pscen} %{plain} -o %t.npg
+// RUN: %FileCheck %s --check-prefix=NEGSCHEMA < %t.npg/schema.sql
+// NEGSCHEMA-NOT: memo           text
+// RUN: %FileCheck %s --check-prefix=NEGPROC < %t.npg/procedure.sql
+// NEGPROC-NOT: , memo)
+// NEGPROC-NOT: 'core-memo-proof'

@@ -1,0 +1,22 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "sponsored_offer_agreement",
+  "dslVersion": "0.1.0",
+  "capability": { "capabilityHash": "877ca140f644c2b849d1ca904b97825d412deca22f31045a702765791b917391", "specVersion": "0.1.0" },
+  "participant": { "name": "Sponsor", "role": "sponsor", "org": "sponsorco", "slotId": "coordinate.sponsored_offer_agreement#Sponsor" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "offer_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 29, "column": 1 } },
+    { "name": "sponsor_id", "type": "party", "specPath": "inputs[1]", "source": { "line": 30, "column": 1 } },
+    { "name": "contribution", "type": "money", "specPath": "inputs[3]", "source": { "line": 32, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[4]", "source": { "line": 33, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "acme", "role": "merchant" }
+  ],
+  "evidenceObligations": [
+    { "leg": "sponsor_commitment", "kind": "debit", "ledger": "sponsor.commitment", "specPath": "effects[0]", "source": { "line": 35, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

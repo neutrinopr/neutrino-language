@@ -1,0 +1,15 @@
+{
+  "scenario": "shipment_evidence_anchor_happy_path",
+  "procedure": "shipment_evidence_anchor",
+  "inputs": {
+    "shipment_ref": "shipment-il-it-001",
+    "delivery_proof": "sha256:0011223344556677889900aabbccddeeff0011223344556677889900aabbccdd"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {},
+    "invariants": [
+      "replay_safe"
+    ]
+  }
+}

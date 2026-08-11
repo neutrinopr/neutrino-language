@@ -1,0 +1,551 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "fee"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "evidence_ref"
+      },
+      "kind": "debit",
+      "ledger": "consumer.access_fee",
+      "name": "consumer_access_fee",
+      "owner": "consumer",
+      "participant": "EvidenceConsumer",
+      "party": {
+        "kind": "ref",
+        "value": "consumer_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "fee"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "evidence_ref"
+      },
+      "kind": "credit",
+      "ledger": "controller.evidence_revenue",
+      "name": "controller_evidence_revenue",
+      "owner": "controller",
+      "participant": "DataController",
+      "party": {
+        "kind": "ref",
+        "value": "controller_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "d95998903b40c53b9ecfb044ac7864b933379928d7946e8c4e07ae1bab514f0b",
+    "specHash": "3b9f3e3e32fb3170ece080e9ca8d95f0f3c385b6468180536a33a49588f42620"
+  },
+  "inputs": [
+    {
+      "category": "evidence",
+      "name": "evidence_ref",
+      "type": "evidence"
+    },
+    {
+      "category": "party",
+      "name": "consumer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "controller_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "fee",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "evidence_ref"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Patient",
+      "org": "patientorg",
+      "role": "patient"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "DataController",
+      "org": "controllerco",
+      "role": "controller"
+    },
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "evm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "Verifier",
+      "org": "verifierco",
+      "role": "verifier"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "EvidenceConsumer",
+      "org": "consumerco",
+      "role": "consumer"
+    }
+  ],
+  "procedure": "core_regulated_evidence_sample",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input evidence_ref",
+      "source": {
+        "column": 1,
+        "line": 56
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input consumer_id",
+      "source": {
+        "column": 1,
+        "line": 57
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input controller_id",
+      "source": {
+        "column": 1,
+        "line": 58
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input fee",
+      "source": {
+        "column": 1,
+        "line": 59
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 60
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "debit consumer_access_fee",
+      "source": {
+        "column": 1,
+        "line": 62
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit controller_evidence_revenue",
+      "source": {
+        "column": 1,
+        "line": 72
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "participant Patient",
+      "source": {
+        "column": 1,
+        "line": 20
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant DataController",
+      "source": {
+        "column": 1,
+        "line": 24
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "participant Verifier",
+      "source": {
+        "column": 1,
+        "line": 28
+      },
+      "specPath": "participants[2]"
+    },
+    {
+      "construct": "participant EvidenceConsumer",
+      "source": {
+        "column": 1,
+        "line": 35
+      },
+      "specPath": "participants[3]"
+    },
+    {
+      "construct": "allow consumerco with controllerco",
+      "source": {
+        "column": 1,
+        "line": 39
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "allow patientorg with controllerco",
+      "source": {
+        "column": 1,
+        "line": 43
+      },
+      "specPath": "topology.allowedOrgPairs[1]"
+    },
+    {
+      "construct": "allow controllerco with verifierco",
+      "source": {
+        "column": 1,
+        "line": 46
+      },
+      "specPath": "topology.allowedOrgPairs[2]"
+    },
+    {
+      "construct": "allow patientorg with verifierco",
+      "source": {
+        "column": 1,
+        "line": 49
+      },
+      "specPath": "topology.allowedOrgPairs[3]"
+    },
+    {
+      "construct": "allow patientorg with consumerco",
+      "source": {
+        "column": 1,
+        "line": 51
+      },
+      "specPath": "topology.allowedOrgPairs[4]"
+    },
+    {
+      "construct": "allow verifierco with consumerco",
+      "source": {
+        "column": 1,
+        "line": 53
+      },
+      "specPath": "topology.allowedOrgPairs[5]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 82
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:evidence",
+        "primitive": "input evidence_ref",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 56
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input consumer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 57
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input fee",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 59
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 60
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit consumer_access_fee",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 62
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit controller_evidence_revenue",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 72
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 82
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant Verifier",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 28
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Patient",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 20
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow consumerco with controllerco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 39
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "consumerco",
+        "orgB": "controllerco",
+        "roleA": "consumer",
+        "roleB": "controller"
+      },
+      {
+        "orgA": "patientorg",
+        "orgB": "controllerco",
+        "roleA": "patient",
+        "roleB": ""
+      },
+      {
+        "orgA": "controllerco",
+        "orgB": "verifierco",
+        "roleA": "",
+        "roleB": "verifier"
+      },
+      {
+        "orgA": "patientorg",
+        "orgB": "verifierco",
+        "roleA": "",
+        "roleB": ""
+      },
+      {
+        "orgA": "patientorg",
+        "orgB": "consumerco",
+        "roleA": "",
+        "roleB": ""
+      },
+      {
+        "orgA": "verifierco",
+        "orgB": "consumerco",
+        "roleA": "",
+        "roleB": ""
+      }
+    ]
+  },
+  "trigger": "evidence_access_requested"
+}

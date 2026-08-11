@@ -1,0 +1,110 @@
+// Synthetic R5b provider-thinning witness (test-only; not a production domain).
+// The POSITIVE arm for both sequence-level selections R5b's trio generates:
+//   * WithMemo postings schema — the direct pair carries a memo;
+//   * Single attestation (gated) — an M-of-N attest gate over the movement.
+// Its four ordered postings mix a GUARDED pair (`when amount >= threshold` ->
+// PostingGuard) and a DIRECT pair (PostingDirect), so it also drives the
+// procedure trio (extents/guard presence, ordinals, field projections). Paired
+// with the plain/ungated variant it proves neither extent is constant.
+// Identity/ledgers/parties are deliberately synthetic.
+
+procedure r5b_effect_memo_witness {
+    trigger witness_opened
+    version "1.0.0"
+
+    participant Payer {
+        role = "payer"
+        org  = "payerco"
+    }
+    participant Payee {
+        role = "payee"
+        org  = "payeeco"
+    }
+    participant Custodian {
+        role               = "custodian"
+        org                = "custodyco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    allow "payerco" with "custodyco" {
+        "payerco" as "payer"
+        "custodyco" as "custodian"
+    }
+    allow "custodyco" with "payeeco" {
+        "custodyco" as "custodian"
+        "payeeco" as "payee"
+    }
+    allow "payerco" with "payeeco" {
+    }
+
+    input ref_id          : string
+    input payer_id        : party
+    input custodian_id    : party
+    input payee_id        : party
+    input amount          : money
+    input threshold       : money
+    input currency        : currency
+    input clearance_proof : evidence
+
+    // Gate the movement on an M-of-N attestation -> attestationKind Single. The
+    // plain/ungated variant (attestationKind None) is the opposite arm, so the
+    // attestation extent is demonstrably not constant.
+    attest clearance_proof {
+        quorum           = 2
+        observer_set     = "witness_oracles"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+
+    // Direct pair carrying a MEMO -> postings table renders its WithMemo variant.
+    debit reserve_debit {
+        ledger          = "payer.reserve"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %ref_id
+        memo            = "r5b-memo"
+    }
+
+    credit custody_credit {
+        ledger          = "custody.holding"
+        owner           = "custodian"
+        participant     = "Custodian"
+        party           = %custodian_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %ref_id
+        memo            = "r5b-memo"
+    }
+
+    // Guarded pair (PostingGuard present): releases iff amount >= threshold.
+    debit release_debit {
+        ledger          = "custody.holding"
+        owner           = "custodian"
+        participant     = "Custodian"
+        party           = %custodian_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %ref_id
+        when            = amount >= threshold
+    }
+
+    credit settle_credit {
+        ledger          = "payee.proceeds"
+        owner           = "payee"
+        participant     = "Payee"
+        party           = %payee_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %ref_id
+        when            = amount >= threshold
+    }
+
+    assert balanced
+}

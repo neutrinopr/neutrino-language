@@ -1,0 +1,14 @@
+{
+  "kind": "neutrino.domain-pack-verification-receipt",
+  "outcome": "VERIFIED",
+  "pack": {
+    "packDigest": "sha256:228fb818f6bfdd6338c621b975172492f565f743442dd0a8ce50a4d73ce2073c",
+    "packId": "example.external-pack.v2"
+  },
+  "schemaVersion": 1,
+  "targetsBundle": {
+    "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.10.0"
+  }
+}

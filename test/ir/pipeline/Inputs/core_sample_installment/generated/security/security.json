@@ -1,0 +1,48 @@
+{
+  "kind": "neutrino.capability-security",
+  "schemaVersion": "0.1.0",
+  "procedure": "core_sample_installment",
+  "dslVersion": "0.1.0",
+  "ok": true,
+  "categories": [
+    {
+      "category": "authorization",
+      "status": "advisory",
+      "findings": [
+        "value-moving capability declares no participants; authorization actors are unspecified (declare participants to enable authorization safety)"
+      ]
+    },
+    {
+      "category": "value",
+      "status": "pass",
+      "findings": [
+        "balanced invariant asserted; debits conserve credits"
+      ]
+    },
+    {
+      "category": "topology",
+      "status": "pass",
+      "findings": [
+        "no inter-capability invocations declared; composition trivially satisfied"
+      ]
+    },
+    {
+      "category": "trustBoundary",
+      "status": "pass",
+      "findings": [
+        "every ledger leg carries an idempotency_key (replay-safe)",
+        "0 evidence/attestation input(s) declared"
+      ]
+    },
+    {
+      "category": "state",
+      "status": "n/a",
+      "findings": [
+        "no explicit state-machine construct in the current DSL (L2)"
+      ]
+    }
+  ],
+  "advisories": 1,
+  "violations": 0,
+  "resultCode": 0
+}

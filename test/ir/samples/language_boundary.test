@@ -1,0 +1,6 @@
+// [57] M3 language boundary (): future-facing source syntax (state machines / escrow lifecycle /
+// protocol-native pacs.* / external-observation) is rejected with "unexpected statement" naming the
+// offending keyword — the boundary is enforced by the frontend statement whitelist, not just documented.
+// See check_language_boundary.py. Fixtures live at the test/ root (neg_*.neu).
+//
+// RUN: python3 %S/check_language_boundary.py %neutrino-translate %S/../..

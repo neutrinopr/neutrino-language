@@ -1,0 +1,57 @@
+{
+  "_note": "C++ policy ratchet baseline ( / ). AUTHORED BY scripts/gates/check_cpp_policy.py -- regenerate with `python3 scripts/gates/check_cpp_policy.py --write-baseline`. Ceilings may only move DOWN: a reduction must be banked by regenerating this file. dynamic_cast and raw_new are hard-zero. Do not hand-edit.",
+  "floor_files": 20,
+  "policies": {
+    "dynamic_cast": {
+      "dirs": [
+        "include",
+        "lib",
+        "tools"
+      ],
+      "hard_zero": true,
+      "files": {}
+    },
+    "throw_runtime_error": {
+      "dirs": [
+        "lib"
+      ],
+      "hard_zero": false,
+      "files": {
+        "lib/Scenario.cpp": 9,
+        "lib/backends/oracle/GenOracleObserverSpec.cpp": 1,
+        "lib/backends/postgres/harness/PostgresDbTest.cpp": 4,
+        "lib/backends/postgres/model/PostgresModel.cpp": 1,
+        "lib/backends/postgres/provider/PostgresSpecModel.cpp": 1,
+        "lib/backends/solidity/GenSolidityQuorumGuard.cpp": 1,
+        "lib/backends/solidity/harness/GenSolidityTest.cpp": 4,
+        "lib/backends/solidity/provider/SolidityEmit.cpp": 2,
+        "lib/backends/solidity/provider/SolidityTargetValidation.cpp": 1,
+        "lib/slots/GenSlotSpec.cpp": 3,
+        "lib/spec-contract/Attestation.cpp": 1,
+        "lib/spec-contract/Expr.cpp": 36,
+        "lib/targets/TestRealizationTarget.cpp": 1,
+        "lib/views/GenViewsSpec.cpp": 2
+      }
+    },
+    "shared_ptr": {
+      "dirs": [
+        "include",
+        "lib"
+      ],
+      "hard_zero": false,
+      "files": {
+        "include/Neutrino/View.h": 2,
+        "lib/View.cpp": 2
+      }
+    },
+    "raw_new": {
+      "dirs": [
+        "include",
+        "lib",
+        "tools"
+      ],
+      "hard_zero": true,
+      "files": {}
+    }
+  }
+}

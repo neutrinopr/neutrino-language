@@ -1,0 +1,62 @@
+// M4 sample (strategy ) — channel-verified payout (ChannelVerificationEarmark).
+//
+// L1 carries only the balanced settlement leg: a Payer funds a payout and the Recipient is
+// settled, balanced and replay-safe. The *channel verification* — proving the recipient
+// controls the bound communication channel before the payout is released — is NOT L1: it is
+// declared at L2 as an evidence requirement (category `channel_verification`, proof tags
+// authority/event/liveness) and bound at L3 to the `channel_verification.v1` admission profile
+// with the challenge policy. M4 owns runtime admission of the concrete channel proof.
+//
+// Design boundary (): no phone/email/SMS transport in L1 — concrete transports are an
+// L2/L3/profile concern. No new MLIR ops; this reuses the existing procedure-oriented L1. The
+// Recipient slot is `to_be_bound` to the `channel_verification.v1` runtime so an L3 Binding
+// Manifest binds it at realization.
+
+procedure channel_verified_payout {
+    trigger payout_authorized
+    version "1.0.0"
+
+    participant Payer {
+        role = "payer"
+        org  = "payerco"
+    }
+    participant Recipient {
+        role               = "recipient"
+        org                = "recipientco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["channel_verification.v1"]
+        bind_min_assurance = "A2"
+    }
+    allow "payerco" with "recipientco" {
+        "payerco" as "payer"
+        "recipientco" as "recipient"
+    }
+
+    input payout_id    : string
+    input payer_id     : party
+    input recipient_id : party
+    input amount       : money
+    input currency     : currency
+
+    debit payer_funding {
+        ledger          = "payer.funding"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %payout_id
+    }
+
+    credit recipient_settlement {
+        ledger          = "recipient.settlement"
+        owner           = "recipient"
+        participant     = "Recipient"
+        party           = %recipient_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %payout_id
+    }
+
+    assert balanced
+}

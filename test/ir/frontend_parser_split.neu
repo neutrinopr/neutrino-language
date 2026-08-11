@@ -1,0 +1,70 @@
+// RUN: %neutrino-translate %s | %FileCheck %s
+//
+// Exercises the parser responsibilities that are split across private frontend
+// translation units while using only the public source parser entry.
+//
+// CHECK: "neutrino.procedure"
+// CHECK: "neutrino.participant"() {capabilities = ["pay"], org = "sponsorco", role = "sponsor", sym_name = "Sponsor"}
+// CHECK: "neutrino.participant"() {org = "merchantco", role = "merchant", sym_name = "Merchant"}
+// CHECK: "neutrino.allow_orgs"() {org_a = "sponsorco", org_b = "merchantco", role_a = "sponsor", role_b = "merchant"}
+// CHECK: "neutrino.input"() {sym_name = "proof", ty = "evidence"}
+// CHECK: "neutrino.compute"
+// CHECK: "neutrino.attest"
+// CHECK: "neutrino.debit"
+// CHECK: "neutrino.credit"
+// CHECK: "neutrino.assert_balanced"
+// CHECK: sym_name = "frontend_split_probe"
+agreement frontend_split_probe between Sponsor and Merchant {
+    trigger split_probe
+    version "1.0.0"
+
+    participant Sponsor {
+        role = "sponsor"
+        org = "sponsorco"
+        capabilities = ["pay"]
+    }
+    participant Merchant {
+        role = "merchant"
+        org = "merchantco"
+    }
+    allow "sponsorco" with "merchantco" {
+        "sponsorco" as "sponsor"
+        "merchantco" as "merchant"
+    }
+
+    input sponsor_id : party
+    input merchant_id : party
+    input amount : money
+    input currency : currency
+    input payment_id : string
+    input proof : evidence
+    compute settlement = amount
+
+    attest proof {
+        quorum = 1
+        observer_set = "fulfillment_oracles"
+        canonicalization = "exact"
+        timeout = "PT1H"
+        fallback = "abort"
+    }
+
+    debit sponsor_pay {
+        ledger = "sponsor.out"
+        owner = "sponsor"
+        participant = "Sponsor"
+        party = %sponsor_id
+        amount = %settlement
+        currency = %currency
+        idempotency_key = %payment_id
+    }
+    credit merchant_receive {
+        ledger = "merchant.in"
+        owner = "merchant"
+        participant = "Merchant"
+        party = %merchant_id
+        amount = %settlement
+        currency = %currency
+        idempotency_key = %payment_id
+    }
+    assert balanced
+}

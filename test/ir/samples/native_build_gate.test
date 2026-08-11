@@ -1,0 +1,6 @@
+// [69] M3 native build gate (): the committed portfolio passes the --run gate; --summary-out creates
+// its parent dir + summary; a committed .sol classified non-native is rejected; and a
+// native-validated-but-uncompilable .sol fails the --run gate deterministically (solc present or not).
+// See check_native_build_gate.py.
+//
+// RUN: python3 %S/check_native_build_gate.py %scripts/gates/native_build_gate.py %examples

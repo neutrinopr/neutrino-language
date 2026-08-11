@@ -1,0 +1,45 @@
+//  slice 1 — the coordination-plan (plan) target serializes via CHECKED
+// Expected propagation, NEVER cantFail. A plan serialization / assemblePlan
+// legality failure fails closed with a stable diagnostic and leaves NO partial
+// coordination-plan.json / backend-projection.json behind — on BOTH the
+// from-source and the --from-spec paths.
+//
+// Before  the from-source coordination-plan target re-serialized with
+// cantFail(coordinationPlanToText(...)), so any newly-added assemblePlan legality
+// error would crash / emit a corrupt coordination plan instead of a clean diagnostic. This
+// pins the error seam; the mixed-temporal legality refusal that will USE it is a
+// separate PR ( item 2) and is intentionally NOT added here.
+//
+// BITING PROPERTY (re-review): the hidden --coordination-plan-fault-selftest seam
+// folds the failure INTO the Expected the serializer returns (it does NOT
+// short-circuit before it), so the driver's ordinary `if (!planTextE) return
+// fail(...takeError())` is the code under test. The fault runs assert EXACTLY
+// exit 4 (EXIT_IR): if that checked unwrap were replaced by
+// cantFail(coordinationPlanToText(...)) — the exact  regression — the
+// injected error would abort the process (exit != 4) and these runs FAIL. So a
+// cantFail reintroduction on either path is detected here, not silently green.
+//
+// RUN: rm -rf %t && mkdir -p %t
+//
+// ---- non-vacuity: the coordination-plan target succeeds WITHOUT the fault seam ----------
+// RUN: %neutrino-gen --target=coordination-plan %S/coordination_plan.neu -o %t/ok
+// RUN: test -e %t/ok/coordination-plan.json
+// RUN: test -e %t/ok/backend-projection.json
+//
+// ---- from-source: a forced coordination-plan serialization failure fails closed --------
+// RUN: %neutrino-gen --target=coordination-plan --coordination-plan-fault-selftest %S/coordination_plan.neu -o %t/neg; [ $? -eq 4 ]
+// RUN: test ! -e %t/neg/coordination-plan.json
+// RUN: test ! -e %t/neg/backend-projection.json
+// RUN: %FileCheck --check-prefix=SEAMFAULT %s < %t/neg/diagnostics.json
+//
+// ---- --from-spec: the same seam, the same fail-closed behavior ------------
+// RUN: %neutrino-gen --target=capability-spec %S/coordination_plan.neu -o %t/spec
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t/spec/capability-spec.json --coordination-plan-fault-selftest -o %t/negrt; [ $? -eq 4 ]
+// RUN: test ! -e %t/negrt/coordination-plan.json
+// RUN: test ! -e %t/negrt/backend-projection.json
+// RUN: %FileCheck --check-prefix=SEAMFAULT %s < %t/negrt/diagnostics.json
+//
+// The diagnostics bundle records the failure with the stable code and ok:false
+// (FileCheck matches in file order: the diagnostic message precedes the ok flag).
+// SEAMFAULT: forced-coordination-plan-serialization-failure
+// SEAMFAULT: "ok": false

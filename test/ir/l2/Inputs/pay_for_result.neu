@@ -1,0 +1,68 @@
+// S8 ( / ) — pay-for-result flow in REAL vocabulary, forced through the tool.
+// Stable job identity (instance_key job_id); an admissible-result condition + timeout
+// (a 2-of-N result_validators attestation with PT48H timeout, fallback=abort); a
+// guarded BALANCED incentive (both legs gated by accepted(result_proof), so value is
+// conserved on the partition where the result is not accepted); exactly-once
+// settlement (idempotency_key = job_id, every lifecycle transition idempotency=reject).
+// It reduces to a verified CoordinationPlan — the hourglass waist already covers
+// pay-for-result with zero new machinery. An unaccepted result posts no settlement.
+// Timeout and replay behavior are declared here but require a clock/prior-state runner
+// before they can be claimed as executable evidence.
+procedure pay_for_result {
+    trigger job_posted
+    version "1.0.0"
+    instance_key job_id
+
+    participant Requester {
+        role = "requester"
+        org  = "requesterco"
+    }
+    participant Worker {
+        role = "worker"
+        org  = "workerco"
+    }
+    allow "requesterco" with "workerco" {
+        "requesterco" as "requester"
+        "workerco" as "worker"
+    }
+
+    input job_id       : string
+    input requester_id : party
+    input worker_id    : party
+    input bounty       : money
+    input currency     : currency
+    input result_proof : evidence
+
+    attest result_proof {
+        quorum           = 2
+        observer_set     = "result_validators"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT48H"
+        fallback         = "abort"
+    }
+
+    debit bounty_out {
+        ledger          = "requester.escrow"
+        owner           = "requester"
+        participant     = "Requester"
+        party           = %requester_id
+        amount          = %bounty
+        currency        = %currency
+        idempotency_key = %job_id
+        when            = accepted(result_proof)
+    }
+    credit bounty_in {
+        ledger          = "worker.wallet"
+        owner           = "worker"
+        participant     = "Worker"
+        party           = %worker_id
+        amount          = %bounty
+        currency        = %currency
+        idempotency_key = %job_id
+        when            = accepted(result_proof)
+    }
+
+    assert balanced
+}

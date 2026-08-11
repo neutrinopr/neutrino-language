@@ -1,0 +1,67 @@
+// Canonical late-binding capability (Trust lane, T1).
+//
+// Same sponsored-offer commitment as `core_sponsored_offer`, but the
+// Sponsor's slot is **bound to a concrete runtime at realization time** rather
+// than fixed by the agreement: `binding = "to_be_bound"` plus a conservative
+// policy (allowed runtime families + minimum assurance tier). The Merchant slot
+// stays fixed.
+//
+// This is the reference artifact the downstream rails develop against:
+//   - agents (T2) authorize a Binding Receipt validated against this policy
+//     (authorizedBinder = the participant's org, runtimes, minAssurance);
+//   - network (T3) produces A3 runtime evidence against the bound runtime.
+//
+// The binding policy rides in the slot `capability.json` (covered by
+// capabilityHash / the EnvelopeHeader.schema_hash bridge). Because the policy
+// requires assurance A2 — above the A1 static generation attests — the Capability
+// Security Pass records a trustBoundary advisory (ok stays true; the higher tier
+// is earned at realization/runtime, never claimed here). See docs/binding/BINDING_POLICY.md.
+
+procedure core_flexible_binding {
+    trigger sponsored_offer_proposed
+    version "1.0.0"
+
+    participant Sponsor {
+        role               = "sponsor"
+        org                = "sponsorco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm", "jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant Merchant {
+        role = "merchant"
+        org  = "acme"
+    }
+    allow "sponsorco" with "acme" {
+        "sponsorco" as "sponsor"
+        "acme" as "merchant"
+    }
+
+    input offer_id     : string
+    input sponsor_id   : party
+    input merchant_id  : party
+    input contribution : money
+    input currency     : currency
+
+    debit sponsor_commitment {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    credit merchant_expected_contribution {
+        ledger          = "merchant.expected_contribution"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    assert balanced
+}

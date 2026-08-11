@@ -1,0 +1,102 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_hybrid_compute_sample",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "7bdeabc4830bf4f66967eb7b12b738b32a340ed5c3e9acb3b44dd8e5c3148a64",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "EvmCore",
+    "role": "orchestrator",
+    "org": "hybridinfra",
+    "slotId": "coordinate.core_hybrid_compute_sample#EvmCore"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [
+    {
+      "name": "job_id",
+      "type": "string",
+      "specPath": "inputs[0]",
+      "source": {
+        "line": 84,
+        "column": 1
+      }
+    },
+    {
+      "name": "core_id",
+      "type": "party",
+      "specPath": "inputs[2]",
+      "source": {
+        "line": 86,
+        "column": 1
+      }
+    },
+    {
+      "name": "bounty",
+      "type": "money",
+      "specPath": "inputs[3]",
+      "source": {
+        "line": 87,
+        "column": 1
+      }
+    },
+    {
+      "name": "currency",
+      "type": "currency",
+      "specPath": "inputs[4]",
+      "source": {
+        "line": 88,
+        "column": 1
+      }
+    }
+  ],
+  "permittedCounterparties": [
+    {
+      "org": "requesterorg",
+      "role": "requester"
+    },
+    {
+      "org": "supplyorg"
+    },
+    {
+      "org": "verifierorg"
+    }
+  ],
+  "binding": {
+    "mode": "to_be_bound",
+    "runtimes": [
+      "evm"
+    ],
+    "minAssurance": "A2",
+    "authorizedBinder": "hybridinfra"
+  },
+  "evidenceObligations": [
+    {
+      "leg": "core_escrow",
+      "kind": "credit",
+      "ledger": "core.escrow",
+      "specPath": "effects[1]",
+      "source": {
+        "line": 100,
+        "column": 1
+      }
+    }
+  ],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

@@ -1,0 +1,6 @@
+// [36] D1a: proposal-only dataset-analysis artifacts validate fail-closed — corpus / analysis-run /
+// proposal validate (proposal cross-checked against its corpus authority); citation authority is
+// fail-closed (no --corpus -> unverifiable), the supplied corpus must be the proposal's own, and eight
+// schema/authority negatives each fail closed with their specific code. See check_domain_proposal.py.
+//
+// RUN: python3 %S/check_domain_proposal.py %scripts/corpus/validate_domain_proposal.py %examples/domain-proposals

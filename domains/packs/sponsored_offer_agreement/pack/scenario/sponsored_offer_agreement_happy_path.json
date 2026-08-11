@@ -1,0 +1,25 @@
+{
+  "scenario": "sponsored_offer_agreement_happy_path",
+  "procedure": "sponsored_offer_agreement",
+  "inputs": {
+    "offer_id": "offer-001",
+    "sponsor_id": "sponsor-001",
+    "merchant_id": "merchant-001",
+    "contribution": 5000,
+    "currency": "EUR"
+  },
+  "expect": {
+    "computed": {},
+    "events": [
+      "SponsoredOfferProposed",
+      "SponsorCommitmentDebited",
+      "MerchantExpectedContributionCredited",
+      "SponsoredOfferAgreementReconciled"
+    ],
+    "ledger": {
+      "sponsor.commitment": -5000,
+      "merchant.expected_contribution": 5000
+    },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

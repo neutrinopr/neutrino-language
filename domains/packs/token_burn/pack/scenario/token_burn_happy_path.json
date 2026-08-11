@@ -1,0 +1,22 @@
+{
+  "scenario": "token_burn_happy_path",
+  "procedure": "token_burn",
+  "inputs": {
+    "burn_id": "burn-001",
+    "supply_id": "token-reserve",
+    "holder_id": "holder-001",
+    "amount": 2500,
+    "currency": "EUR",
+    "supply_approved": 1
+  },
+  "expect": {
+    "ledger": {
+      "token.balance": -2500,
+      "token.supply": 2500
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

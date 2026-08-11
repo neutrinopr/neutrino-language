@@ -1,0 +1,6 @@
+// [97] M5  D2 (): TargetRegistry is generated from the declarative TargetRegistry.def (not a
+// hand-coded table); --list-targets without packages matches the built-in .def order; target profiles
+// have exactly one built-in or extracted-package authority and name their own file — orphan/missing/
+// mis-attached/mismatched-field profiles all fail closed. See check_target_registry_def.py.
+//
+// RUN: python3 %S/check_target_registry_def.py %neutrino-gen %examples

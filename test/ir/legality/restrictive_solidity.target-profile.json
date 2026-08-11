@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "neutrino.target-profile",
+  "profileId": "target.evm.v1",
+  "profileVersion": 1,
+  "target": "solidity",
+  "runtimeFamily": "on_chain",
+  "executionMode": "simulated",
+  "supportedFeatures": [
+    "binding:flexible",
+    "effect:credit",
+    "effect:debit",
+    "guard:conditional",
+    "topology:org_coordination",
+    "topology:participants",
+    "value_category:currency",
+    "value_category:decimal",
+    "value_category:evidence",
+    "value_category:money",
+    "value_category:party",
+    "value_category:string"
+  ],
+  "unsupportedConstructs": [],
+  "fallbackPolicy": "fail_closed",
+  "capabilitySpecVersion": "v1"
+}

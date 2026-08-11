@@ -1,0 +1,12 @@
+{
+  "scenario": "oracle_settled_escrow_happy_path",
+  "procedure": "oracle_settled_escrow",
+  "inputs": {
+    "order_id": "ord-001",
+    "buyer_id": "buyer-001",
+    "seller_id": "seller-001",
+    "amount": 100000,
+    "currency": "EUR",
+    "delivery_proof": "sha256:aa01"
+  }
+}

@@ -1,0 +1,33 @@
+// Negative fixture: a malformed attribute value that is neither a "literal" nor
+// a %reference (bare `merchant_id`, missing the % sigil). The frontend must
+// reject it ("attribute value must be a \"literal\" or %reference").
+procedure bad_value {
+    input amount : money
+
+    debit d {
+        ledger          = "a.b"
+        owner           = "o"
+        party           = merchant_id
+        amount          = %amount
+        currency        = "EUR"
+        idempotency_key = "k"
+    }
+
+    credit c {
+        ledger          = "a.b"
+        owner           = "o"
+        party           = "p"
+        amount          = %amount
+        currency        = "EUR"
+        idempotency_key = "k"
+    }
+
+    assert balanced
+}
+
+// Frontend parser/verifier NEGATIVE (S5/): neutrino-translate must REJECT this
+// malformed source. %not asserts the non-zero exit; FileCheck matches the diagnostic.
+// (RUN/CHECK are appended so the code's line numbers stay stable for the language-
+// intelligence tests that also consume this fixture.)
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: must be a "literal" or %reference

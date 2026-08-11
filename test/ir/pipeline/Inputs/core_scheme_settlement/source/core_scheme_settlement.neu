@@ -1,0 +1,104 @@
+// Second sample domain: scheme net settlement (distinct shape from merchant subsidy).
+// Exercises multiple debits/credits, a compute that depends on another compute,
+// and entirely different parties/ledgers/events — to prove the toolchain is not
+// hardcoded to the merchant/issuer/acquirer domain.
+//
+// M2 language-evolution promotion (): upgraded to the participant / org /
+// org-pair-policy / leg-participant form, with the SettlementBank slot late-bound
+// (`binding = "to_be_bound"`). Derived from
+// neutrino-strategy/09-debates/m2-language-evolution-examples.md (Example 2).
+// SWIFT / ISO 20022 message semantics (pacs.008/009/002) stay lower-layer /
+// domain-dialect / translation-map concerns — not invented as core .neu here
+// (see README "Gaps").
+
+procedure core_scheme_settlement {
+    trigger scheme_position_finalized
+    version "1.0.0"
+
+    participant Scheme {
+        role = "scheme"
+        org  = "scheme-net"
+    }
+
+    participant SettlementBank {
+        role               = "settlement_bank"
+        org                = "bankco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["swift", "jvm"]
+        bind_min_assurance = "A2"
+    }
+
+    participant Treasury {
+        role = "treasury"
+        org  = "treasuryco"
+    }
+
+    allow "scheme-net" with "bankco" {
+        "scheme-net" as "scheme"
+        "bankco" as "settlement_bank"
+    }
+    allow "scheme-net" with "treasuryco" {
+        "scheme-net" as "scheme"
+        "treasuryco" as "treasury"
+    }
+    // All co-occurring org pairs must be permitted by the topology gate: the bank
+    // and treasury orgs coexist in this capability, so their pair is declared too
+    // (the M2 note's Example 2 omitted this — added here so it compiles clean).
+    allow "bankco" with "treasuryco" {
+        "bankco" as "settlement_bank"
+        "treasuryco" as "treasury"
+    }
+
+    input settlement_id  : string
+    input scheme_id      : party
+    input bank_id        : party
+    input treasury_id    : party
+    input gross_position : money
+    input fee_bps        : decimal
+    input currency       : currency
+
+    compute fee = gross_position * fee_bps / 10000
+    compute net = gross_position - fee
+
+    debit scheme_principal {
+        ledger          = "scheme.net_payable"
+        owner           = "scheme"
+        participant     = "Scheme"
+        party           = %scheme_id
+        amount          = %net
+        currency        = %currency
+        idempotency_key = %settlement_id
+    }
+
+    credit bank_principal {
+        ledger          = "bank.settlement_account"
+        owner           = "settlement_bank"
+        participant     = "SettlementBank"
+        party           = %bank_id
+        amount          = %net
+        currency        = %currency
+        idempotency_key = %settlement_id
+    }
+
+    debit scheme_fee {
+        ledger          = "scheme.fee_payable"
+        owner           = "scheme"
+        participant     = "Scheme"
+        party           = %scheme_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %settlement_id
+    }
+
+    credit treasury_fee {
+        ledger          = "treasury.fee_income"
+        owner           = "treasury"
+        participant     = "Treasury"
+        party           = %treasury_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %settlement_id
+    }
+
+    assert balanced
+}

@@ -1,0 +1,77 @@
+//===- LanguageVocabulary.def - shared .neu keyword vocabulary ----------===//
+//
+// The SINGLE DECLARATIVE SOURCE of the parser-recognized language keywords
+// and field keys (). Both frontend recognition and languageMetadataJson()
+// expand these rows, so metadata is definitionally true of the parser surface
+// rather than a hand-maintained mirror.
+//
+//   NEUTRINO_VOCAB(Category, EnumId, "spelling")
+//
+// Category : STATEMENT | FIELD | CONNECTOR — the metadata keywordCategories
+//            bucket the spelling is emitted into.
+// EnumId   : C++ enumerator name under VocabId (must be a valid identifier;
+//            `and` is the alternative token for &&, so its id is `and_`).
+// spelling : the bareword as it appears in .neu source / metadata JSON.
+//
+// Frontend code recognizes these spellings ONLY through the approved helpers
+// in LanguageVocabulary.h (matchKeywordPrefix / tokenIsKeyword /
+// consumeVocabKeyword / lineContainsKeywordWord / vocabSpelling). A raw
+// startswith/equality/token-index recognition of a keyword-shaped literal
+// outside those helpers fails the parser-keyword gate.
+//
+// The includer defines NEUTRINO_VOCAB before #include and #undefs it after.
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef NEUTRINO_VOCAB
+#error "define NEUTRINO_VOCAB(Category, EnumId, Spelling) before including LanguageVocabulary.def"
+#endif
+
+// ---- statement barewords (line leaders / block openers) ----
+NEUTRINO_VOCAB(STATEMENT, procedure, "procedure")
+NEUTRINO_VOCAB(STATEMENT, trigger, "trigger")
+NEUTRINO_VOCAB(STATEMENT, version, "version")
+NEUTRINO_VOCAB(STATEMENT, instance_key, "instance_key")
+NEUTRINO_VOCAB(STATEMENT, participant, "participant")
+NEUTRINO_VOCAB(STATEMENT, input, "input")
+NEUTRINO_VOCAB(STATEMENT, compute, "compute")
+NEUTRINO_VOCAB(STATEMENT, debit, "debit")
+NEUTRINO_VOCAB(STATEMENT, credit, "credit")
+NEUTRINO_VOCAB(STATEMENT, assert_, "assert")
+NEUTRINO_VOCAB(STATEMENT, agreement, "agreement")
+NEUTRINO_VOCAB(STATEMENT, allow, "allow")
+NEUTRINO_VOCAB(STATEMENT, attest, "attest")
+
+// ---- field keys (attribute names inside blocks) ----
+NEUTRINO_VOCAB(FIELD, role, "role")
+NEUTRINO_VOCAB(FIELD, org, "org")
+NEUTRINO_VOCAB(FIELD, capabilities, "capabilities")
+NEUTRINO_VOCAB(FIELD, binding, "binding")
+NEUTRINO_VOCAB(FIELD, bind_runtimes, "bind_runtimes")
+NEUTRINO_VOCAB(FIELD, bind_min_assurance, "bind_min_assurance")
+NEUTRINO_VOCAB(FIELD, ledger, "ledger")
+NEUTRINO_VOCAB(FIELD, owner, "owner")
+NEUTRINO_VOCAB(FIELD, party, "party")
+NEUTRINO_VOCAB(FIELD, amount, "amount")
+NEUTRINO_VOCAB(FIELD, currency, "currency")
+NEUTRINO_VOCAB(FIELD, idempotency_key, "idempotency_key")
+NEUTRINO_VOCAB(FIELD, when, "when")
+NEUTRINO_VOCAB(FIELD, memo, "memo")
+// attest-block policy fields
+NEUTRINO_VOCAB(FIELD, quorum, "quorum")
+NEUTRINO_VOCAB(FIELD, observer_set, "observer_set")
+NEUTRINO_VOCAB(FIELD, observer_role, "observer_role")
+NEUTRINO_VOCAB(FIELD, assurance, "assurance")
+NEUTRINO_VOCAB(FIELD, independence, "independence")
+NEUTRINO_VOCAB(FIELD, canonicalization, "canonicalization")
+NEUTRINO_VOCAB(FIELD, tolerance, "tolerance")
+NEUTRINO_VOCAB(FIELD, timeout, "timeout")
+NEUTRINO_VOCAB(FIELD, fallback, "fallback")
+
+// ---- connector / grammar words ----
+NEUTRINO_VOCAB(CONNECTOR, between, "between")
+NEUTRINO_VOCAB(CONNECTOR, with, "with")
+// `and` is a C++ alternative token (&&); enumerator is and_.
+NEUTRINO_VOCAB(CONNECTOR, and_, "and")
+NEUTRINO_VOCAB(CONNECTOR, as, "as")
+NEUTRINO_VOCAB(CONNECTOR, balanced, "balanced")

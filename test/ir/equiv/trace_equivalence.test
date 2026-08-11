@@ -1,0 +1,25 @@
+// [] normalized trace-equivalence + non-vacuous tamper gates. neutrino-equiv
+// now compares each realization's normalized observation trace against the
+// reference evaluator, WITHIN its  profile (an incompatible coordination plan is refused,
+// not misleadingly compared). The gate script proves it is non-vacuous and fails
+// closed: every committed sample is trace-equivalent (executedCases>=1, floor
+// >=5), a profile-incompatible coordination plan is refused (not compared, does not fail
+// equivalence, and the report carries profileId+Version), and all eight tamper
+// classes (dropped effect, altered amount, reordered observations, wrong
+// terminal, replay omission, partial commit, altered derived value, changed
+// outcome — one per compared field) are detected with divergence
+// coordinates. This is complementary to — not a replacement for — the byte
+// goldens: it compares observable MEANING, not artifact bytes.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+//
+// RUN: python3 %S/check_trace_equivalence.py %neutrino-equiv %S/../../..
+//
+// Focused fail-closed self-test: an UNKNOWN --tamper kind must fail (a broken
+// self-test must never silently pass), with the trace-divergence taxonomy.
+// RUN: %not %neutrino-equiv --reference-only --scenario=%{msi}/scenario/core_sample_installment_happy_path.json %{msi}/source/core_sample_installment.neu --report=%t.u --tamper=bogus
+// RUN: %FileCheck --check-prefix=UNK %s < %t.u/equivalence.json
+// RUN: %FileCheck --check-prefix=UNKDIAG %s < %t.u/diagnostics.json
+// UNK: "ok": false
+// UNK: "traceEquivalence"
+// UNKDIAG: equivalence.trace_divergence

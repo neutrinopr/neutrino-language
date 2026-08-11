@@ -1,0 +1,23 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_document_escrow",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "7f34a4816601e3327d59b3ce112a0f8ac17bc47e0889501b68dd6f16220cdd87", "specVersion": "1.0.0" },
+  "participant": { "name": "Buyer", "role": "buyer", "org": "buyerco", "slotId": "coordinate.core_document_escrow#Buyer" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "escrow_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 41, "column": 1 } },
+    { "name": "buyer_id", "type": "party", "specPath": "inputs[1]", "source": { "line": 42, "column": 1 } },
+    { "name": "amount", "type": "money", "specPath": "inputs[4]", "source": { "line": 45, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[6]", "source": { "line": 47, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "escrowco", "role": "agent" },
+    { "org": "sellerco" }
+  ],
+  "evidenceObligations": [
+    { "leg": "buyer_escrow", "kind": "debit", "ledger": "buyer.escrow", "specPath": "effects[0]", "source": { "line": 49, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 2 } }
+}

@@ -1,0 +1,73 @@
+// Multi-slot late-binding reference capability (Trust lane, T1) — the
+// **two-`to_be_bound`-slot** companion to `core_flexible_binding` (which binds
+// only the Sponsor slot). Here BOTH the Sponsor and the Merchant slots are bound
+// to a concrete runtime at realization time, each carrying its own conservative
+// policy (allowed runtime families + minimum assurance + authorized binder = the
+// participant's org).
+//
+// This is the canonical translator-provided input the network realization rail
+// (neutrino-network) develops multi-slot positive realization against:
+//   - the slot binding-topology declares two `to_be_bound` slots
+//     (coordinate.dual_bound_offer#Sponsor, #Merchant), each with its own
+//     allowedRuntimes / minAssurance / authorizedBinder;
+//   - a binding manifest binds both slots (one binding per slot), validated for
+//     multi-slot completeness by scripts/validators/validate_binding_manifest.py;
+//   - capability.json / capability.lock ground the wire -> evidence identity for
+//     both slots (capabilityHash = the EnvelopeHeader.schema_hash bridge).
+//
+// Both policies require assurance A2 — above the A1 static generation attests — so
+// the Capability Security Pass records a trustBoundary advisory (ok stays true;
+// the higher tier is earned at realization, never claimed here). See
+// docs/binding/BINDING_POLICY.md.
+
+procedure dual_bound_offer {
+    trigger sponsored_offer_proposed
+    version "1.0.0"
+
+    participant Sponsor {
+        role               = "sponsor"
+        org                = "sponsorco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm", "jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant Merchant {
+        role               = "merchant"
+        org                = "acme"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    allow "sponsorco" with "acme" {
+        "sponsorco" as "sponsor"
+        "acme" as "merchant"
+    }
+
+    input offer_id     : string
+    input sponsor_id   : party
+    input merchant_id  : party
+    input contribution : money
+    input currency     : currency
+
+    debit sponsor_commitment {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    credit merchant_expected_contribution {
+        ledger          = "merchant.expected_contribution"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    assert balanced
+}

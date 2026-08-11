@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/source-neutral-backend-witness-report.schema.json",
+  "title": "Neutrino source-neutral governed-backend witness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "artifact",
+    "artifactHash",
+    "capabilities",
+    "coordinationPlan",
+    "governedBackends",
+    "renderedArtifacts",
+    "coreReferenceTrace",
+    "backendEquivalence",
+    "conceptSpecificProductionMatches",
+    "productionSourcesScanned",
+    "semanticAuthorityMode"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.source-neutral-backend-witness"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "artifact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifactHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "coordinationPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "procedure",
+        "projectionSchemaVersion"
+      ],
+      "properties": {
+        "procedure": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projectionSchemaVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "governedBackends": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "renderedArtifacts": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "coreReferenceTrace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "executedCases",
+        "observationCount"
+      ],
+      "properties": {
+        "mode": {
+          "const": "reference-only"
+        },
+        "executedCases": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "observationCount": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "backendEquivalence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "requiredBackends",
+        "comparedBackends"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "complete"
+          ]
+        },
+        "requiredBackends": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "comparedBackends": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "conceptSpecificProductionMatches": {
+      "const": 0
+    },
+    "productionSourcesScanned": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "semanticAuthorityMode": {
+      "const": "enforce"
+    }
+  }
+}

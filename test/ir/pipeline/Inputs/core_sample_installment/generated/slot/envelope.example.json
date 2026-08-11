@@ -1,0 +1,40 @@
+{
+  "sessionId": "sess-merch-001",
+  "operationId": "op-commit-001",
+  "operation": "COMMIT",
+  "correlationId": "op-propose-001",
+  "capability": "coordinate.core_sample_installment",
+  "capabilityVersion": "0.1.0",
+  "participant": "issuer:issuer-001",
+  "counterparty": "merchant:merchant-001",
+  "payload": {
+    "procedure": "core_sample_installment",
+    "computed": {
+      "subsidy": 10000
+    },
+    "postings": [
+      {
+        "entry": "merchant_subsidy",
+        "ledger": "acquirer.merchant_balance",
+        "delta": -10000,
+        "currency": "EUR"
+      },
+      {
+        "entry": "issuer_receivable",
+        "ledger": "issuer.promotional_receivable",
+        "delta": 10000,
+        "currency": "EUR"
+      }
+    ],
+    "idempotencyKey": "txn-001"
+  },
+  "payloadHash": "sha256:f0e1d2c3b4a5968778695a4b3c2d1e0f1122334455667788990011223344aabb",
+  "previousTranscriptHash": "sha256:00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
+  "signature": "ed25519-fixture:issuer-001:1c0ffee",
+  "diagnostics": [],
+  "anchorRef": {
+    "chain": "evm",
+    "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+    "commitmentHash": "sha256:aabbccddeeff00112233445566778899aabbccddeeff001122334455667788"
+  }
+}

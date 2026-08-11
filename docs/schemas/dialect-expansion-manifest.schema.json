@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/dialect-expansion-manifest/v1",
+  "title": "Neutrino Dialect Expansion Manifest",
+  "description": "D2 / translator Phase 23: the audit sidecar emitted alongside a `.neu` expanded from a reviewed neutrino.domain-dialect template (scripts/domain/expand_dialect.py). It pins the dialect (domainDialectHash) + template + generated source hash, and traces every generated construct back to a domain term + mapping-graph edge so review can audit the Upper-Layer path. Fail-closed (additionalProperties:false everywhere).",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "dialect", "template", "generated", "constructs", "grouping", "edgesUsed", "lowerProvenance"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"const": "neutrino.dialect-expansion-manifest"},
+    "schemaVersion": {"const": 1},
+    "dialect": {
+      "type": "object",
+      "required": ["domain", "version", "domainDialectHash"],
+      "additionalProperties": false,
+      "properties": {
+        "domain": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "domainDialectHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "template": {
+      "type": "object",
+      "required": ["id", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      }
+    },
+    "generated": {
+      "type": "object",
+      "required": ["path", "sourceHash"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sourceHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "constructs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["construct", "edges", "sourceSpan"],
+        "additionalProperties": false,
+        "properties": {
+          "construct": {"type": "string", "minLength": 1, "description": "The generated .neu construct, e.g. 'procedure X' or 'debit Y'."},
+          "fromTemplate": {"type": "string", "minLength": 1},
+          "participantTerm": {"type": ["string", "null"], "minLength": 1},
+          "edges": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1},
+            "description": "mappingGraph edge ids backing this construct — every construct must trace to at least one edge."
+          },
+          "sourceSpan": {
+            "type": "object",
+            "required": ["startLine", "endLine"],
+            "additionalProperties": false,
+            "description": "1-based inclusive line span of this construct in the generated .neu, so a core diagnostic line maps back to its domain origin (D3).",
+            "properties": {
+              "startLine": {"type": "integer", "minimum": 1},
+              "endLine": {"type": "integer", "minimum": 1}
+            }
+          }
+        }
+      }
+    },
+    "grouping": {
+      "type": "array",
+      "description": "The organization -> participant -> slot grouping the generated .neu declares — the same (organizationId, participantId, slotId) D1b's binding-topology assigns. Empty when the template declares no participants.",
+      "items": {
+        "type": "object",
+        "required": ["organizationId", "participantId", "role", "slotId", "termEdges"],
+        "additionalProperties": false,
+        "properties": {
+          "organizationId": {"type": ["string", "null"], "minLength": 1, "description": "null when the participant declares no org (dialect templates carry only role)."},
+          "participantId": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "minLength": 1},
+          "slotId": {"type": "string", "minLength": 1, "description": "coordinate.<procedure>#<participant> — matches the D1b binding-topology slotId."},
+          "termEdges": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "edgesUsed": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "description": "Sorted union of every mappingGraph edge id referenced by the expansion."
+    },
+    "lowerProvenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["concept", "edge", "railField", "source", "lossiness"],
+        "additionalProperties": false,
+        "properties": {
+          "concept": {"type": "string", "minLength": 1},
+          "edge": {"type": "string", "minLength": 1},
+          "railField": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "lossiness": {"enum": ["lossless", "lossy-preserved-in-extensionData", "unsupported"]}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+# Neutrino `.neu` source (). Once the Neutrino language is accepted upstream in
+# github-linguist (see linguist/README.md), these make GitHub highlight + count `.neu`
+# with our generated grammar; they are harmless before then. Local/VS Code highlighting
+# comes from the generated grammar directly and does not depend on this.
+*.neu linguist-language=Neutrino
+*.neu linguist-detectable=true
+
+# The generated grammar + packaged Linguist assets are generated artifacts, not authored
+# source — mark them so GitHub's language stats don't attribute the repo to JSON/YAML.
+docs/neutrino.tmLanguage.json linguist-generated=true
+linguist/neutrino.tmLanguage.json linguist-generated=true

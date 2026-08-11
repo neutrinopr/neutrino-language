@@ -1,0 +1,371 @@
+{
+  "kind": "neutrino.target-printer-inventory.v1",
+  "scope": "handwritten target-specific per-node printer emission sites",
+  "excludes": [
+    " legalization",
+    "generic target-printer driver helpers",
+    "escaping/framing primitives",
+    "external boundaries",
+    "backend tests"
+  ],
+  "genericFramingHandlers": [
+    {
+      "target": "solidity",
+      "node": "Blank",
+      "note": "bare pass-through (empty line) \u2014 generic layout primitive, carries no target syntax"
+    },
+    {
+      "target": "solidity",
+      "node": "Line",
+      "note": "bare pass-through (${text}) \u2014 verbatim already-legalized line; carries no .td syntax, NOT credited as a migrated typed-syntax node"
+    },
+    {
+      "target": "solidity",
+      "node": "Block",
+      "note": "bare pass-through (${text} \u2026 ${close}) \u2014 generic framing delimiters authored by legalization; NOT credited as a migrated typed-syntax node"
+    },
+    {
+      "target": "postgres",
+      "node": "Blank",
+      "note": "fieldless empty-line framing only \u2014 carries no operands, domain/decision payload, or target SQL bytes; any payload-bearing shape is not generic framing"
+    }
+  ],
+  "generatedHandlers": [
+    {
+      "target": "solidity",
+      "node": "Require",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Transition",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Emit",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Line",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Blank",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Guarded",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Block",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "LocalDecl",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Assign",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "CompoundAssign",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "DocComment",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "SpdxLicense",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Pragma",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Import",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "EnumDecl",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "StorageDecl",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "AuthorizedObserverTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "CoordinationStatusTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "LedgerBalanceTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "PostingIdempotencyTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "CommittedGroupTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "PostingsTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "PostingsWithMemoTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "KeyClaimTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "QuorumAcceptanceTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "TemporalQuorumAcceptanceTable",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "QuorumAcceptanceTemporalPreflight",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "CommittedGroupPreflight",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "KeyClaimPreflight",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "model": "PgSchemaDecl",
+      "node": "QuorumAcceptanceUpgradePreflight",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "Blank",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "Raise",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "Assign",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "If",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "FlatIf",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "StatusWrite",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "LedgerUpsert",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "PostingInsert",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "ProgressFlag",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "PostingIdempotency",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "KeyClaimInsert",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "CommittedGroupInsert",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "QuorumAcceptInsert",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "TemporalAcceptInsert",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "IdempotentReturn",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "EvidenceClaimComment",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "PolicyCaseSelect",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "EffectLedgerComment",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "IdempotencyGuardComment",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "BalancedInvariantComment",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "CallableSig",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "DeclareSection",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "CallableBody",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "CallableClose",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "StatusWriteUpdate",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "RaiseArg",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "postgres",
+      "node": "PostingInsertWithMemo",
+      "path": "lib/backends/postgres/generated/PostgresPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "EventDecl",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "FunctionSig",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "ContractShell",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "InterfaceSignature",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "InterfaceShell",
+      "path": "lib/backends/solidity/generated/SolidityPrinterHandlers.inc"
+    }
+  ],
+  "handwrittenSites": [],
+  "sealedBodyCarriers": [],
+  "variantGroups": [
+    {
+      "target": "postgres",
+      "retires": "PgSchemaDecl::PostingsTable",
+      "variants": [
+        "PgSchemaDecl::PostingsTable",
+        "PgSchemaDecl::PostingsWithMemoTable"
+      ]
+    }
+  ]
+}

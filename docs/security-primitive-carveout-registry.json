@@ -1,0 +1,326 @@
+{
+  "kind": "neutrino.security-primitive-carveout-registry",
+  "schemaVersion": 1,
+  "status": "tier2-final",
+  "statusNote": "TIER-2-FINAL (2026-07-24; enforcement amended 2026-07-25): reviewed identities are exact blob bytes or anchored generator regions. Derived closure files and their digest remain diagnostic provenance; unrelated edits outside a reviewed region do not require re-banking. Region identity, consumer set, resolver row, verifier chain and the completed  disposition remain enforced exactly. pendingClassification empty; no tracked-to-zero residue. Any reviewed identity change requires -governed separate architect/security approval.",
+  "issue": "urn:neutrino:document:security-carveout-v1",
+  "defaultDeny": true,
+  "scopeRule": "A carve-out admits the reviewed guard IMPLEMENTATION (exact body or narrow reviewed generator), never the interface/signature grammar around it \u2014 declaration/ABI/signature syntax is Tier-2 typed-table territory, not a trust object.",
+  "entries": [
+    {
+      "id": "SOL-QUORUM-BLOB",
+      "form": "exact-body",
+      "backend": "solidity",
+      "artifact": "lib/backends/solidity/ThresholdQuorumAcceptance.sol.inc",
+      "identitySha256": "12479dedbed9c9119945beb718a9c1dfab9118198a1adeeb4cb0f5175f4037a2",
+      "purpose": "The reviewed M-of-N threshold-quorum acceptance guard body (S2 lowering ): on-chain acceptance of attested evidence requires M distinct authorized observer signatures.",
+      "threatBoundary": "Acceptance forgery: a coordination leg firing on unattested or under-quorum evidence, or on signatures from unauthorized observers.",
+      "whyNotDeclarative": "A reviewed, security-audited verbatim body; templating it per-construct would fragment the audited unit and weaken review ( registry contract, form 1).",
+      "allowedConsumers": [
+        "lib/backends/solidity/GenSolidityQuorumGuard.cpp"
+      ],
+      "requiredSecurityTests": [
+        {
+          "path": "examples/oracle-reference/threshold-quorum/test/ThresholdQuorumAcceptance.t.sol",
+          "invocation": {
+            "surface": ".github/workflows/oracle-reference.yml",
+            "marker": "make solidity-reference-test",
+            "via": {
+              "surface": "test/acceptance/run.sh",
+              "mustContain": "examples/oracle-reference/threshold-quorum"
+            }
+          }
+        }
+      ],
+      "approvingDecision": " (reviewed lowering) +  (registry admission; final sign-off pending)",
+      "finalizedKind": "QuorumAcceptance.Single"
+    },
+    {
+      "id": "PG-QUORUM-SINGLE",
+      "form": "reviewed-generator",
+      "backend": "postgres",
+      "artifact": "lib/backends/postgres/model/PostgresModel.cpp (single-policy accept_<proc> quorum guard generation into PgProcedure.functions)",
+      "closureFiles": [
+        "lib/backends/postgres/CoordinationEnvelope.sql.inc",
+        "lib/backends/postgres/leaf/PgSqlSyntax.cpp",
+        "lib/backends/postgres/leaf/PgSqlSyntax.h",
+        "lib/backends/postgres/leaf/PgSqlText.cpp",
+        "lib/backends/postgres/leaf/PgSqlText.h",
+        "lib/backends/postgres/provider/PostgresEvidenceInputs.h",
+        "lib/backends/postgres/model/PostgresModel.cpp",
+        "lib/backends/postgres/model/PostgresModel.h",
+        "lib/backends/postgres/generated/PostgresPrinterHandlers.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.decl.inc",
+        "lib/backends/postgres/generated/PgDdlBuilders.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.inc",
+        "lib/backends/postgres/generated/PostgresTargetEnums.inc",
+        "lib/backends/postgres/generated/PostgresTargetNodes.inc"
+      ],
+      "closureSha256": "e85e1b7b35dfe8ce982f42ad7ae2d3579541cefa0e5f637bd4f6ec74a641ca4b",
+      "parameterSurface": "Closed, semantically typed: canonical procedure id, declared key ref, closed type mapping, canonical observer-set id, bounded threshold M<=N. Raw target fragments / SQL identifiers are unrepresentable.",
+      "purpose": "Generates the per-procedure accept_<proc> M-of-N quorum acceptance function (specialized per procedure, one reviewed shape).",
+      "threatBoundary": "Evidence acceptance forgery in the database rail; per-procedure specialization must not open an injection or shape-drift surface.",
+      "whyNotDeclarative": "Per-procedure specialization over a closed typed parameter surface ( registry contract, form 2) \u2014 the anchored region hash + independent output verifier make each variant exactly enumerable.",
+      "allowedConsumers": [
+        "lib/backends/postgres/model/PostgresModel.cpp"
+      ],
+      "outputVerifier": [
+        {
+          "path": "lib/backends/postgres/test/quorum_accept_golden.sql",
+          "invocation": {
+            "surface": "lib/backends/postgres/CMakeLists.txt",
+            "marker": "test/quorum_accept_golden.sql"
+          }
+        },
+        {
+          "path": "test/cmake/run_pg_quorum_acceptance_table_real_path_mutation.cmake",
+          "invocation": {
+            "surface": "tools/neutrino-gen/CMakeLists.txt",
+            "marker": "run_pg_quorum_acceptance_table_real_path_mutation.cmake"
+          }
+        }
+      ],
+      "approvingDecision": "/ (reviewed trailer + RawSql sink) +  (final sign-off pending)",
+      "anchor": "PgFunction buildQuorumAcceptGate(",
+      "regionSha256": "46522fe54a91b347710fd47a023a1a8909a748ed22aa8dec4656d042678ecb3a",
+      "finalizedKind": "QuorumAcceptance.Single",
+      "revokeCoupling": {
+        "dependency": "PG-QUORUM-SINGLE-REVOKE",
+        "signatureMarker": ", text, text[]) FROM PUBLIC;"
+      },
+      "entryPoint": "accept_",
+      "dynamicNameOperand": "name"
+    },
+    {
+      "id": "PG-QUORUM-SINGLE-REVOKE",
+      "form": "reviewed-generator",
+      "backend": "postgres",
+      "artifact": "lib/backends/postgres/model/PostgresModel.cpp (the  accept_ REVOKE trailer, fail-closed RawSql; printPostgres is the sole authorized sink)",
+      "closureFiles": [
+        "lib/backends/postgres/CoordinationEnvelope.sql.inc",
+        "lib/backends/postgres/leaf/PgSqlSyntax.cpp",
+        "lib/backends/postgres/leaf/PgSqlSyntax.h",
+        "lib/backends/postgres/leaf/PgSqlText.cpp",
+        "lib/backends/postgres/leaf/PgSqlText.h",
+        "lib/backends/postgres/provider/PostgresEvidenceInputs.h",
+        "lib/backends/postgres/model/PostgresModel.cpp",
+        "lib/backends/postgres/model/PostgresModel.h",
+        "lib/backends/postgres/generated/PostgresPrinterHandlers.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.decl.inc",
+        "lib/backends/postgres/generated/PgDdlBuilders.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.inc",
+        "lib/backends/postgres/generated/PostgresTargetEnums.inc",
+        "lib/backends/postgres/generated/PostgresTargetNodes.inc"
+      ],
+      "closureSha256": "e85e1b7b35dfe8ce982f42ad7ae2d3579541cefa0e5f637bd4f6ec74a641ca4b",
+      "parameterSurface": "The exact generated accept_<proc> signature (function name + argument type list) \u2014 nothing else.",
+      "purpose": "REVOKE EXECUTE ... FROM PUBLIC on the exact matching accept_<proc> overload: PUBLIC-callable acceptance is forgeable, so the guard is closed by default and GRANTed only to the aggregator role.",
+      "threatBoundary": "Privilege bypass: a PUBLIC caller invoking the acceptance entry point directly.",
+      "whyNotDeclarative": "The hardening property is keyed to the generated signature of its guard variant; it is one reviewed trailer, not a per-construct template.",
+      "allowedConsumers": [
+        "lib/backends/postgres/model/PostgresModel.cpp"
+      ],
+      "outputVerifier": [
+        {
+          "path": "lib/backends/postgres/test/quorum_accept_golden.sql",
+          "invocation": {
+            "surface": "lib/backends/postgres/CMakeLists.txt",
+            "marker": "test/quorum_accept_golden.sql"
+          }
+        }
+      ],
+      "approvingDecision": "/ +  (final sign-off pending)",
+      "anchor": "pgddl::RawSql quorumAcceptRevoke(",
+      "regionSha256": "a3433cac901b45abd13c9f4188c33cc6c1a412c3a79c143670e70918efa1c5f4",
+      "revokeSignatureMarker": ", text, text[]) FROM PUBLIC;",
+      "revokeFunctionPrefix": "REVOKE EXECUTE ON FUNCTION accept_"
+    },
+    {
+      "id": "PG-QUORUM-TEMPORAL",
+      "form": "reviewed-generator",
+      "backend": "postgres",
+      "artifact": "lib/backends/postgres/model/PostgresModel.cpp (temporal accept_ variant; signature carries the extra p_policy argument)",
+      "closureFiles": [
+        "lib/backends/postgres/CoordinationEnvelope.sql.inc",
+        "lib/backends/postgres/leaf/PgSqlSyntax.cpp",
+        "lib/backends/postgres/leaf/PgSqlSyntax.h",
+        "lib/backends/postgres/leaf/PgSqlText.cpp",
+        "lib/backends/postgres/leaf/PgSqlText.h",
+        "lib/backends/postgres/provider/PostgresEvidenceInputs.h",
+        "lib/backends/postgres/model/PostgresModel.cpp",
+        "lib/backends/postgres/model/PostgresModel.h",
+        "lib/backends/postgres/generated/PostgresPrinterHandlers.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.decl.inc",
+        "lib/backends/postgres/generated/PgDdlBuilders.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.inc",
+        "lib/backends/postgres/generated/PostgresTargetEnums.inc",
+        "lib/backends/postgres/generated/PostgresTargetNodes.inc"
+      ],
+      "closureSha256": "e85e1b7b35dfe8ce982f42ad7ae2d3579541cefa0e5f637bd4f6ec74a641ca4b",
+      "parameterSurface": "As PG-QUORUM-SINGLE plus the closed per-policy axis (canonical policy id); raw fragments unrepresentable.",
+      "purpose": "Generates the temporal (per-policy) quorum acceptance variant.",
+      "threatBoundary": "As PG-QUORUM-SINGLE, plus cross-policy confusion (accepting under the wrong policy's quorum).",
+      "whyNotDeclarative": "Same reviewed-generator rationale; distinct finalized semantic shape (single vs per-policy is a core decision,  finalized kinds).",
+      "allowedConsumers": [
+        "lib/backends/postgres/model/PostgresModel.cpp"
+      ],
+      "outputVerifier": [
+        {
+          "path": "test/cmake/run_pg_temporal_quorum_acceptance_table_real_path_mutation.cmake",
+          "invocation": {
+            "surface": "tools/neutrino-gen/CMakeLists.txt",
+            "marker": "run_pg_temporal_quorum_acceptance_table_real_path_mutation.cmake"
+          }
+        }
+      ],
+      "approvingDecision": " (final sign-off pending)",
+      "anchor": "PgFunction buildTemporalAcceptGate(",
+      "regionSha256": "2480be89257fac6aa5c63a5b740dc95e2b6699339e361455cee056e921769b6b",
+      "finalizedKind": "QuorumAcceptance.PerPolicy",
+      "revokeCoupling": {
+        "dependency": "PG-QUORUM-TEMPORAL-REVOKE",
+        "signatureMarker": ", text, text, text, text[]) FROM PUBLIC;"
+      },
+      "entryPoint": "accept_",
+      "dynamicNameOperand": "name"
+    },
+    {
+      "id": "PG-QUORUM-TEMPORAL-REVOKE",
+      "form": "reviewed-generator",
+      "backend": "postgres",
+      "artifact": "lib/backends/postgres/model/PostgresModel.cpp (temporal accept_ REVOKE trailer keyed to the p_policy-bearing signature)",
+      "closureFiles": [
+        "lib/backends/postgres/CoordinationEnvelope.sql.inc",
+        "lib/backends/postgres/leaf/PgSqlSyntax.cpp",
+        "lib/backends/postgres/leaf/PgSqlSyntax.h",
+        "lib/backends/postgres/leaf/PgSqlText.cpp",
+        "lib/backends/postgres/leaf/PgSqlText.h",
+        "lib/backends/postgres/provider/PostgresEvidenceInputs.h",
+        "lib/backends/postgres/model/PostgresModel.cpp",
+        "lib/backends/postgres/model/PostgresModel.h",
+        "lib/backends/postgres/generated/PostgresPrinterHandlers.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.decl.inc",
+        "lib/backends/postgres/generated/PgDdlBuilders.inc",
+        "lib/backends/postgres/generated/PostgresRecipeBuilders.inc",
+        "lib/backends/postgres/generated/PostgresTargetEnums.inc",
+        "lib/backends/postgres/generated/PostgresTargetNodes.inc"
+      ],
+      "closureSha256": "e85e1b7b35dfe8ce982f42ad7ae2d3579541cefa0e5f637bd4f6ec74a641ca4b",
+      "parameterSurface": "The exact generated temporal accept_ signature \u2014 nothing else.",
+      "purpose": "REVOKE EXECUTE from PUBLIC on the exact temporal acceptance overload.",
+      "threatBoundary": "Privilege bypass on the temporal variant; wrong-overload REVOKE leaving the p_policy overload PUBLIC.",
+      "whyNotDeclarative": "As PG-QUORUM-SINGLE-REVOKE.",
+      "allowedConsumers": [
+        "lib/backends/postgres/model/PostgresModel.cpp"
+      ],
+      "outputVerifier": [
+        {
+          "path": "test/cmake/run_pg_temporal_quorum_acceptance_table_real_path_mutation.cmake",
+          "invocation": {
+            "surface": "tools/neutrino-gen/CMakeLists.txt",
+            "marker": "run_pg_temporal_quorum_acceptance_table_real_path_mutation.cmake"
+          }
+        }
+      ],
+      "approvingDecision": " (final sign-off pending)",
+      "anchor": "pgddl::RawSql temporalAcceptRevoke(",
+      "regionSha256": "2eae76690679efcb28e5651d8e467a24319a64713efe2b865efdf25fe31c7af1",
+      "revokeSignatureMarker": ", text, text, text, text[]) FROM PUBLIC;",
+      "revokeFunctionPrefix": "REVOKE EXECUTE ON FUNCTION accept_"
+    },
+    {
+      "id": "SOL-EXECUTION-ENVELOPE",
+      "form": "exact-body",
+      "backend": "solidity",
+      "artifact": "lib/backends/solidity/CoordinationEnvelope.sol.inc",
+      "identitySha256": "d3b1c7252a0b077207875eb3c15d1a157233cebc0b02c0c8d1a20be4200839a9",
+      "finalizedKind": "CoordinationEnvelope.Digest",
+      "purpose": "The  on-chain execution-claim digest: a domain-separated SHA-256 with explicit big-endian length framing over coordination identity + workflow key + the declared typed payload \u2014 reproduced byte-for-byte from the target-neutral reference (lib/spec-contract/CoordinationEnvelope.cpp), so acceptance of one payload never authorizes a different payload on the same key.",
+      "threatBoundary": "Claim/payload substitution: an accepted execution claim being used to authorize a DIFFERENT payload on the same workflow key; any cross-implementation divergence of the digest preimage silently splitting what each rail believes was accepted.",
+      "whyNotDeclarative": "A hand-authored, security-reviewed cryptographic canonicalization that must remain byte-equivalent across three implementations (C++ reference, Solidity, SQL) and is pinned to a committed cross-implementation vector; generating or templating it would fragment the audited unit and the equivalence proof ( registry contract, form 1).",
+      "allowedConsumers": [
+        "lib/backends/solidity/GenSolidityQuorumGuard.cpp"
+      ],
+      "requiredSecurityTests": [
+        {
+          "path": "examples/oracle-reference/coordination-envelope/test/CoordinationEnvelope.t.sol",
+          "invocation": {
+            "surface": ".github/workflows/oracle-reference.yml",
+            "marker": "make solidity-reference-test",
+            "via": {
+              "surface": "test/acceptance/run.sh",
+              "mustContain": "examples/oracle-reference/coordination-envelope"
+            }
+          }
+        }
+      ],
+      "approvingDecision": " (reviewed reference + cross-implementation vector) +  classification 2026-07-24 (final sign-off pending post- re-enumeration)"
+    },
+    {
+      "id": "PG-EXECUTION-ENVELOPE",
+      "form": "exact-body",
+      "backend": "postgres",
+      "artifact": "lib/backends/postgres/CoordinationEnvelope.sql.inc",
+      "identitySha256": "9ef77a1d27611bbb45a40b1502c4c6da5e3869957f4bf48ac453ad6dea3b971d",
+      "finalizedKind": "CoordinationEnvelope.Digest",
+      "purpose": "The SQL realization of the  execution-claim digest (neu_frame + neu_execution_claim): the same framed SHA-256 preimage as the reference, computed in the database rail.",
+      "threatBoundary": "As SOL-EXECUTION-ENVELOPE: claim/payload substitution and cross-implementation preimage divergence.",
+      "whyNotDeclarative": "Same reviewed cross-implementation cryptographic canonicalization; byte-equivalence to the reference and the committed vector is the security property \u2014 not a layout idiom.",
+      "allowedConsumers": [
+        "lib/backends/postgres/model/PostgresModel.cpp"
+      ],
+      "requiredSecurityTests": [
+        {
+          "path": "test/backend-guard/execution_claim_vector/pg_claim_vector_db_test.sh",
+          "invocation": {
+            "surface": "test/acceptance/run.sh",
+            "marker": "pg_claim_vector_db_test.sh"
+          }
+        }
+      ],
+      "approvingDecision": " +  classification 2026-07-24 (final sign-off pending post- re-enumeration)"
+    }
+  ],
+  "pendingClassification": [],
+  "trackedToZero": [
+    {
+      "artifact": "PostgresModel.h Kind::KeyClaimTable / Kind::QuorumAcceptanceTable / Kind::TemporalQuorumAcceptanceTable",
+      "disposition": "COMPLETED (verified 2026-07-24): the three table shapes are migrated to typed .td nodes \u2014 defined in PostgresTargetNodes.td with generated printer handlers (PostgresTargetNodes.inc / PostgresPrinterHandlers.inc). The remaining `PgSchemaDecl(Kind::X, {})` factory calls are the legitimate typed instantiation of GENERATED nodes, not handwritten residue;  does not (and need not) remove them. No absence-probe residue remains on this axis.",
+      "issueRef": "urn:neutrino:document:typed-security-table-migration-v1",
+      "absenceProbes": []
+    }
+  ],
+  "prohibitions": [
+    "No directory wildcards, prose-only exceptions, or per-domain/per-construct entries.",
+    "The projection core/graph never names a backend implementation ID (SOL-*/PG-* in core is a  violation); the per-target resolver maps (governedTarget, finalizedPrimitiveKind) to exactly ONE entry \u2014 zero or multiple matches fail.",
+    "Idiom tables carry no registry ID and perform no selection; a table may only lay out already-resolved output.",
+    "Adding or changing an entry (including any identity hash) requires -governed separate architect/security approval \u2014 never an implementation-slice edit."
+  ],
+  "resolver": [
+    {
+      "target": "solidity",
+      "finalizedKind": "QuorumAcceptance.Single",
+      "implementation": "SOL-QUORUM-BLOB"
+    },
+    {
+      "target": "postgres",
+      "finalizedKind": "QuorumAcceptance.Single",
+      "implementation": "PG-QUORUM-SINGLE"
+    },
+    {
+      "target": "postgres",
+      "finalizedKind": "QuorumAcceptance.PerPolicy",
+      "implementation": "PG-QUORUM-TEMPORAL"
+    },
+    {
+      "target": "solidity",
+      "finalizedKind": "CoordinationEnvelope.Digest",
+      "implementation": "SOL-EXECUTION-ENVELOPE"
+    },
+    {
+      "target": "postgres",
+      "finalizedKind": "CoordinationEnvelope.Digest",
+      "implementation": "PG-EXECUTION-ENVELOPE"
+    }
+  ]
+}

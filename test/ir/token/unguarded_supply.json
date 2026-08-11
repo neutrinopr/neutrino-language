@@ -1,0 +1,15 @@
+{
+  "scenario": "unguarded_supply",
+  "procedure": "unguarded_supply",
+  "inputs": {
+    "mint_id": "mint-001",
+    "supply_id": "token-reserve",
+    "holder_id": "holder-001",
+    "amount": 2500,
+    "currency": "EUR"
+  },
+  "expect": {
+    "ledger": { "token.supply": -2500, "token.balance": 2500 },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

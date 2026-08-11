@@ -1,0 +1,52 @@
+{
+  "baseRoot": "a9de67dd212a05b82d39222fd344b2092567ab86",
+  "kind": "neutrino.publication-closure/1",
+  "registeredTestCount": 26,
+  "registeredTests": [
+    "capability-profile-smoke",
+    "coverage-spec-smoke",
+    "framed-lines-fixture-render",
+    "framed-lines-fixture-td-mutation-footer",
+    "framed-lines-fixture-td-mutation-header",
+    "framed-lines-fixture-td-mutation-item",
+    "framed-lines-fixture-td-mutation-placeholder",
+    "lines-fixture-render",
+    "lines-fixture-td-mutation",
+    "public-pack-receipts",
+    "public-pack-receipts-selftest",
+    "public-pack-resolver",
+    "security-policy-smoke",
+    "slot-spec-smoke",
+    "solidity-import-golden",
+    "solidity-import-td-mutation",
+    "solidity-localdecl-golden",
+    "solidity-localdecl-td-mutation",
+    "solidity-optional-extent-test",
+    "solidity-raw-seam-sealed.PROBE_AGGREGATE",
+    "solidity-raw-seam-sealed.PROBE_CTOR_PROBE_COMPLETION",
+    "solidity-raw-seam-sealed.PROBE_MUTATION",
+    "solidity-recipe-provider-test",
+    "solidity-recipe-render-referee",
+    "spec-contract-smoke",
+    "views-spec-smoke"
+  ],
+  "removedClosures": [
+    "abandoned corpus validators, tests, documentation identifiers, and gate metadata",
+    "abandoned recipe CLI implementation, tests, documentation, and registrations",
+    "obsolete PostgreSQL knowledge-model validator",
+    "obsolete model-name comment policy and its baseline",
+    "repository-only governance metadata and test census machinery",
+    "test registrations whose required public inputs are absent"
+  ],
+  "receiptIdentities": {
+    "channel_verified_payout": "sha256:1036a4d126a45228d07cbeb1bef2a31d370898ed4ef48a7e6da5eddd2a9209e6",
+    "contested_evidence_resolution": "sha256:e6f757541e69cdfd6ec583da9dee0b54fd85721a07cb12907857590329aedd0d",
+    "deadline_guarded_transfer": "sha256:504b4da20141b08c2a1cd63da5fb82a6388b05fae4a193cb4db12eb1ce856082",
+    "dual_bound_offer": "sha256:0934d414883940f361473216cfdd939c37e07d98565a178421e0fa226d056b18",
+    "sponsored_offer_agreement": "sha256:cb53090d115a0493aa0af233bbbbbeec5f9642b6303528e2ec661d9eb5ca33b5",
+    "token_burn": "sha256:0f1cf5ed683421ea222f5e36b60743c7bacf6a77376ab40b4b614b2f78609660",
+    "token_mint": "sha256:ce3ee32fc1b9ab24c5948686dfed8ee5cf5a2d61da6ddb5c6c72c529b35a2b37"
+  },
+  "resolverContract": "neutrino.public-pack-receipt/1",
+  "schemaVersion": 1
+}

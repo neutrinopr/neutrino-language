@@ -1,0 +1,30 @@
+{
+  "capabilityHash": "08149cc148fa6c9d97c2c168e65956e2f08c668b06fab0655cc76ee7f11200e3",
+  "computed": {},
+  "eventChain": [
+    "MintRequested",
+    "SupplyDebitDebited",
+    "HolderCreditCredited",
+    "TokenMintReconciled"
+  ],
+  "inputs": {
+    "amount": 2500,
+    "currency": "EUR",
+    "holder_id": "holder-001",
+    "mint_id": "mint-001",
+    "supply_approved": 1,
+    "supply_id": "token-reserve"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "token.balance": 2500,
+    "token.supply": -2500
+  },
+  "procedure": "token_mint",
+  "scenario": "token_mint_happy_path",
+  "schemaVersion": 1
+}

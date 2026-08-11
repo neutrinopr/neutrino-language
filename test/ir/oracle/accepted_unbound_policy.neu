@@ -1,0 +1,75 @@
+// [] Per-policy binding COMPLETENESS, verified once in the coordination plan
+// so every rail legalizes the same checked binding rather than rediscovering it.
+// Once ANY effect gates on accepted(x), the coordination is in per-policy mode:
+// every DECLARED attestation policy must then be bound by some accepted() guard.
+// Here beta_proof is declared (an attest quorum + an input) but NO effect gates
+// on accepted(beta_proof) — a declared quorum that gates nothing (fail-open). The
+// coordination plan REFUSES it (attest.policy.unbound); no trace is written. A
+// mistyped or
+// stale policy name cannot silently become a quorum with no teeth.
+//
+// RUN: %not %neutrino-gen --target=coordination-trace --scenario=%S/accepted_unbound_policy.scn.json %s -o %t.ev 2>&1 | %FileCheck %s --check-prefix=UNBOUND
+// RUN: test ! -e %t.ev/coordination-trace.json
+// RUN: python3 %S/check_unbound_policy_cli.py %neutrino-gen %neutrino-equiv %s %S/accepted_unbound_policy.scn.json %S/accepted_multi_policy.neu %t.cli
+// UNBOUND: attestation policy 'beta_proof' is declared but no effect gates on accepted(beta_proof)
+// UNBOUND-SAME: every declared quorum
+procedure accepted_unbound_policy {
+    trigger settlement_proposed
+    version "1.0.0"
+
+    participant Payer {
+        role = "payer"
+        org  = "payerco"
+    }
+    participant Payee {
+        role = "payee"
+        org  = "payeeco"
+    }
+    allow "payerco" with "payeeco" {
+        "payerco" as "payer"
+        "payeeco" as "payee"
+    }
+
+    input settlement_id : string
+    input payer_id      : party
+    input payee_id      : party
+    input amount        : money
+    input currency      : currency
+    input alpha_proof   : evidence
+    input beta_proof    : evidence
+
+    attest alpha_proof {
+        quorum           = 2
+        observer_set     = "alpha_oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+    attest beta_proof {
+        quorum           = 3
+        observer_set     = "beta_oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+
+    debit alpha_debit {
+        ledger          = "payer.alpha"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(alpha_proof)
+    }
+    credit alpha_credit {
+        ledger          = "payee.alpha"
+        owner           = "payee"
+        participant     = "Payee"
+        party           = %payee_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(alpha_proof)
+    }
+    assert balanced
+}

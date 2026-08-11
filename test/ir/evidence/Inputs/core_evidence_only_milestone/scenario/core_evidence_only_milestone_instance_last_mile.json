@@ -1,0 +1,19 @@
+{
+  "scenario": "core_evidence_only_milestone_last_mile",
+  "procedure": "core_evidence_only_milestone",
+  "inputs": {
+    "milestone_id": "ms-il-it-001-lastmile",
+    "shipment_id": "shipment-il-it-001",
+    "milestone_kind": "last_mile_handoff",
+    "custody_from": "carrier-it-001",
+    "custody_to": "courier-it-001",
+    "milestone_evidence": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {},
+    "invariants": [
+      "replay_safe"
+    ]
+  }
+}

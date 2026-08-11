@@ -1,0 +1,173 @@
+// Worked oracle example (M5 oracle S4, ): render the deterministic serverless observers from an
+// attestation policy () + an observation binding. Proves: (a) BYTE-GOLDEN — the rendered observer
+// .js + aggregator are byte-identical to the committed goldens (deterministic render); (b) STRUCTURAL —
+// each observer signs ONLY the canonicalized claim (subscribe -> canonicalize -> claim -> keccak256 ->
+// sign), and the aggregator fires only on >= M matching signatures; (c) FAIL-CLOSED — a binding whose
+// N < M is refused. No live external dependency: the source is mocked and the hasher/signer are injected.
+//
+// RUN: rm -rf %t.d %t.bad && %neutrino-gen --target=capability-spec %s -o %t.d
+// RUN: %neutrino-gen --target=oracle-observer --from-spec %t.d/capability-spec.json --binding %S/binding.json -o %t.d/oracle
+//
+// (a) BYTE-GOLDEN: N observers + aggregator render byte-identically to the committed goldens.
+// RUN: diff -rq %t.d/oracle/observers %S/golden/observers
+//
+// (a2) S2c BYTE-GOLDEN (): the on-chain M-of-N acceptance guard the Solidity backend renders FROM
+// this attestation policy is BYTE-IDENTICAL to the vetted  reference contract — the reference-first
+// proof that the lowering reproduces the reviewed pattern, not a second invented one. The guard is
+// deployment-independent (M/N/observers/capabilityHash are constructor args), emitted ALONGSIDE the
+// coordination contract; the leg's value movement stays the coordination's concern. The full behavioral
+// negatives (missing quorum, duplicate/unknown signer, mismatched claim, malleable/invalid signature,
+// replay, cross-fork replay) live in the reference's Foundry suite (11 tests) — byte-identity carries
+// them onto this rendered output for free.
+// RUN: %neutrino-gen --target=solidity --scenario=%S/oracle_delivery_scenario.json %s -o %t.sol
+// RUN: diff %S/../../../examples/oracle-reference/threshold-quorum/src/ThresholdQuorumAcceptance.sol %t.sol/src/ThresholdQuorumAcceptance.sol
+//
+// (a3) GATED COORDINATION (, review High): the generated coordination contract is GATED BY the
+// guard — execute() proceeds only for a workflow key the guard ACCEPTED, and there is NO local
+// public `attest()` setter a caller could flip to bypass quorum. It takes the guard address at
+// construction and reads `acceptanceGuard.isAccepted(_k)`; the legacy `attested`/`attest()` self-
+// attestation is GONE for an attested spec (a leg can never post on unattested evidence).
+// RUN: %FileCheck %s --check-prefix=COORD < %t.sol/src/OracleDelivery.sol
+// COORD: interface IThresholdQuorumAcceptance {
+// The guard exposes the accepted canonical claim hash (), so a coordination
+// can bind execution to the accepted payload, not just the key.
+// COORD: function acceptedExecutionClaim(bytes32 claimId) external view returns (bytes32);
+// COORD: IThresholdQuorumAcceptance public immutable acceptanceGuard;
+// COORD: constructor(address acceptanceGuard_) {
+// COORD: require(acceptanceGuard.isAccepted(_k), "quorum not accepted");
+// COORD-NOT: function attest(
+// COORD-NOT: attested[_k]
+// The Foundry harness assertions for this fixture were re-homed to the Web3 runtime/demo
+// layer by M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9 (2026-07-31): the external Solidity
+// package emits compilable sources + manifest, not execution scaffolding. The core
+// semantics below remain asserted here.
+//
+// SCHEMA BUMP (): an attestation policy is the first point where a consumer that IGNORES the policy
+// is UNSAFE (it would deploy the coordination without the M-of-N guard), so the capability-spec bumps to
+// schemaVersion 3 — a pre-3 consumer must refuse rather than silently drop the guard.
+// RUN: %FileCheck %s --check-prefix=SCHEMA < %t.d/capability-spec.json
+// SCHEMA: "schemaVersion": 3
+//
+// (a4) POSTGRESQL QUORUM GUARD (, S2d): the SAME attestation policy renders an M-of-N quorum
+// acceptance guard on the PostgreSQL rail too — parity with the Solidity baseline (). SQL has no
+// on-rail signature recovery (no ecrecover), so — the documented backend difference  anticipates —
+// the guard admits already-recovered observer IDENTITIES and enforces the ADMISSION policy: >= M
+// DISTINCT AUTHORIZED observers over the SAME canonical claim, accepted at most once. The rendered
+// output is byte-diffed against the committed golden.
+// RUN: %neutrino-gen --target=postgres --scenario=%S/oracle_delivery_scenario.json %s -o %t.pg
+// RUN: diff %t.pg/procedure.sql %S/golden/postgres/procedure.sql
+// RUN: diff %t.pg/schema.sql %S/golden/postgres/schema.sql
+// RUN: diff %t.pg/run_db_test.sh %S/golden/postgres/run_db_test.sh
+// The coordination is GATED BY the quorum: execute() proceeds only for an accepted claim (no legacy
+// self-attest to bypass), and accept_ fails closed on an unauthorized observer, < M distinct, or replay.
+// RUN: %FileCheck %s --check-prefix=PGGUARD < %t.pg/procedure.sql
+// PGGUARD: FUNCTION accept_oracle_delivery(p_order_id text, p_canonical_claim_hash text, p_observers text[])
+// PGGUARD: RAISE EXCEPTION 'already accepted'
+// PGGUARD: RAISE EXCEPTION 'unauthorized observer'
+// PGGUARD: count(*) FROM unnest(p_observers)) <> (SELECT count(DISTINCT o.id)
+// PGGUARD: RAISE EXCEPTION 'duplicate observer'
+// PGGUARD: count(DISTINCT o.id) FROM unnest(p_observers) o(id)) < 2
+// PGGUARD: RAISE EXCEPTION 'quorum not met'
+// PGGUARD: NOT EXISTS (SELECT 1 FROM quorum_acceptance WHERE claim_id = p_order_id AND procedure = 'oracle_delivery')
+// PGGUARD: RAISE EXCEPTION 'quorum not accepted'
+// The admission guard is no-access-by-default: accept_ is REVOKEd from PUBLIC (a PUBLIC-callable accept_
+// would be forgeable by anyone knowing the non-secret observer ids), so the deployer must GRANT it to
+// only the aggregator role.
+// PGGUARD: REVOKE EXECUTE ON FUNCTION accept_oracle_delivery(text, text, text[]) FROM PUBLIC
+// PGGUARD-NOT: attest_oracle_delivery
+// RUN: %FileCheck %s --check-prefix=PGSCHEMA < %t.pg/schema.sql
+// PGSCHEMA: CREATE TABLE IF NOT EXISTS authorized_observer
+// PGSCHEMA: CREATE TABLE IF NOT EXISTS quorum_acceptance
+//
+// (b) STRUCTURAL: the observer signs ONLY the canonicalized claim, single-sourced from the spec.
+// RUN: %FileCheck %s --check-prefix=OBS < %t.d/oracle/observers/delivery_oracles/obs-alpha.js
+// OBS: function canonicalize(observation)
+// OBS: function claim(observation)
+// OBS: value: canonicalize(observation)
+// OBS: const c = claim(observation);
+// OBS-NEXT: const digest = keccak256(encode(c));
+// OBS-NEXT: const signature = signer(digest);
+// OBS: return { observer: OBSERVER, publicKey: PUBLIC_KEY, claim: c, digest, signature };
+//
+// The aggregator counts DISTINCT AUTHORIZED signers: it rejects public keys outside the bound set and
+// dedupes each signer, so a duplicate or unknown key can never satisfy the quorum.
+// RUN: %FileCheck %s --check-prefix=AGG < %t.d/oracle/observers/delivery_oracles/aggregate.js
+// AGG: const THRESHOLD = 2;
+// AGG: const AUTHORIZED = new Set(
+// AGG: if (!AUTHORIZED.has(a.publicKey)) continue;
+// AGG: if (!signers.has(a.publicKey)) signers.set(a.publicKey, a);
+// AGG: const group = [...byDigest[digest].values()];
+// AGG: if (group.length >= THRESHOLD)
+//
+// A binding value containing an apostrophe renders inside a DOUBLE-quoted JS literal — it cannot break
+// out of the string / inject code: obs-beta's public key is `0xbb'02`.
+// RUN: %FileCheck %s --check-prefix=ESC < %t.d/oracle/observers/delivery_oracles/obs-beta.js
+// ESC: const PUBLIC_KEY = "0xbb'02";
+//
+// (c) FAIL-CLOSED: a binding with N < M is refused (the quorum could never be met), no code written.
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %t.d/capability-spec.json --binding %S/binding_nlt.json -o %t.bad 2>&1 | %FileCheck %s --check-prefix=NLT
+// RUN: test ! -e %t.bad/observers
+// NLT: quorum could never be met
+//
+// (d) CONTAINMENT + NO-INJECTION: an untrusted identifier is validated by
+// an ALLOWLIST, so neither a path-traversal id nor a control-char/comment-injection id can escape the
+// -o dir or break out of the generated code. Both fail closed with no file written.
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %t.d/capability-spec.json --binding %S/binding_traversal.json -o %t.bad 2>&1 | %FileCheck %s --check-prefix=TRAV
+// RUN: test ! -e %t.bad/observers
+// TRAV: is not a safe identifier
+// A member id with a newline (would otherwise escape the observer's `//` header comment into code):
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %t.d/capability-spec.json --binding %S/binding_inject.json -o %t.bad2 2>&1 | %FileCheck %s --check-prefix=INJ
+// RUN: test ! -e %t.bad2/observers
+// INJ: is not a safe identifier
+procedure oracle_delivery {
+    trigger delivery_reported
+    version "1.0.0"
+
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

@@ -1,0 +1,3 @@
+// RUN: python3 %S/check_test_substitution.py %test %S | %FileCheck %s
+
+// CHECK: %test substitution OK:

@@ -1,0 +1,42 @@
+{
+  "kind": "neutrino.translator-compatibility-manifest",
+  "schemaVersion": 1,
+  "compatibilityManifestVersion": "v1",
+  "_note": "Published translator-owned M5 compatibility surface (, /). A single machine-readable file downstream (agents/network/console/wrappers) can inspect WITHOUT building or running the toolchain, then fail closed on an unsupported language level or schema version. Every value here is pinned to include/Neutrino/VersionInfo.h (the single source of truth, ) and to the committed docs/schemas/*.schema.json version constants, and validated by scripts/validators/validate_compatibility_manifest.py in CI — a drift that is not reflected here fails closed. The per-tool `neutrino-* --version-json` envelope (kind neutrino.translator-version) is the runtime subset of this surface; generated manifest.json artifacts embed that same `translatorVersion`.",
+  "translator": {
+    "toolVersion": "0.2.0",
+    "mlirDialectVersion": "0.1.0",
+    "schemaBundleVersion": "v1"
+  },
+  "language": {
+    "l1ArtifactFormat": "neutrino-mlir-textual",
+    "levels": {
+      "supported": ["L1", "L3", "L4", "L5"],
+      "future": ["L2"],
+      "max": "L5"
+    }
+  },
+  "artifactSchemas": {
+    "l2DomainSemantics": 1,
+    "l3BindingManifest": [1, 2],
+    "slotBindingTopology": 1,
+    "dialectExpansionManifest": 1,
+    "backendProfileCatalog": 1,
+    "bindingPolicy": "v1",
+    "bindingReceipt": "v1",
+    "runtimeEvidence": "v1"
+  },
+  "featureFlags": {
+    "l2TypedProofIntent": true,
+    "channelVerificationEarmark": true,
+    "flexibleBinding": true
+  },
+  "conformanceVectorVersion": "envelope-v1",
+  "semanticProfileVersion": 3,
+  "semanticLanguageVersion": "0.1.0",
+  "consumers": {
+    "_note": "Downstream network/agents fail closed against this surface via scripts/gates/check_compatibility.py (a neutrino.component-compatibility-manifest): mlirDialectVersion + per-contract schema versions must match exactly, toolVersion must be same-MAJOR and >= these. Formal upper SemVer bounds are not yet pinned (open toolchain, pre-1.0); minToolVersion is the current translator and is pinned to VersionInfo.h.",
+    "network": { "minToolVersion": "0.2.0", "maxToolVersion": null },
+    "agents": { "minToolVersion": "0.2.0", "maxToolVersion": null }
+  }
+}

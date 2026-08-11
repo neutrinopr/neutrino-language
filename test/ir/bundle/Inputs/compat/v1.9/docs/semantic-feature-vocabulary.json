@@ -1,0 +1,20 @@
+{
+  "features": [
+    "attestation:quorum",
+    "authorization:explicit",
+    "coordination:evidence_acceptance",
+    "effect:credit",
+    "effect:debit",
+    "guard:conditional",
+    "identity:explicit_instance_key",
+    "invariant:balanced",
+    "replay:idempotent",
+    "terminal:aborted",
+    "terminal:contested",
+    "terminal:success",
+    "time:explicit_input"
+  ],
+  "kind": "neutrino.semantic-feature-vocabulary",
+  "schemaVersion": 1,
+  "semanticProfileVersion": 3
+}

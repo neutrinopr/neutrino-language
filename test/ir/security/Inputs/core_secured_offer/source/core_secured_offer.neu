@@ -1,0 +1,63 @@
+// Secured worked example — the Parties/Topology/Identity track, end to end.
+//
+// This companion to `core_sponsored_offer` passes every gate of the
+// Capability Security Pass and lowers without `--allow-insecure`:
+//
+//   - `version`        : the capability carries an explicit semantic version.
+//   - `participant`    : the two actors are declared, each with a `role` and an
+//                        `org` (trust boundary).
+//   - `allow`          : an org-pair policy permits sponsorco <-> acme to
+//                        coordinate (without it, cross-org is only an advisory).
+//   - `participant =`  : every value-moving leg is bound to its authorizing
+//                        participant, so authorization is a hard pass, not an
+//                        advisory.
+//
+// Result: authorization = pass, value = pass, topology = pass (policy-allowed),
+// so `--target=security` exits 0 and `--target=solidity|postgres|slot` emit.
+// It additionally carries an explicit semantic version and a sponsor capability
+// declaration; those realization-facing declarations are intentionally not
+// required by the curated agreement fixture.
+
+procedure core_secured_offer {
+    trigger sponsored_offer_proposed
+    version "1.0.0"
+
+    participant Sponsor {
+        role         = "sponsor"
+        capabilities = ["commit_funds"]
+        org          = "sponsorco"
+    }
+    participant Merchant {
+        role = "merchant"
+        org  = "acme"
+    }
+    allow "sponsorco" with "acme"
+
+    input offer_id     : string
+    input sponsor_id   : party
+    input merchant_id  : party
+    input contribution : money
+    input currency     : currency
+
+    debit sponsor_commitment {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    credit merchant_expected_contribution {
+        ledger          = "merchant.expected_contribution"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    assert balanced
+}

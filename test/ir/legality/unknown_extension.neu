@@ -1,0 +1,20 @@
+// Arbitrary extension types stay fail-closed. Only the closed temporal spelling
+// family receives value_extension:temporal.
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.spec/capability-spec.json
+// SPEC: "feature": "value_category:extension"
+// SPEC-NOT: "feature": "value_extension:temporal"
+// Solidity is an EXTERNAL target: a caller-supplied profile is refused outright, so this
+// negative control now asserts the refusal boundary rather than a profile-gated legality
+// verdict (M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9, 2026-07-31).
+// RUN: %not %neutrino-gen --target=solidity --from-spec --profile %examples/target-profiles/solidity.target-profile.json %t.spec/capability-spec.json -o %t.sol 2>&1 | %FileCheck %s --check-prefix=NEG
+// RUN: test ! -e %t.sol/src
+// NEG: bound to its verified package profile
+
+
+procedure unknown_extension_probe {
+    trigger opened
+    input flow_id      : string
+    input opaque_value : future_hash
+}

@@ -1,0 +1,6 @@
+// [56] M3 conformance (): every fixture under test/conformance/accepted/ translates; every fixture
+// under test/conformance/rejected/ (capability / topology / flow / security / binding_manifest
+// pseudo-syntax — M3 source-level non-goals) is rejected, not silently ignored. Non-vacuous floors
+// (>=2 accepted, >=5 rejected). See check_conformance.py.
+//
+// RUN: python3 %S/check_conformance.py %neutrino-translate %S/../../conformance

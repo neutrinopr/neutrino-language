@@ -1,0 +1,62 @@
+// Per-org-pair role policy — the secured sponsored-offer capability with a
+// topology policy that not only permits sponsorco <-> acme to coordinate, but
+// constrains the role each side's actors may take:
+//
+//   allow "A" with "B" {
+//       "A" as "roleA"      // actors from org A must have this role
+//       "B" as "roleB"      // actors from org B must have this role
+//   }
+//
+// The Capability Security Pass then hard-gates the binding: every value-moving
+// leg authorized from an organization must be bound to a participant whose role
+// matches the policy. Here Sponsor (org sponsorco) is "sponsor" and Merchant
+// (org acme) is "merchant", so the policy is satisfied and the capability passes.
+// A leg authorized from acme by a non-"merchant" participant would be a topology
+// violation (exit 5), and would be refused at lowering.
+
+procedure core_role_constrained {
+    trigger sponsored_offer_proposed
+    version "1.0.0"
+
+    participant Sponsor {
+        role         = "sponsor"
+        capabilities = ["commit_funds"]
+        org          = "sponsorco"
+    }
+    participant Merchant {
+        role = "merchant"
+        org  = "acme"
+    }
+    allow "sponsorco" with "acme" {
+        "sponsorco" as "sponsor"
+        "acme" as "merchant"
+    }
+
+    input offer_id     : string
+    input sponsor_id   : party
+    input merchant_id  : party
+    input contribution : money
+    input currency     : currency
+
+    debit sponsor_commitment {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    credit merchant_expected_contribution {
+        ledger          = "merchant.expected_contribution"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    assert balanced
+}

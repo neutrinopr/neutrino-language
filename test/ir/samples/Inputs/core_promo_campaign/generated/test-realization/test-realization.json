@@ -1,0 +1,34 @@
+{
+  "capabilityHash": "8daf46a13e1f4ce5fada3e3dcfaff5dff0cb5eebc5caf41d12b6a1f666ce0e03",
+  "computed": {},
+  "eventChain": [
+    "PromoRedemptionReported",
+    "SponsorCommissionFundingDebited",
+    "PromoterCommissionCredited",
+    "SponsorReimbursementFundingDebited",
+    "FulfillerReimbursementCredited",
+    "CorePromoCampaignReconciled"
+  ],
+  "inputs": {
+    "commission": 20,
+    "currency": "EUR",
+    "fulfiller_id": "fulfiller-001",
+    "promoter_id": "promoter-001",
+    "redemption_id": "redeem-001",
+    "reimbursement": 80,
+    "sponsor_id": "sponsor-001"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "fulfiller.reimbursement": 80,
+    "promoter.commission": 20,
+    "sponsor.promo_pool": -100
+  },
+  "procedure": "core_promo_campaign",
+  "scenario": "core_promo_campaign_happy_path",
+  "schemaVersion": 1
+}

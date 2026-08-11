@@ -1,0 +1,1 @@
+{"scenario":"result_rejected","procedure":"pay_for_result","inputs":{"job_id":"J-1","requester_id":"req-1","worker_id":"wrk-1","bounty":1000,"currency":"EUR","result_proof":"sha256:aa"},"accepted":{"result_proof":false},"expect":{}}

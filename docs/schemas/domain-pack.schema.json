@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-pack/v1",
+  "title": "Domain Pack Manifest",
+  "description": "An external domain pack's conformance manifest (): the bundle it targets (id + version + exact bundleDigest pin), the version axes it pins, its required/optional contract negotiation, and its artifacts (each tagged with the bundled contract it must validate against). Verified by scripts/validators/verify_domain_pack.py against a published core contract bundle.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "targetsBundle", "artifacts"],
+  "properties": {
+    "kind": { "const": "neutrino.domain-pack" },
+    "packId": { "type": "string", "minLength": 1 },
+    "targetsBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundleId", "bundleVersion", "bundleDigest"],
+      "properties": {
+        "bundleId": { "type": "string", "minLength": 1 },
+        "bundleVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "bundleDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "translatorPins": {
+      "type": "object",
+      "additionalProperties": { "type": ["string", "integer"] }
+    },
+    "requiredContracts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "optionalContracts": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["contract", "path"],
+        "properties": {
+          "contract": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

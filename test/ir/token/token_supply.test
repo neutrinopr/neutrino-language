@@ -1,0 +1,83 @@
+// M5 token S5 (): mint/burn on the approved supply-as-a-ledger model (decision ,
+// docs/process/SUPPLY_LEDGER_DECISION.md). Mint/burn are the one place a token creates or destroys
+// circulating value; modeled as a bare credit/debit with no counterparty they would break
+// `assert balanced`. The decision makes total supply an explicit `token.supply` ledger so mint and
+// burn are ordinary BALANCED debit/credit pairs — feature-by-balanced-composition over the existing
+// model, NOT a new primitive. This test proves, from ONE spec per operation: both legs post on the
+// happy path and render to Solidity AND PostgreSQL; `assert balanced` stays intact on both rails;
+// the security artifact surfaces the mint/burn authority + the supply-ledger audit surface; and an
+// unauthorized or malformed supply_approved suppresses BOTH legs (fail-closed, no value moves) —
+// the required invalid/unauthorized case.
+//
+// DEFINE: %{mint}  = %curated0-source
+// DEFINE: %{mscen} = %curated0-scenario
+// DEFINE: %{burn}  = %curated1-source
+// DEFINE: %{bscen} = %curated1-scenario
+//
+// MINT happy path — both legs post (debit token.supply / credit token.balance).
+// RUN: %neutrino-gen --target=test-realization --scenario=%{mscen} %{mint} -o %t.mr
+// RUN: %FileCheck %s --check-prefix=MINTREAL < %t.mr/test-realization.json
+// MINTREAL: "eventChain"
+// MINTREAL: SupplyDebitDebited
+// MINTREAL: HolderCreditCredited
+//
+// MINT renders to Solidity from that spec — a balanced pair on the supply + balance ledgers.
+// RUN: %neutrino-gen --target=solidity --scenario=%{mscen} %{mint} -o %t.msol
+// RUN: cat %t.msol/src/*.sol | %FileCheck %s --check-prefix=MINTSOL
+// MINTSOL: net[_k]["token.supply"] -= int256(u_amount);
+// MINTSOL: emit SupplyDebitDebited(u_supply_id, u_amount, u_currency);
+// MINTSOL: net[_k]["token.balance"] += int256(u_amount);
+// MINTSOL: emit HolderCreditCredited(u_holder_id, u_amount, u_currency);
+// MINTSOL: require(debitTotal[_k] == creditTotal[_k], "not balanced");
+//
+// MINT renders to PostgreSQL from the SAME spec — the same balanced pair + the balance check.
+// RUN: %neutrino-gen --target=postgres --scenario=%{mscen} %{mint} -o %t.mpg
+// RUN: %FileCheck %s --check-prefix=MINTPG < %t.mpg/procedure.sql
+// MINTPG: VALUES ({{'[^']+'}}, 'supply_debit', 'token.supply', p_supply_id, p_amount, p_currency, -(p_amount), p_mint_id);
+// MINTPG: VALUES ({{'[^']+'}}, 'holder_credit', 'token.balance', p_holder_id, p_amount, p_currency, p_amount, p_mint_id);
+// MINTPG: RAISE EXCEPTION 'not balanced for %', p_mint_id;
+//
+// MINT security artifact surfaces the mint/burn authority + the supply-ledger audit surface.
+// RUN: %neutrino-gen --target=security --scenario=%{mscen} %{mint} -o %t.msec
+// RUN: %FileCheck %s --check-prefix=MINTSEC < %t.msec/security.json
+// MINTSEC: reserved supply ledger `token.supply`
+// MINTSEC: created (mint: supply
+// MINTSEC: authority-gated (see the guard above), so unauthorized supply change is suppressed fail-closed
+// (The negative — an UNGUARDED `token.supply` leg must raise an advisory, never claim fail-closed —
+// is the self-contained regression fixture token/unguarded_supply.neu.)
+//
+// BURN happy path — both legs post (debit token.balance / credit token.supply).
+// RUN: %neutrino-gen --target=test-realization --scenario=%{bscen} %{burn} -o %t.br
+// RUN: %FileCheck %s --check-prefix=BURNREAL < %t.br/test-realization.json
+// BURNREAL: HolderDebitDebited
+// BURNREAL: SupplyCreditCredited
+//
+// BURN renders to BOTH backends from one spec, balanced intact.
+// RUN: %neutrino-gen --target=solidity --scenario=%{bscen} %{burn} -o %t.bsol
+// RUN: cat %t.bsol/src/*.sol | %FileCheck %s --check-prefix=BURNSOL
+// BURNSOL: net[_k]["token.balance"] -= int256(u_amount);
+// BURNSOL: net[_k]["token.supply"] += int256(u_amount);
+// BURNSOL: require(debitTotal[_k] == creditTotal[_k], "not balanced");
+// RUN: %neutrino-gen --target=postgres --scenario=%{bscen} %{burn} -o %t.bpg
+// RUN: %FileCheck %s --check-prefix=BURNPG < %t.bpg/procedure.sql
+// BURNPG: VALUES ({{'[^']+'}}, 'holder_debit', 'token.balance', p_holder_id, p_amount, p_currency, -(p_amount), p_burn_id);
+// BURNPG: VALUES ({{'[^']+'}}, 'supply_credit', 'token.supply', p_supply_id, p_amount, p_currency, p_amount, p_burn_id);
+//
+// UNAUTHORIZED mint (supply_approved == 0) -> suppressed: NEITHER leg posts, no supply is created.
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/mint_unauthorized.json %{mint} -o %t.mu
+// RUN: %FileCheck %s --check-prefix=MDENY < %t.mu/test-realization.json
+// MDENY-NOT: SupplyDebitDebited
+// MDENY-NOT: HolderCreditCredited
+//
+// MALFORMED mint (supply_approved == 2, out of range) -> suppressed fail-closed: only an exact 1
+// posts, so any other value can never mint.
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/mint_malformed.json %{mint} -o %t.mm
+// RUN: %FileCheck %s --check-prefix=MDENYM < %t.mm/test-realization.json
+// MDENYM-NOT: SupplyDebitDebited
+// MDENYM-NOT: HolderCreditCredited
+//
+// UNAUTHORIZED burn (supply_approved == 0) -> suppressed: NEITHER leg posts, no supply is destroyed.
+// RUN: %neutrino-gen --target=test-realization --scenario=%S/burn_unauthorized.json %{burn} -o %t.bu
+// RUN: %FileCheck %s --check-prefix=BDENY < %t.bu/test-realization.json
+// BDENY-NOT: HolderDebitDebited
+// BDENY-NOT: SupplyCreditCredited

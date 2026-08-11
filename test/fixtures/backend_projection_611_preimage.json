@@ -1,0 +1,40 @@
+{
+ "kind": "neutrino.backend-projection-611-preimage.v1",
+ "sourceCommit": "5f291ef0",
+ "sourcePath": "lib/backends/postgres/PostgresModel.cpp",
+ "sourceSha256": "157e813e8d1bbebe8882b0dcf5b78f666238f4d8e79acc2bd722f210df5196d8",
+ "spanSha256": "390cb653dcd676e97f29b66ecd218bf545bdee1498e107d91db88a3b0dca6751",
+ "span": "  for (const PlanEffect &pe : coordinationPlan.effects)\n    if (pe.gateMode != PlanGateMode::TemporalSuppress)\n      fail(\"attest.temporal.mixed\",\n           \"effect '\" + pe.name +\n               \"' is not gated on an accepted() policy, but the coordination \"\n               \"has \"\n               \"accepted() groups — a temporal per-policy PostgreSQL \"\n               \"coordination \"\n               \"must gate EVERY effect on accepted(); mixing per-policy and \"\n               \"ordinary/unconditional effects is unsupported\");",
+ "sourceBoundDecisions": [
+  {
+   "decision": "control:for",
+   "legacyOccurrence": "postgres:legalizePostgresTemporal:control:for:2",
+   "owningSite": "pg.posting",
+   "destinationRow": "semantic-posting-fixed-expansion"
+  },
+  {
+   "decision": "field:effects",
+   "legacyOccurrence": "postgres:legalizePostgresTemporal:field:effects:2",
+   "owningSite": "pg.posting",
+   "destinationRow": "semantic-posting-fixed-expansion"
+  },
+  {
+   "decision": "control:if",
+   "legacyOccurrence": "postgres:legalizePostgresTemporal:control:if:4",
+   "owningSite": "pg.memo",
+   "destinationRow": "memo-positional-operand"
+  },
+  {
+   "decision": "local-field:PlanEffect:gateMode",
+   "legacyOccurrence": "postgres:legalizePostgresTemporal:local-field:PlanEffect:gateMode:1",
+   "owningSite": "pg.guard-binding",
+   "destinationRow": "guard-binding"
+  },
+  {
+   "decision": "local-field:PlanEffect:name",
+   "legacyOccurrence": "postgres:legalizePostgresTemporal:local-field:PlanEffect:name:1",
+   "owningSite": "pg.posting",
+   "destinationRow": "semantic-posting-fixed-expansion"
+  }
+ ]
+}

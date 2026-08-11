@@ -1,0 +1,18 @@
+// Core-contract-bundle completeness + determinism (). %examples/.. is the
+// repository root.
+//
+// GENERATION IS DETERMINISTIC: regenerating from the authoritative contracts +
+// the translator version surface byte-matches the committed bundle (so its
+// digest is current, and the release manifest's pinned digest cannot go stale).
+// RUN: python3 %scripts/generators/make_core_contract_bundle.py --translate %neutrino-translate --repo-root %examples/.. > %t.regen.json
+// RUN: diff %examples/../docs/core-contract-bundle.json %t.regen.json
+//
+// The completeness + integrity gate accepts the committed bundle, and its
+// embedded mutation checks (tampered digest, dropped/stale contract, an
+// unclassified new schema) all fail closed.
+// RUN: python3 %scripts/gates/check_core_contract_bundle.py 2>&1 | %FileCheck %s --check-prefix=GATE
+// RUN: python3 %scripts/gates/check_core_contract_bundle.py --selftest
+// GATE: core-contract-bundle gate OK
+//
+// The committed bundle conforms to its own published meta-contract schema.
+// RUN: python3 -c "import sys,json; sys.path.insert(0, sys.argv[3]); import verify_domain_pack as v; s=json.load(open(sys.argv[2])); d=[]; v._validate(json.load(open(sys.argv[1])), s, 'bundle', d, s); print(chr(10).join(d)); sys.exit(1 if d else 0)" %examples/../docs/core-contract-bundle.json %examples/../docs/schemas/core-contract-bundle.schema.json %scripts/validators

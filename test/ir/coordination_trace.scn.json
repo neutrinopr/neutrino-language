@@ -1,0 +1,13 @@
+{
+  "scenario": "trace_probe_high",
+  "procedure": "trace_probe",
+  "inputs": {
+    "flow_id": "F-1",
+    "payer": "buyer-1",
+    "payee": "seller-1",
+    "amount": 1000,
+    "threshold": 500,
+    "currency": "EUR"
+  },
+  "expect": {}
+}

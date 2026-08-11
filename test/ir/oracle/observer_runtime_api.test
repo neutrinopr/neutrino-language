@@ -1,0 +1,11 @@
+// [] The EXECUTABLE observer leg of the observer -> guard -> coordination vector.
+// A generated domain-bound observer is invoked with node: it must co-sign the
+// executionClaim it is given (surfacing it, and making the signed digest depend on
+// it) and FAIL CLOSED on a missing/short/non-hex/non-string value. This pins the
+// producer/validation boundary the build-tools consumer must honor (supply a valid
+// 32-byte executionClaim as the 5th argument to observe()).
+//
+// REQUIRES: node
+// RUN: rm -rf %t.obs && %neutrino-gen --target=oracle-observer --from-spec %S/../../../examples/observation-binding/capability-spec.json --binding %S/../../../examples/observation-binding/binding-guard.json -o %t.obs
+// RUN: node %S/observer_runtime_harness.js %t.obs/observers/delivery_oracles/obs-alpha.js | %FileCheck %s
+// CHECK: observer runtime API OK

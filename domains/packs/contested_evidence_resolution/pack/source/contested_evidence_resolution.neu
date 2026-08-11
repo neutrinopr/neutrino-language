@@ -1,0 +1,26 @@
+// Contested evidence resolution — an evidence-only decision whose failed
+// quorum is escalated for authoritative dispute handling.
+//
+// `resolution_id` is the explicit instance/replay key. The attestation quorum
+// accepts the submitted evidence when observers agree; if they cannot reach
+// quorum before the timeout, `fallback = "escalate"` makes ESCALATED a real
+// contested terminal state in the canonical capability contract.
+procedure contested_evidence_resolution {
+    trigger evidence_resolution_requested
+    version "0.1.0"
+
+    input resolution_id      : string
+    input resolution_evidence : evidence
+
+    instance_key resolution_id
+
+    attest resolution_evidence {
+        quorum           = 2
+        observer_set     = "resolution_oracles"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "escalate"
+    }
+}

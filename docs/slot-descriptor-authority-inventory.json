@@ -1,0 +1,2177 @@
+{
+  "artifacts": {
+    "binding-topology.json": {
+      "conditional": "spec.participants nonempty (GenSlotSpec.cpp:540-543)"
+    },
+    "capability.json": {
+      "conditional": null
+    },
+    "capability.lock": {
+      "conditional": null
+    },
+    "compensation.json": {
+      "conditional": null
+    },
+    "envelope.schema.json": {
+      "conditional": null
+    },
+    "operations.json": {
+      "conditional": null
+    },
+    "transcript.json": {
+      "conditional": null
+    }
+  },
+  "authorityTotals": {
+    "UNSOURCED": 55,
+    "capability-spec": 57,
+    "deploy-coordinate": 0,
+    "finalized-projection": 0,
+    "target-profile": 0
+  },
+  "checkpoint": "S0-C0",
+  "domains": [
+    "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+    "test/ir/samples/Inputs/core_promo_campaign/generated/slot",
+    "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+    "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot"
+  ],
+  "fields": [
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:431",
+      "fieldAddress": "binding-topology.json::capability",
+      "invariant": null,
+      "note": "cap = \"coordinate.\" + spec.procedure (GenSlotSpec.cpp:528-529)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:432",
+      "fieldAddress": "binding-topology.json::capabilityVersion",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "specVersion",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:484-485",
+      "fieldAddress": "binding-topology.json::crossOrganization",
+      "invariant": "== capability.json::topology.crossOrganization (independently recomputed at GenSlotSpec.cpp:216)",
+      "note": "computed: distinct NAMED orgs > 1",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:429",
+      "fieldAddress": "binding-topology.json::kind",
+      "invariant": null,
+      "note": "\"neutrino.slot-binding-topology\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:407-415,438-439",
+      "fieldAddress": "binding-topology.json::organizations[].organizationId",
+      "invariant": null,
+      "note": "nullable: a participant with no declared org is a valid bucket rendered with a null id",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:458",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].participantId",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "participants[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:459",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].role",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "participants[].role",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:464-465",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].slots[].allowedRuntimes[]",
+      "invariant": null,
+      "note": "empty array when the participant is not flexible",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "participants[].bindRuntimes[]",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:470-472",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].slots[].authorizedBinder",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "participant isFlexible and org nonempty",
+      "ordering": "n/a",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:468",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].slots[].evidenceProfile",
+      "invariant": null,
+      "note": "constant null",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:453,463",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].slots[].lateBindingMode",
+      "invariant": null,
+      "note": "\"to_be_bound\" when isFlexible, else \"fixed\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "participants[].binding",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:455-456,466",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].slots[].minAssurance",
+      "invariant": null,
+      "note": "falls back to the literal \"A1\" when the participant is not flexible or declares no bindMinAssurance \u2014 a partially unsourced field (static generation never claims above A1)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "participants[].bindMinAssurance",
+      "unsourcedKind": "computed-default"
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:451,462",
+      "fieldAddress": "binding-topology.json::organizations[].participants[].slots[].slotId",
+      "invariant": null,
+      "note": "cap + \"#\" + participant name",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "participants[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:433",
+      "fieldAddress": "binding-topology.json::procedure",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "binding-topology.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:430",
+      "fieldAddress": "binding-topology.json::schemaVersion",
+      "invariant": null,
+      "note": "constant 1",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:178",
+      "fieldAddress": "capability.json::capability",
+      "invariant": null,
+      "note": "cap = \"coordinate.\" + spec.procedure (GenSlotSpec.cpp:528-529)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:179",
+      "fieldAddress": "capability.json::capabilityVersion",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "specVersion",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:224",
+      "fieldAddress": "capability.json::computed[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "computes[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:204-205",
+      "fieldAddress": "capability.json::declaredParticipants[].binding.authorizedBinder",
+      "invariant": null,
+      "note": "the binder is the participant's own declared org",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "participant isFlexible and org nonempty",
+      "ordering": "n/a",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:201-203",
+      "fieldAddress": "capability.json::declaredParticipants[].binding.minAssurance",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "participant isFlexible and bindMinAssurance nonempty",
+      "ordering": "n/a",
+      "sourcePath": "participants[].bindMinAssurance",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:200",
+      "fieldAddress": "capability.json::declaredParticipants[].binding.mode",
+      "invariant": null,
+      "note": "constant \"to_be_bound\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "participant binding == \"to_be_bound\" (isFlexible, :125-127)",
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:200",
+      "fieldAddress": "capability.json::declaredParticipants[].binding.runtimes[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "participant isFlexible",
+      "ordering": "first-appearance",
+      "sourcePath": "participants[].bindRuntimes[]",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:198",
+      "fieldAddress": "capability.json::declaredParticipants[].capabilities[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "spec.participants nonempty",
+      "ordering": "first-appearance",
+      "sourcePath": "participants[].capabilities[]",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:192",
+      "fieldAddress": "capability.json::declaredParticipants[].name",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "spec.participants nonempty",
+      "ordering": "first-appearance",
+      "sourcePath": "participants[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:193-196",
+      "fieldAddress": "capability.json::declaredParticipants[].org",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "participant org nonempty",
+      "ordering": "n/a",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:192",
+      "fieldAddress": "capability.json::declaredParticipants[].role",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "spec.participants nonempty",
+      "ordering": "n/a",
+      "sourcePath": "participants[].role",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:71-77,249",
+      "fieldAddress": "capability.json::entries[].amount.input",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].amount.value",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:71-77,250",
+      "fieldAddress": "capability.json::entries[].currency.input",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].currency.value",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:71-77,251",
+      "fieldAddress": "capability.json::entries[].idempotencyKey.input",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].idempotencyKey.value",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:243",
+      "fieldAddress": "capability.json::entries[].kind",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].kind",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:244",
+      "fieldAddress": "capability.json::entries[].ledger",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].ledger",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:242",
+      "fieldAddress": "capability.json::entries[].name",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "effects[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:245",
+      "fieldAddress": "capability.json::entries[].owner",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].owner",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:246-247",
+      "fieldAddress": "capability.json::entries[].participant",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "effect participant nonempty",
+      "ordering": "n/a",
+      "sourcePath": "effects[].participant",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:71-77,248",
+      "fieldAddress": "capability.json::entries[].party.input",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].party.value",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:226",
+      "fieldAddress": "capability.json::evidenceInputs[]",
+      "invariant": "== transcript.json::evidence[]",
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "inputs[type==evidence].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:177",
+      "fieldAddress": "capability.json::kind",
+      "invariant": null,
+      "note": "\"neutrino.slot-capability\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:219",
+      "fieldAddress": "capability.json::ledgerOwners[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "distinct-first-appearance",
+      "sourcePath": "effects[].owner",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:225",
+      "fieldAddress": "capability.json::ledgers[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "distinct-first-appearance",
+      "sourcePath": "effects[].ledger",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:222-223",
+      "fieldAddress": "capability.json::operations[]",
+      "invariant": "== operations.json::operations[].operation and == envelope.schema.json::properties.operation.enum[]",
+      "note": "projected via lifecycleModelFromSpec(spec).operationNames() ()",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "lifecycle-machine-order",
+      "sourcePath": "lifecycle",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:159,183",
+      "fieldAddress": "capability.json::parties[]",
+      "invariant": null,
+      "note": "the party OPERANDS of the legs, not the ledger owners",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "distinct-first-appearance",
+      "sourcePath": "effects[].party.value",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:227",
+      "fieldAddress": "capability.json::partyTypedInputs[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "inputs[type==party].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:180",
+      "fieldAddress": "capability.json::procedure",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:216",
+      "fieldAddress": "capability.json::topology.crossOrganization",
+      "invariant": "== binding-topology.json::crossOrganization (independently recomputed at GenSlotSpec.cpp:484-485)",
+      "note": "computed: distinct named orgs > 1",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "declared named orgs nonempty",
+      "ordering": "n/a",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:215-216",
+      "fieldAddress": "capability.json::topology.organizations[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "declared named orgs nonempty",
+      "ordering": "distinct-first-appearance",
+      "sourcePath": "participants[].org",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:181-182",
+      "fieldAddress": "capability.json::trigger",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "C",
+      "optionalityPredicate": "spec.trigger present",
+      "ordering": "n/a",
+      "sourcePath": "trigger",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:232",
+      "fieldAddress": "capability.json::typedInputs[].name",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "inputs[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:233",
+      "fieldAddress": "capability.json::typedInputs[].type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "inputs[].type",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.lock",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:507",
+      "fieldAddress": "capability.lock::capability",
+      "invariant": null,
+      "note": "cap = \"coordinate.\" + spec.procedure (GenSlotSpec.cpp:528-529)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.lock",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:496-503,513",
+      "fieldAddress": "capability.lock::capabilityHash",
+      "invariant": null,
+      "note": "sha256 over concat(sorted(basename + ':' + sha256(content) + newline)) of the WIRE subset only (capability/operations/compensation/transcript); envelope.schema.json, binding-topology.json and the lock itself are excluded (:566-577). Structurally cross-artifact \u2014 a receipt cannot belong to a single authority partition",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "computed-receipt"
+    },
+    {
+      "artifact": "capability.lock",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:508",
+      "fieldAddress": "capability.lock::capabilityVersion",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "specVersion",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "capability.lock",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:515-518",
+      "fieldAddress": "capability.lock::files.<name>",
+      "invariant": null,
+      "note": "per-wire-file sha256, sorted by basename",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "sorted",
+      "sourcePath": null,
+      "unsourcedKind": "computed-receipt"
+    },
+    {
+      "artifact": "capability.lock",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:506",
+      "fieldAddress": "capability.lock::kind",
+      "invariant": null,
+      "note": "\"neutrino.capability-lock\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "capability.lock",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:509-512",
+      "fieldAddress": "capability.lock::method",
+      "invariant": null,
+      "note": "constant prose describing the hash construction",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:350",
+      "fieldAddress": "compensation.json::capability",
+      "invariant": null,
+      "note": "cap = \"coordinate.\" + spec.procedure (GenSlotSpec.cpp:528-529)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:353",
+      "fieldAddress": "compensation.json::compensable.<commitOp>.how",
+      "invariant": null,
+      "note": "constant \"post the inverse of each committed leg\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:364",
+      "fieldAddress": "compensation.json::compensable.<commitOp>.idempotency",
+      "invariant": null,
+      "note": "literal template \"<procedure>:<idempotency_key>:compensation\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "mixed-literal-spec"
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:358",
+      "fieldAddress": "compensation.json::compensable.<commitOp>.reverses[].entry",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "effects[].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:360",
+      "fieldAddress": "compensation.json::compensable.<commitOp>.reverses[].inverseOf",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].kind",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:359",
+      "fieldAddress": "compensation.json::compensable.<commitOp>.reverses[].ledger",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "effects[].ledger",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:137-144,369-370",
+      "fieldAddress": "compensation.json::invariantAfterCompensation",
+      "invariant": null,
+      "note": "\"balanced\" when the spec declares a balanced invariant, else \"none\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "invariants[kind==balanced]",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:349",
+      "fieldAddress": "compensation.json::kind",
+      "invariant": null,
+      "note": "\"neutrino.slot-compensation\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "compensation.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:341-345,368",
+      "fieldAddress": "compensation.json::nonCompensable[]",
+      "invariant": null,
+      "note": "machine ops minus the single post-effect and compensate-effect ops; the emitter throws unless there is exactly one of each (:333-339). This is the census's 'refusal set': it is spec-lifecycle-derived and TARGET-NEUTRAL \u2014 no target profile is read anywhere in the slot renderer",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "lifecycle-machine-order",
+      "sourcePath": "lifecycle",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:81",
+      "fieldAddress": "envelope.schema.json::$id",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:80",
+      "fieldAddress": "envelope.schema.json::$schema",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:85",
+      "fieldAddress": "envelope.schema.json::additionalProperties",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:88",
+      "fieldAddress": "envelope.schema.json::allOf[].if.properties.operation.enum[]",
+      "invariant": null,
+      "note": "constant [\"COMMIT\",\"REJECT\",\"COMPENSATE\"] \u2014 a HARDCODED op subset that is NOT projected from the machine, unlike properties.operation.enum[]. Latent drift if a machine renames or drops one of these ops; recorded as a census finding",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "fixed-key-order",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:88-89",
+      "fieldAddress": "envelope.schema.json::allOf[].then.required[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "fixed-key-order",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:83",
+      "fieldAddress": "envelope.schema.json::description",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:105",
+      "fieldAddress": "envelope.schema.json::properties.anchorRef.properties.address.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:105",
+      "fieldAddress": "envelope.schema.json::properties.anchorRef.properties.chain.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:105",
+      "fieldAddress": "envelope.schema.json::properties.anchorRef.properties.commitmentHash.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:105",
+      "fieldAddress": "envelope.schema.json::properties.anchorRef.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:96",
+      "fieldAddress": "envelope.schema.json::properties.capability.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:97",
+      "fieldAddress": "envelope.schema.json::properties.capabilityVersion.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:95",
+      "fieldAddress": "envelope.schema.json::properties.correlationId.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:99",
+      "fieldAddress": "envelope.schema.json::properties.counterparty.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:104",
+      "fieldAddress": "envelope.schema.json::properties.diagnostics.items.properties.code.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:104",
+      "fieldAddress": "envelope.schema.json::properties.diagnostics.items.properties.message.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:104",
+      "fieldAddress": "envelope.schema.json::properties.diagnostics.items.properties.severity.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:104",
+      "fieldAddress": "envelope.schema.json::properties.diagnostics.items.required[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "fixed-key-order",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:104",
+      "fieldAddress": "envelope.schema.json::properties.diagnostics.items.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:104",
+      "fieldAddress": "envelope.schema.json::properties.diagnostics.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:94,117-123",
+      "fieldAddress": "envelope.schema.json::properties.operation.enum[]",
+      "invariant": "== capability.json::operations[]",
+      "note": "the ONLY projected value in this artifact ()",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "lifecycle-machine-order",
+      "sourcePath": "lifecycle",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:94",
+      "fieldAddress": "envelope.schema.json::properties.operation.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:93",
+      "fieldAddress": "envelope.schema.json::properties.operationId.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:98",
+      "fieldAddress": "envelope.schema.json::properties.participant.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:100",
+      "fieldAddress": "envelope.schema.json::properties.payload.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:101",
+      "fieldAddress": "envelope.schema.json::properties.payloadHash.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:102",
+      "fieldAddress": "envelope.schema.json::properties.previousTranscriptHash.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:92",
+      "fieldAddress": "envelope.schema.json::properties.sessionId.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:103",
+      "fieldAddress": "envelope.schema.json::properties.signature.type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:86",
+      "fieldAddress": "envelope.schema.json::required[]",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "fixed-key-order",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:82",
+      "fieldAddress": "envelope.schema.json::title",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "envelope.schema.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:84",
+      "fieldAddress": "envelope.schema.json::type",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "operations.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:312",
+      "fieldAddress": "operations.json::capability",
+      "invariant": null,
+      "note": "cap = \"coordinate.\" + spec.procedure (GenSlotSpec.cpp:528-529)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "operations.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:311",
+      "fieldAddress": "operations.json::kind",
+      "invariant": null,
+      "note": "\"neutrino.slot-operations\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "operations.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:286-306,289",
+      "fieldAddress": "operations.json::operations[].maps",
+      "invariant": null,
+      "note": "a literal prose table keyed by operation name; only the PROPOSE row interpolates spec compute/effect names (:289). The emitter throws when the machine has an op with no prose row (:316-319)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "mixed-literal-spec"
+    },
+    {
+      "artifact": "operations.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:263,314",
+      "fieldAddress": "operations.json::operations[].operation",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "lifecycle-machine-order",
+      "sourcePath": "lifecycle",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "operations.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:263,320",
+      "fieldAddress": "operations.json::operations[].requiresPrior",
+      "invariant": null,
+      "note": "nullable; LifecycleModel.requiresPrior(op)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "lifecycle",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:396-398",
+      "fieldAddress": "transcript.json::anchoring.anchorRef.chain",
+      "invariant": null,
+      "note": "constant \"evm\" \u2014 the only DEPLOY-SHAPED value in any artifact, and it is hardcoded, not deploy-sourced. Census-relevant: this is why the deploy-coordinate authority has zero rows",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:396-398",
+      "fieldAddress": "transcript.json::anchoring.anchorRef.records",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:396-398",
+      "fieldAddress": "transcript.json::anchoring.anchorRef.via",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:394",
+      "fieldAddress": "transcript.json::anchoring.default",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:395",
+      "fieldAddress": "transcript.json::anchoring.valueMovingCommit",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:385",
+      "fieldAddress": "transcript.json::capability",
+      "invariant": null,
+      "note": "cap = \"coordinate.\" + spec.procedure (GenSlotSpec.cpp:528-529)",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": "procedure",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "capability-spec",
+      "emitter": "lib/slots/GenSlotSpec.cpp:400",
+      "fieldAddress": "transcript.json::evidence[]",
+      "invariant": "== capability.json::evidenceInputs[]",
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "first-appearance",
+      "sourcePath": "inputs[type==evidence].name",
+      "unsourcedKind": null
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:389-390",
+      "fieldAddress": "transcript.json::hashChain.chain",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:391",
+      "fieldAddress": "transcript.json::hashChain.includesDiagnostics",
+      "invariant": null,
+      "note": "constant true",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:390",
+      "fieldAddress": "transcript.json::hashChain.includesRejected",
+      "invariant": null,
+      "note": "constant true",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:388",
+      "fieldAddress": "transcript.json::hashChain.perEnvelope",
+      "invariant": null,
+      "note": "",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    },
+    {
+      "artifact": "transcript.json",
+      "authority": "UNSOURCED",
+      "emitter": "lib/slots/GenSlotSpec.cpp:384",
+      "fieldAddress": "transcript.json::kind",
+      "invariant": null,
+      "note": "\"neutrino.slot-transcript-policy\"",
+      "observedIn": [
+        "test/ir/domain/Inputs/core_flexible_binding/generated/slot",
+        "test/ir/pipeline/Inputs/core_sample_installment/generated/slot",
+        "test/ir/pipeline/Inputs/core_scheme_settlement/generated/slot",
+        "test/ir/samples/Inputs/core_promo_campaign/generated/slot"
+      ],
+      "optionality": "R",
+      "optionalityPredicate": null,
+      "ordering": "n/a",
+      "sourcePath": null,
+      "unsourcedKind": "literal-constant"
+    }
+  ],
+  "documentId": "urn:neutrino:document:slot-descriptor-authority-v1",
+  "kind": "neutrino.slot-descriptor-authority-inventory",
+  "note": "PROBE/CENSUS ONLY \u2014 grants no retirement authority and adopts no partition. Records where each slot-descriptor field actually comes from in the committed generator.",
+  "partiallyUnsourcedRows": 1,
+  "schemaVersion": 1,
+  "sourceRevision": "sha256:7af1d5eda68f40b8b0baa5d5d3828c82c24d3c076313bb47996abeb570e4f110",
+  "totals": {
+    "fields": 112
+  },
+  "unexercisedEmitterBranches": [
+    {
+      "branch": "refJson emits { \"literal\": <value> } when the spec operand kind == \"literal\"",
+      "censusEffect": "not counted as authority rows \u2014 the observed authority map contains no literal-operand field",
+      "emitter": "lib/slots/GenSlotSpec.cpp:71-77",
+      "evidence": "every effect operand in every committed capability-spec is kind == \"ref\" (136 operands, 0 literal, whole-corpus scan); no committed slot artifact contains a literal operand",
+      "wouldProduce": [
+        "capability.json::entries[].party.literal",
+        "capability.json::entries[].amount.literal",
+        "capability.json::entries[].currency.literal",
+        "capability.json::entries[].idempotencyKey.literal"
+      ]
+    }
+  ],
+  "unobservedAuthorities": [
+    "deploy-coordinate",
+    "finalized-projection",
+    "target-profile"
+  ],
+  "unsourcedKindTotals": {
+    "computed-default": 1,
+    "computed-receipt": 2,
+    "literal-constant": 51,
+    "mixed-literal-spec": 2
+  }
+}

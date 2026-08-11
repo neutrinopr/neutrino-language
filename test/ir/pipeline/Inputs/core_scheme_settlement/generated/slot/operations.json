@@ -1,0 +1,13 @@
+{
+  "kind": "neutrino.slot-operations",
+  "capability": "coordinate.core_scheme_settlement",
+  "operations": [
+    { "operation": "OPEN", "requiresPrior": null, "maps": "initialize workflow key (status NEW)" },
+    { "operation": "NEGOTIATE", "requiresPrior": "OPEN", "maps": "capability / attestation agreement" },
+    { "operation": "PROPOSE", "requiresPrior": "NEGOTIATE", "maps": "compute [fee, net]; stage [debit scheme_principal, credit bank_principal, debit scheme_fee, credit treasury_fee]" },
+    { "operation": "COMMIT", "requiresPrior": "PROPOSE", "maps": "assert_balanced + post the staged legs (replay-protected)" },
+    { "operation": "REJECT", "requiresPrior": "PROPOSE", "maps": "decline; no postings; recorded in transcript" },
+    { "operation": "COMPENSATE", "requiresPrior": "COMMIT", "maps": "reverse the committed legs" },
+    { "operation": "CLOSE", "requiresPrior": null, "maps": "reconciliation + final coordination status" }
+  ]
+}

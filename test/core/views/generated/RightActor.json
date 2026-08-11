@@ -1,0 +1,22 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "synthetic_views",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "5e4111ca58ae3cfe7481abf8fdd558e5eb2d60c3375f6930232aafa7b2162f5c", "specVersion": "1.0.0" },
+  "participant": { "name": "RightActor", "role": "right", "org": "beta", "slotId": "coordinate.synthetic_views#RightActor" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "operation_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 18, "column": 1 } },
+    { "name": "right_id", "type": "party", "specPath": "inputs[2]", "source": { "line": 20, "column": 1 } },
+    { "name": "quantity", "type": "money", "specPath": "inputs[3]", "source": { "line": 21, "column": 1 } },
+    { "name": "unit", "type": "currency", "specPath": "inputs[4]", "source": { "line": 22, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "alpha", "role": "left" }
+  ],
+  "evidenceObligations": [
+    { "leg": "increase", "kind": "credit", "ledger": "synthetic.right", "specPath": "effects[1]", "source": { "line": 33, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

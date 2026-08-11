@@ -1,0 +1,44 @@
+// M5 oracle S5 (): the observation-binding contract — validator + backend portability + fail-closed.
+//
+// The portable capability-spec declares only the observer-set REFERENCE + the M threshold; the binding
+// supplies the concrete observers/keys/source. This drives the committed worked example
+// (examples/observation-binding) through both the stdlib validator and the oracle-observer backend.
+//
+// DEFINE: %{ob} = %examples/observation-binding
+//
+// PORTABILITY: the SAME spec is satisfied by two different deployment bindings (validator + backend).
+// RUN: python3 %scripts/validators/validate_observation_binding.py --binding %{ob}/binding.json --spec %{ob}/capability-spec.json
+// RUN: python3 %scripts/validators/validate_observation_binding.py --binding %{ob}/binding-alt.json --spec %{ob}/capability-spec.json
+// RUN: rm -rf %t.a %t.b
+// RUN: %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/binding.json -o %t.a
+// RUN: ls %t.a/observers/delivery_oracles | %FileCheck %s --check-prefix=CANON
+// CANON-DAG: obs-alpha.js
+// CANON-DAG: obs-gamma.js
+// RUN: %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/binding-alt.json -o %t.b
+// RUN: ls %t.b/observers/delivery_oracles | %FileCheck %s --check-prefix=ALT
+// ALT-DAG: node-fra.js
+// ALT-DAG: node-ams.js
+//
+// FAIL-CLOSED: the validator rejects each negative (M>N, duplicate id, missing key, unsupported source,
+// unbound set, bad kind, unsafe id); the backend refuses to render the ones it sees, before any output.
+// RUN: %not python3 %scripts/validators/validate_observation_binding.py --binding %{ob}/negatives/quorum_infeasible.json --spec %{ob}/capability-spec.json
+// RUN: %not python3 %scripts/validators/validate_observation_binding.py --binding %{ob}/negatives/unbound_observer_set.json --spec %{ob}/capability-spec.json
+// RUN: %not python3 %scripts/validators/validate_observation_binding.py --binding %{ob}/negatives/unsafe_observer_id.json
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/duplicate_observer.json -o %t.neg 2>&1 | %FileCheck %s --check-prefix=DUP
+// DUP: more than once
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/missing_public_key.json -o %t.neg2 2>&1 | %FileCheck %s --check-prefix=KEY
+// KEY: no public key
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/unsupported_source.json -o %t.neg3 2>&1 | %FileCheck %s --check-prefix=SRC
+// SRC: unsupported source type
+//
+// The renderer fails closed on the binding ENVELOPE on its OWN (not only via the standalone
+// validator): a wrong kind/schemaVersion, a missing source descriptor, or a duplicated observer-set
+// ref must all be refused before any observer is written.
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/bad_kind.json -o %t.neg4 2>&1 | %FileCheck %s --check-prefix=KIND
+// KIND: kind' must be 'neutrino.observation-binding'
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/bad_schema_version.json -o %t.neg5 2>&1 | %FileCheck %s --check-prefix=VER
+// VER: schemaVersion' must be 1
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/missing_source_type.json -o %t.neg6 2>&1 | %FileCheck %s --check-prefix=NOTYPE
+// NOTYPE: unsupported source type ''
+// RUN: %not %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/negatives/duplicate_observer_set.json -o %t.neg7 2>&1 | %FileCheck %s --check-prefix=DUPSET
+// DUPSET: bound more than once

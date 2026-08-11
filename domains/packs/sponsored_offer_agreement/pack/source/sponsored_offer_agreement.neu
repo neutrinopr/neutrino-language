@@ -1,0 +1,56 @@
+// Console Demo Network — Milestone 1 lightweight domain.
+//
+// Domain: a sponsor commits a contribution toward a merchant offer. This is an
+// AGREEMENT, not a settlement: it records a balanced *commitment* (sponsor side
+// debited, merchant side credited on commitment ledgers), so the demo exercises
+// the balanced-posting + replay invariant without implying cash moved. Real
+// settlement is the separate Milestone-8 Sponsored Financing Checkout domain.
+//
+// Inputs are typed so the runtime agreement projection (offerId, sponsorId,
+// sponsorContributionMinor, currency, party ids) is populated from declared
+// capability inputs, not invented at runtime.
+
+procedure sponsored_offer_agreement {
+    trigger sponsored_offer_proposed
+
+    participant Sponsor {
+        role = "sponsor"
+        org  = "sponsorco"
+    }
+    participant Merchant {
+        role = "merchant"
+        org  = "acme"
+    }
+    allow "sponsorco" with "acme" {
+        "sponsorco" as "sponsor"
+        "acme" as "merchant"
+    }
+
+    input offer_id     : string
+    input sponsor_id   : party
+    input merchant_id  : party
+    input contribution : money
+    input currency     : currency
+
+    debit sponsor_commitment {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    credit merchant_expected_contribution {
+        ledger          = "merchant.expected_contribution"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    assert balanced
+}

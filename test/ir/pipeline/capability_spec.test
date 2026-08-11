@@ -1,0 +1,11 @@
+// [76] M5 WP1d (): canonical --target=capability-spec is scenario-free, schema-valid, and
+// byte+hash-stable — every committed sample spec (np>=10) regenerates byte-identically from source alone
+// and validates backend-independently; a scenario-required target fails closed without --scenario;
+// canonicalization is byte-stable under a benign field reorder and keeps capabilityHash stable (specHash
+// tracking) under line-shift, non-ASCII round-trip, and envelope-only mutation, while rename moves both;
+// the slot lifecycle + on-chain surface project from the spec's one lifecycle machine; and every top-level
+// AND nested array section + a dead-end state fail closed even with recomputed hashes. The validator's
+// report also carries the bind-able spec identity (/). See check_capability_spec.py.
+//
+// RUN: python3 %S/check_pipeline_inputs.py %S/../../..
+// RUN: python3 %S/check_capability_spec.py %neutrino-gen %examples

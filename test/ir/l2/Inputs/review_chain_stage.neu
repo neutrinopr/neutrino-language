@@ -1,0 +1,50 @@
+// S7 () — a single bounded review STAGE (the assessor), guarded and balanced.
+// One 1-of-N assessor quorum gates a balanced award. Stable to reduce (single
+// attestation), it demonstrates the fail-closed / replay-safe discipline of the
+// leaf primitives: on a quorum MISS the coordination makes no progress and posts
+// NO partial effect; every lifecycle transition is idempotency=reject and the
+// coordination plan is replay-idempotent on the case key (acceptance: "replay/failure
+// no partial effect"). The two-stage ordering across such stages is the part with
+// no representation — see review_chain_ordered.neu.
+procedure review_chain_stage {
+    trigger submitted
+    version "1.0.0"
+
+    input case_id          : string
+    input submitter_id     : party
+    input board_id         : party
+    input amount           : money
+    input currency         : currency
+    input assessor_report  : evidence
+
+    attest assessor_report {
+        quorum           = 1
+        observer_set     = "assessors"
+        assurance        = "A2"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT72H"
+        fallback         = "abort"
+    }
+
+    debit award_out {
+        ledger          = "board.reserve"
+        owner           = "board"
+        party           = %board_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = accepted(assessor_report)
+    }
+    credit award_in {
+        ledger          = "applicant.wallet"
+        owner           = "submitter"
+        party           = %submitter_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = accepted(assessor_report)
+    }
+
+    assert balanced
+}

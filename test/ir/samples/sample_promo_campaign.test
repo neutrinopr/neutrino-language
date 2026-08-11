@@ -1,0 +1,3 @@
+// [74] M3 sample: core_promo_campaign L1/L2/L3 () — L1 balances + slot regenerates byte-stable; reimbursement_mismatch fails to translate; over_budget/invalid_attribution/double_redemption L2 negatives fail closed; L3 Sponsor -> complete. See check_sample_promo_campaign.py (shared M3 L1/L2/L3 harness in m3lib.py).
+//
+// RUN: python3 %S/check_sample_promo_campaign.py %scripts %examples %neutrino-translate %neutrino-gen

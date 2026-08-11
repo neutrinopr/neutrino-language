@@ -1,0 +1,22 @@
+{
+  "kind": "neutrino.binding-receipt",
+  "bindingId": "bnd-7f3a9c21",
+  "status": "active",
+  "agreementHash": "a1b2c3d4e5f60718293a4b5c6d7e8f90112233445566778899aabbccddeeff00",
+  "irHash": "0011223344556677889900aabbccddeeff112233445566778899aabbccddeeff",
+  "capabilityId": "coordinate.core_flexible_binding",
+  "capabilityVersion": "1.0.0",
+  "capabilityHash": "c7719f2d7716bc6817a744cc7e20423c080f350c765ccac7cfc5cc10b9bfd979",
+  "slotId": "core_flexible_binding/Sponsor",
+  "implementationDigest": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+  "runtimeIdentity": "evm:local-anvil:0xA11ce0000000000000000000000000000000A11c",
+  "assuranceTier": "A2",
+  "endpoint": { "rpc": "http://127.0.0.1:8545", "chainId": 31337 },
+  "validity": { "notBefore": "2026-06-23T00:00:00Z", "notAfter": "2026-12-23T00:00:00Z" },
+  "signer": {
+    "org": "sponsorco",
+    "participant": "Sponsor",
+    "signatureSuite": "ed25519",
+    "signature": "MEUCIQ...demo-signature...AgEB"
+  }
+}

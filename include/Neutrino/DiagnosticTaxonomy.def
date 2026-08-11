@@ -1,0 +1,246 @@
+//===- DiagnosticTaxonomy.def - the declarative diagnostic taxonomy -------===//
+//
+// The SINGLE DECLARATIVE SOURCE of the shared failure taxonomy (M5 WP1c ;
+// declarative-source migration M5  D1, ). Each row is one diagnostic
+// code; the C++ table (lib/DiagnosticTaxonomy.cpp) expands these rows via an
+// X-macro, and the auditor-facing JSON (`--diagnostic-taxonomy`,
+// docs/diagnostic-taxonomy.json) + docs/language/DIAGNOSTIC_TAXONOMY.md are emitted from
+// that table — so ALL of them derive from this file. A drift check
+// (self-test [76]/[78]) byte-matches the emitted JSON against the committed
+// docs, so the generated artifacts cannot diverge from this source.
+//
+//   NEUTRINO_DIAG(Category, "code", Status, precedence, "summary", Emitter)
+//
+// Category : a DiagCategory enum name (Frontend/Kernel/Value/Expr/Scenario/
+//            Security/Generate/Equivalence/Classification/Spec/Profile/Legality/
+//            Realization/View/Observation).
+// Status   : Active (emitted today) | Reserved (bound but not yet emitted).
+// precedence: root-cause rank, LOWER = more primary. Spaced so a follow-up rule
+//            slots in without renumbering. Rows are kept in precedence order.
+// Emitter  : Cpp (a C++ tool) | Validator (a stdlib Python validator) | Both.
+//
+// The includer defines NEUTRINO_DIAG before #include and #undefs it after.
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef NEUTRINO_DIAG
+#error "define NEUTRINO_DIAG(Category, Code, Status, Precedence, Summary, Emitter) before including DiagnosticTaxonomy.def"
+#endif
+
+// ---- frontend: source text -> valid IR (most primary: no IR, no anything)
+NEUTRINO_DIAG(Frontend, "source.io", Active, 10, "the source/scenario file could not be read", Cpp)
+NEUTRINO_DIAG(Frontend, "source.parse", Active, 11, "the .neu source could not be lowered to valid IR", Cpp)
+NEUTRINO_DIAG(Frontend, "ir.parse", Active, 12, "the .mlir input could not be parsed", Cpp)
+NEUTRINO_DIAG(Frontend, "ir.verify", Active, 13, "the input IR failed verification", Cpp)
+NEUTRINO_DIAG(Frontend, "input.io", Active, 14, "the input file could not be read (neutrino-equiv)", Cpp)
+// ---- kernel: the semantic verifier (structural before value/flow)
+NEUTRINO_DIAG(Kernel, "kernel.version.invalid", Active, 20, "the declared procedure version is not a semantic version", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.balance.assert_missing", Active, 21, "a value-moving procedure does not declare assert_balanced", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.balance.not_balanceable", Active, 22, "assert_balanced is declared but there is no debit/credit to balance", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.balance.unbalanced", Active, 23, "debits and credits do not move the same (amount, currency)", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.binding.invalid_mode", Active, 24, "a participant binding mode is unsupported (capability-spec: not fixed|to_be_bound; IR: a binding attribute set to something other than to_be_bound)", Both)
+NEUTRINO_DIAG(Kernel, "kernel.binding.policy_without_flag", Active, 25, "a bind policy is set on a participant that is not to_be_bound", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.binding.missing_binder", Active, 26, "a to_be_bound participant declares no authorized binder (org)", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.binding.missing_runtimes", Active, 27, "a to_be_bound participant declares no bind_runtimes allow-list", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.binding.empty_runtime", Active, 28, "a bind_runtimes allow-list contains an empty runtime family", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.binding.invalid_assurance", Active, 29, "bind_min_assurance is not one of A1/A2/A3/A4", Both)
+// ---- attestation policy (oracle S1, ): the M-of-N oracle-consensus policy on an evidence input
+NEUTRINO_DIAG(Kernel, "kernel.attest.invalid_quorum", Active, 30, "an attestation quorum is not a positive integer (M-of-N threshold)", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.attest.missing_observer_set", Active, 31, "an attestation policy declares no observer-set reference", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.attest.invalid_canonicalization", Active, 32, "an attestation canonicalization mode is missing or unsupported (expected exact/median)", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.attest.invalid_fallback", Active, 33, "an attestation quorum-timeout fallback is unsupported (expected abort/escalate)", Cpp)
+// observer-set trust metadata (oracle S6, ): declared assurance tier + independence posture
+NEUTRINO_DIAG(Kernel, "kernel.attest.invalid_assurance", Active, 34, "a declared observer-set assurance tier is unsupported (expected A1/A2/A3/A4)", Both)
+NEUTRINO_DIAG(Kernel, "kernel.attest.invalid_independence", Active, 35, "a declared observer-set independence posture is unsupported (expected independent/correlated)", Both)
+// ---- value model (WP1a, ): typed operands
+NEUTRINO_DIAG(Value, "value_type.mismatch", Active, 36, "an entry operand carries the wrong value category for its role", Cpp)
+// ---- explicit coordination identity + evidence-only coordination
+NEUTRINO_DIAG(Kernel, "kernel.identity.instance_key", Active, 37, "an explicit coordination instance key is undeclared, non-string, or ambiguous", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.identity.evidence_only", Active, 38, "an effectless coordination is not a valid evidence-acceptance action (no explicit key / no attestation)", Cpp)
+NEUTRINO_DIAG(Kernel, "attest.policy.unbound", Active, 39, "a per-policy coordination declares an attestation policy that no effect gates on", Cpp)
+// ---- expression gate (WP1b, )
+NEUTRINO_DIAG(Expr, "expr.unsupported", Active, 40, "a compute expression uses an unsupported function or call shape", Cpp)
+NEUTRINO_DIAG(Expr, "expr.type", Active, 41, "a compute expression uses a governed non-numeric value where a number is " "required", Cpp)
+NEUTRINO_DIAG(Expr, "expr.invalid", Active, 42, "a compute expression is malformed (family/fallback code)", Cpp)
+NEUTRINO_DIAG(Expr, "expr.internal", Active, 43, "an internal error while typing a compute expression", Cpp)
+// ---- scenario document validation
+NEUTRINO_DIAG(Scenario, "scenario.io", Active, 50, "the scenario file could not be read", Cpp)
+NEUTRINO_DIAG(Scenario, "scenario.json", Active, 51, "the scenario is not well-formed JSON", Cpp)
+NEUTRINO_DIAG(Scenario, "scenario.parse", Active, 52, "the scenario could not be parsed into the scenario model", Cpp)
+NEUTRINO_DIAG(Scenario, "scenario.schema", Active, 53, "the scenario violates the scenario schema shape", Cpp)
+NEUTRINO_DIAG(Scenario, "scenario.procedure", Active, 54, "the scenario names a procedure not present in the IR", Cpp)
+NEUTRINO_DIAG(Scenario, "scenario.invalid", Active, 55, "the scenario is invalid for the procedure (inputs/values)", Cpp)
+// ---- security pass (posture, after the artifact is structurally sound)
+NEUTRINO_DIAG(Security, "security.gate", Active, 60, "lowering refused: the capability security pass found hard violations", Cpp)
+NEUTRINO_DIAG(Security, "security.violation", Active, 61, "the capability security pass found hard violations", Cpp)
+// ---- generation / tooling
+NEUTRINO_DIAG(Generate, "usage.target", Active, 70, "an unknown generation target was requested", Cpp)
+NEUTRINO_DIAG(Generate, "generate.security", Active, 71, "generation was blocked by the security gate", Cpp)
+NEUTRINO_DIAG(Generate, "generator.aborted", Active, 72, "a generator subprocess aborted (crash/signal) before completing", Cpp)
+NEUTRINO_DIAG(Generate, "internal", Active, 78, "an unclassified internal fault (fallback)", Cpp)
+// ---- equivalence (post-generation cross-backend agreement)
+NEUTRINO_DIAG(Equivalence, "equivalence.backend_environment_failed", Active, 79, "a configured backend environment failed before compile/runtime execution (neutrino-equiv)", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.reference_mismatch", Active, 80, "a backend disagreed with the reference evaluator", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.backend_failed", Active, 81, "a backend toolchain failed to run (neutrino-equiv)", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.backend_skipped", Active, 82, "a backend was skipped because its toolchain was unavailable " "(neutrino-equiv)", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.spec_artifact_mismatch", Active, 83, "a rendered backend artifact does not structurally reflect the canonical " "spec it was generated from (neutrino-equiv, WP8/)", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.trace_divergence", Active, 84, "a realization's normalized observation trace diverged from the reference evaluator", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.profile_incompatible", Active, 85, "a realization was refused (not compared) because the coordination plan is illegal for its declared profile", Cpp)
+NEUTRINO_DIAG(Equivalence, "equivalence.no_cases", Active, 86, "the equivalence gate executed zero comparison cases (empty trace / all refused) — fails closed", Cpp)
+// ---- classification: the solidity-classification profile validator
+// (),
+// a stdlib validator that ships its codes deferring to this taxonomy.
+NEUTRINO_DIAG(Classification, "classification.io", Active, 90, "a classification input file could not be read", Validator)
+NEUTRINO_DIAG(Classification, "classification.schema", Active, 92, "the classification profile violates its schema shape", Validator)
+NEUTRINO_DIAG(Classification, "classification.schema_version", Active, 93, "an unsupported classification schema version", Validator)
+NEUTRINO_DIAG(Classification, "classification.missing_field", Active, 94, "a required classification field is missing", Validator)
+NEUTRINO_DIAG(Classification, "classification.unknown_field", Active, 95, "an unknown classification field is present", Validator)
+NEUTRINO_DIAG(Classification, "classification.bad_profile_id", Active, 96, "a classification profile id is malformed", Validator)
+NEUTRINO_DIAG(Classification, "classification.duplicate_profile_id", Active, 97, "two classification profiles share an id", Validator)
+NEUTRINO_DIAG(Classification, "classification.profile_version_mismatch", Active, 98, "a classification profile version mismatch", Validator)
+NEUTRINO_DIAG(Classification, "classification.missing_dimension", Active, 99, "a required classification dimension is missing", Validator)
+NEUTRINO_DIAG(Classification, "classification.unknown_dimension", Active, 100, "an unknown classification dimension is present", Validator)
+NEUTRINO_DIAG(Classification, "classification.unknown_dimension_value", Active, 101, "an unknown value for a classification dimension", Validator)
+NEUTRINO_DIAG(Classification, "classification.duplicate_contract", Active, 102, "two classification entries share a contract", Validator)
+NEUTRINO_DIAG(Classification, "classification.source_contract_mismatch", Active, 103, "a classified contract does not match its source", Validator)
+// ---- capability-spec: the canonical executable capability-spec validator
+// (WP1d,
+// ),
+// a stdlib validator that ships its codes deferring to this taxonomy.
+NEUTRINO_DIAG(Spec, "spec.io", Active, 110, "a capability-spec input file could not be read", Validator)
+// Emitted by the C++ capability-spec-consuming renderers (GenSoliditySpec /
+// GenPostgresSpec) when an INGESTED capability-spec's serialized AST or
+// structure is
+// malformed (missing sections, a non-ref idempotency key, no success
+// terminal, a non-int literal operand, etc.). An ill-typed ingested compute
+// is re-typed and rejected as expr.type, not here (--from-spec ingestion,
+// WP6/).
+NEUTRINO_DIAG(Spec, "spec.ast", Active, 111, "an ingested capability-spec's serialized AST or structure is malformed", Cpp)
+NEUTRINO_DIAG(Spec, "spec.schema", Active, 112, "the capability-spec violates its schema shape", Validator)
+NEUTRINO_DIAG(Spec, "spec.schema_version", Active, 113, "an unsupported capability-spec schema version", Validator)
+NEUTRINO_DIAG(Spec, "spec.missing_field", Active, 114, "a required capability-spec field is missing", Validator)
+NEUTRINO_DIAG(Spec, "spec.unknown_field", Active, 115, "an unknown capability-spec field is present", Validator)
+NEUTRINO_DIAG(Spec, "spec.bad_category", Active, 116, "a capability-spec value carries an invalid category", Validator)
+NEUTRINO_DIAG(Spec, "spec.bad_transition", Active, 117, "a capability-spec state transition is malformed", Validator)
+NEUTRINO_DIAG(Spec, "spec.bad_initial_state", Active, 118, "a capability-spec declares an invalid initial state", Validator)
+NEUTRINO_DIAG(Spec, "spec.bad_terminal_state", Active, 119, "a capability-spec declares an invalid terminal state", Validator)
+NEUTRINO_DIAG(Spec, "spec.dead_end_state", Active, 120, "a capability-spec state has no outgoing transition and is not terminal", Validator)
+NEUTRINO_DIAG(Spec, "spec.unresolved_ref", Active, 121, "a capability-spec reference does not resolve", Validator)
+NEUTRINO_DIAG(Spec, "spec.unresolved_dep", Active, 122, "a capability-spec compute dependency does not resolve", Validator)
+NEUTRINO_DIAG(Spec, "spec.unresolved_participant", Active, 123, "a capability-spec participant reference does not resolve", Validator)
+NEUTRINO_DIAG(Spec, "spec.bad_hash", Active, 124, "a capability-spec carries a malformed capability hash", Validator)
+NEUTRINO_DIAG(Spec, "spec.hash_mismatch", Active, 125, "a capability-spec capability hash does not match its content", Validator)
+// ---- profile: the target-profile validator (WP4, /), a stdlib
+// validator that ships its codes deferring to this taxonomy.
+NEUTRINO_DIAG(Profile, "profile.io", Active, 130, "a target-profile file could not be read", Validator)
+NEUTRINO_DIAG(Profile, "profile.schema", Active, 131, "the target profile violates its schema shape", Validator)
+NEUTRINO_DIAG(Profile, "profile.schema_version", Active, 132, "an unsupported target-profile schema version", Validator)
+NEUTRINO_DIAG(Profile, "profile.missing_field", Active, 133, "a required target-profile field is missing", Validator)
+NEUTRINO_DIAG(Profile, "profile.unknown_field", Active, 134, "an unknown target-profile field is present", Validator)
+NEUTRINO_DIAG(Profile, "profile.bad_profile_id", Active, 135, "a target-profile id is malformed", Validator)
+NEUTRINO_DIAG(Profile, "profile.profile_version_mismatch", Active, 136, "a target-profile version mismatch", Validator)
+NEUTRINO_DIAG(Profile, "profile.bad_feature", Active, 137, "a target profile declares an invalid feature", Validator)
+NEUTRINO_DIAG(Profile, "profile.conflicting_feature", Active, 138, "a target profile declares conflicting features", Validator)
+NEUTRINO_DIAG(Profile, "profile.unknown_semantic_feature", Active, 139, "a target profile advertises a semanticProfile feature outside the closed  registry", Validator)
+// ---- legality: the fail-closed spec-legality gate (WP4, /). The
+// canonical Python gate (check_spec_legality.py) is mirrored in-process by
+// neutrino-gen at the renderer entry (WP6/), so these codes are emitted
+// by BOTH sides — a parity self-test pins the two agree on accept/reject.
+NEUTRINO_DIAG(Legality, "legality.io", Active, 140, "a legality-gate input file could not be read", Both)
+NEUTRINO_DIAG(Legality, "legality.bad_input", Active, 141, "the legality gate received malformed input", Both)
+NEUTRINO_DIAG(Legality, "legality.target_mismatch", Active, 142, "a spec targets a profile it does not match", Both)
+NEUTRINO_DIAG(Legality, "legality.unsupported_feature", Active, 143, "a spec requires a feature the target profile does not support", Both)
+NEUTRINO_DIAG(Legality, "legality.advisory", Active, 144, "a non-blocking legality advisory", Both)
+// ---- semantic realization legality (): the coordination-plan legality gate
+// matches a verified CoordinationPlan's normalized semantic requirements +
+// metrics against a target's SemanticProfile (built-in reference evaluator or a
+// file-backed solidity/postgres profile) BEFORE evaluator/lowering dispatch.
+// C++-only (the in-process dispatch gate) — no standalone Python twin.
+NEUTRINO_DIAG(Legality, "legality.unknown_profile_version", Active, 145, "a semantic profile declares a missing or unknown contract version", Cpp)
+NEUTRINO_DIAG(Legality, "legality.unknown_requirement", Active, 146, "a coordination plan requires a semantic feature outside the closed requirement registry", Cpp)
+NEUTRINO_DIAG(Legality, "legality.limit_exceeded", Active, 147, "a coordination plan exceeds a numeric/resource limit the target profile bounds", Cpp)
+// ---- realization: the test-realization companion validator (WP2, ), a
+// stdlib validator that ships its codes deferring to this taxonomy.
+NEUTRINO_DIAG(Realization, "realization.io", Active, 150, "a test-realization input file could not be read", Validator)
+NEUTRINO_DIAG(Realization, "realization.json", Active, 151, "the test-realization is not well-formed JSON", Validator)
+NEUTRINO_DIAG(Realization, "realization.schema", Active, 152, "the test-realization violates its schema shape", Validator)
+NEUTRINO_DIAG(Realization, "realization.schema_version", Active, 153, "an unsupported test-realization schema version", Validator)
+NEUTRINO_DIAG(Realization, "realization.missing_field", Active, 154, "a required test-realization field is missing", Validator)
+NEUTRINO_DIAG(Realization, "realization.unknown_field", Active, 155, "an unknown test-realization field is present", Validator)
+NEUTRINO_DIAG(Realization, "realization.bad_hash", Active, 156, "the test-realization capabilityHash is malformed", Validator)
+NEUTRINO_DIAG(Realization, "realization.hash_mismatch", Active, 157, "the test-realization capabilityHash does not match the referenced spec", Validator)
+// ---- view: the participant-view validator (M5, ), a stdlib validator
+// that ships its codes deferring to this taxonomy.
+NEUTRINO_DIAG(View, "view.io", Active, 160, "a participant-view input file could not be read", Validator)
+NEUTRINO_DIAG(View, "view.json", Active, 161, "the participant view is not well-formed JSON", Validator)
+NEUTRINO_DIAG(View, "view.schema", Active, 162, "the participant view violates its schema shape", Validator)
+NEUTRINO_DIAG(View, "view.schema_version", Active, 163, "an unsupported participant-view schema version", Validator)
+NEUTRINO_DIAG(View, "view.missing_field", Active, 164, "a required participant-view field is missing", Validator)
+NEUTRINO_DIAG(View, "view.unknown_field", Active, 165, "an unknown participant-view field is present", Validator)
+NEUTRINO_DIAG(View, "view.bad_hash", Active, 166, "the participant-view capabilityHash is malformed", Validator)
+NEUTRINO_DIAG(View, "view.hash_mismatch", Active, 167, "the participant-view capabilityHash does not match the referenced spec", Validator)
+NEUTRINO_DIAG(View, "view.contract_mismatch", Active, 168, "the participant view disagrees with the referenced spec's contract/ops", Validator)
+NEUTRINO_DIAG(View, "view.unresolved_path", Active, 169, "a participant-view specPath/source does not resolve in the " "capability-spec", Validator)
+// ---- observation: the domain-observation-set corpus-extraction validator
+// (S0, ), a stdlib validator that ships its codes deferring to this
+// taxonomy. The DETERMINISTIC middle stage between the governed corpus
+// manifest and the AI-assisted vocabulary proposal — so its trust-boundary
+// code (ai_field_forbidden) rejects confidence/reviewStatus/model metadata.
+NEUTRINO_DIAG(Observation, "observation.io", Active, 170, "a domain-observation-set input file could not be read", Validator)
+NEUTRINO_DIAG(Observation, "observation.schema", Active, 171, "the domain-observation-set violates its schema shape", Validator)
+NEUTRINO_DIAG(Observation, "observation.schema_version", Active, 172, "an unsupported domain-observation-set schema version", Validator)
+NEUTRINO_DIAG(Observation, "observation.bad_kind", Active, 173, "the document kind is not neutrino.domain-observation-set", Validator)
+NEUTRINO_DIAG(Observation, "observation.missing_field", Active, 174, "a required domain-observation-set field is missing", Validator)
+NEUTRINO_DIAG(Observation, "observation.unknown_field", Active, 175, "an unknown domain-observation-set field is present", Validator)
+NEUTRINO_DIAG(Observation, "observation.ai_field_forbidden", Active, 176, "an AI-trust field (confidence/reviewStatus/model/prompt/temperature/" "citations) is present — observations are deterministic facts", Validator)
+NEUTRINO_DIAG(Observation, "observation.bad_hash", Active, 177, "corpusRef.contentHash is not a well-formed sha256 content binding", Validator)
+NEUTRINO_DIAG(Observation, "observation.unknown_dimension", Active, 178, "an observation references a dimension not declared in dimensions", Validator)
+NEUTRINO_DIAG(Observation, "observation.unknown_dimension_value", Active, 179, "an observation value is not in its dimension's controlled vocabulary", Validator)
+NEUTRINO_DIAG(Observation, "observation.duplicate_id", Active, 180, "two observations share the same id", Validator)
+NEUTRINO_DIAG(Observation, "observation.span_inverted", Active, 181, "a provenance span has startLine > endLine", Validator)
+// ---- domain: the L2 domain layer (). Versioned import resolution runs the
+// domain's l2.import records against the cross-rail registry and fails closed on
+// a dangling, unknown-version, ambiguous, or cyclic mapping (neutrino-emit
+// --kind=domain-imports).
+NEUTRINO_DIAG(Domain, "domain.import.dangling", Active, 190, "an l2.import resolves to no capability in the registry", Cpp)
+NEUTRINO_DIAG(Domain, "domain.import.unknown", Active, 191, "an l2.import names a registered capability but not at the imported version", Cpp)
+NEUTRINO_DIAG(Domain, "domain.import.ambiguous", Active, 192, "an l2.import resolves to more than one registry entry", Cpp)
+NEUTRINO_DIAG(Domain, "domain.import.cyclic", Active, 193, "the transitive l2.import graph contains a cycle", Cpp)
+NEUTRINO_DIAG(Domain, "domain.import.ungoverned", Active, 194, "an l2.import's registry entry has no governed v2 sidecar, or that sidecar is invalid or fails its hash / identity pin", Cpp)
+// ---- spec lifecycle field-specific schema codes (): the three GENUINELY NEW field codes for the
+// synthesized-lifecycle enum fields that have no existing semantic code (the reserved kernel.state/
+// idempotency/effect codes cover different, IR-verifier semantics). Registered APPEND-ONLY at the active
+// tail at their original ordinals 199-201; ordinals 195-198 were allocated to four field codes that were
+// withdrawn in favour of reusing the kernel.binding.*/kernel.attest.* codes (below, now emitter Both) and
+// are left as permanent GAPS — the precedence namespace is append-only, withdrawn ordinals are not recycled.
+NEUTRINO_DIAG(Spec, "spec.terminal_kind", Active, 199, "a capability-spec state terminal kind is invalid", Validator)
+NEUTRINO_DIAG(Spec, "spec.transition_idempotency", Active, 200, "a capability-spec transition idempotency policy is invalid", Validator)
+NEUTRINO_DIAG(Spec, "spec.transition_effect", Active, 201, "a capability-spec transition effect kind is invalid", Validator)
+// ---- obligation (L1 v0.2 O1, ): the structural verifier for the first-class
+// undertaking op. Distinct from effect execution; every reference is resolved in
+// the enclosing procedure with no domain/backend vocabulary. Root-cause ordered:
+// identity/obligor, then scope, then predicate, then the authorized effect set.
+NEUTRINO_DIAG(Kernel, "kernel.obligation.identity", Active, 202, "an obligation declares an empty or whitespace identity (sym_name)", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.obligor", Active, 203, "an obligation's obligor is empty or does not resolve to exactly one declared participant", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.scope", Active, 204, "an obligation's scoped beneficiary or authority is empty or does not resolve to exactly one declared participant", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.ambiguous_ref", Active, 205, "an obligation reference (obligor/scope/effect) resolves to more than one declaration of that name — order-dependent resolution is refused", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.predicate", Active, 206, "an obligation's activation predicate is missing (when text and when_ast must both be present)", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.effects_empty", Active, 207, "an obligation authorizes an empty (vacuous) set of value effects", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.not_an_effect", Active, 208, "an obligation's effect reference does not resolve to a declared value effect (debit/credit) — it is absent, or names a participant/obligation/other op", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.obligation.duplicate_effect", Active, 209, "an obligation declares the same value-effect reference more than once", Cpp)
+// ---- RESERVED: kernel rules the WP1c follow-ups will emit (). Named
+// now so target profiles and later slices bind to a stable code; NOT
+// emitted
+// until the modeling primitive (state machines, compensation, reservations,
+// evidence gates, ordering) exists in the kernel.
+NEUTRINO_DIAG(Kernel, "kernel.state.guard_undeclared_state", Reserved, 210, "a guard references a state that is not declared", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.state.nonterminal_success", Reserved, 211, "a non-terminal state is treated as a successful exit", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.effect.unreachable", Reserved, 212, "an effect is not reachable through any transition", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.effect.abort_value_effect", Reserved, 213, "an abort/contested transition performs a non-compensating value effect", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.compensation.not_inverse", Reserved, 214, "a compensation does not invert the committed effect", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.reservation.not_conserved", Reserved, 215, "a reserved value is neither consumed, released, nor explicitly " "outstanding", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.idempotency.inconsistent", Reserved, 216, "idempotency policy is inconsistent with the instance key / transitions", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.ordering.undeclared_scope", Reserved, 217, "a guard depends on an ordering scope / time source not declared first", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.participant.guard_undeclared", Reserved, 218, "a participant guard references an undeclared participant/role/slot", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.target.requirement_unbacked", Reserved, 219, "a target feature requirement does not trace to a source-backed " "primitive", Cpp)
+NEUTRINO_DIAG(Kernel, "kernel.evidence.gate_unsatisfiable", Reserved, 220, "an evidence requirement / admission gate cannot be satisfied", Cpp)

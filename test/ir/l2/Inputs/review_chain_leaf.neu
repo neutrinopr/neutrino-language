@@ -1,0 +1,77 @@
+// S7 ( / ) — LEAF CONTROL for the bounded review-chain composite forcing.
+//
+// The two review stages expressed with ONLY the current source vocabulary and NO
+// cross-stage ordering: a 1-of-N assessor quorum over `assessor_report` and a
+// 1-of-N reviewer quorum over `reviewer_signoff`, plus a balanced award. This is
+// the flat/concurrent control — it reduces cleanly through the verified waist,
+// proving the chain's LEAF primitives (attestation:quorum ×2, effect:debit/credit,
+// invariant:balanced, terminal) are all present. What it CANNOT carry is the
+// assessor-before-reviewer ordering; the reduced coordination plan lists the two
+// attestations as an unordered set folded into one shared lifecycle machine, with
+// no concept->concept ordering edge. The `review_chain_ordered.neu` sibling adds
+// exactly that ordering and is refused by the front end before any lowering.
+procedure review_chain_leaf {
+    trigger submitted
+    version "1.0.0"
+
+    participant Submitter {
+        role = "submitter"
+        org  = "applicantco"
+    }
+    participant Board {
+        role = "board"
+        org  = "boardco"
+    }
+    allow "applicantco" with "boardco" {
+        "applicantco" as "submitter"
+        "boardco" as "board"
+    }
+
+    input case_id          : string
+    input submitter_id     : party
+    input board_id         : party
+    input amount           : money
+    input currency         : currency
+    input assessor_report  : evidence
+    input reviewer_signoff : evidence
+
+    attest assessor_report {
+        quorum           = 1
+        observer_set     = "assessors"
+        assurance        = "A2"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT72H"
+        fallback         = "abort"
+    }
+    attest reviewer_signoff {
+        quorum           = 1
+        observer_set     = "reviewers"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT72H"
+        fallback         = "abort"
+    }
+
+    debit award_out {
+        ledger          = "board.reserve"
+        owner           = "board"
+        participant     = "Board"
+        party           = %board_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %case_id
+    }
+    credit award_in {
+        ledger          = "applicant.wallet"
+        owner           = "submitter"
+        participant     = "Submitter"
+        party           = %submitter_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %case_id
+    }
+
+    assert balanced
+}

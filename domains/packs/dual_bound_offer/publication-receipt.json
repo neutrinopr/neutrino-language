@@ -1,0 +1,138 @@
+{
+  "contentDigest": "sha256:af9dcec1d74ca706f489a46abb2041992e83bfe6b0a0153b1c9c805610ef82af",
+  "coreContractBundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+  "declaredPackDigest": "sha256:361ff00370f3b946384c9d97a4c891257e42ba24406957d04cadfc50a0733221",
+  "kind": "neutrino.public-pack-receipt/1",
+  "members": [
+    {
+      "bytes": 5205,
+      "mode": "100644",
+      "path": "pack.json",
+      "sha256": "ba910007b5e6294d0c8c7c23be3de275aa454f37e42d64d44348ec1e8c1d6004"
+    },
+    {
+      "bytes": 9445,
+      "mode": "100644",
+      "path": "generated/capability-spec/capability-spec.json",
+      "sha256": "de95335fa1b4ea0f81412836742f2cb2c5d74fdd4021deb8bd82d97472370765"
+    },
+    {
+      "bytes": 3459,
+      "mode": "100644",
+      "path": "generated/postgres/procedure.sql",
+      "sha256": "eddc7d20a08b3bd6237f01fdd60e1ef582263fa2e6fab8cf4711533575848281"
+    },
+    {
+      "bytes": 265,
+      "mode": "100644",
+      "path": "generated/postgres/reconciliation.sql",
+      "sha256": "9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "bytes": 3872,
+      "mode": "100755",
+      "path": "generated/postgres/run_db_test.sh",
+      "sha256": "68d3818cb9957f11561d3de165669209d3e134c07ecb09420416d1bca4cd8e4e"
+    },
+    {
+      "bytes": 1909,
+      "mode": "100644",
+      "path": "generated/postgres/schema.sql",
+      "sha256": "a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "bytes": 1245,
+      "mode": "100644",
+      "path": "generated/slot/binding-topology.json",
+      "sha256": "4b56c7c045e36cec2e070d1abdcd47521f0a239cdb76be8d07a76c061376ced6"
+    },
+    {
+      "bytes": 2098,
+      "mode": "100644",
+      "path": "generated/slot/capability.json",
+      "sha256": "917bbdf1deef93a30c1fc13b7becddcd28b206d5b5b35d47a123f0046aa030fa"
+    },
+    {
+      "bytes": 849,
+      "mode": "100644",
+      "path": "generated/slot/capability.lock",
+      "sha256": "2ce0f661b3d8de810d79a23dc4e3b542cd157d5fb57b1bf10a864dab54358b17"
+    },
+    {
+      "bytes": 626,
+      "mode": "100644",
+      "path": "generated/slot/compensation.json",
+      "sha256": "a45b82a60f2d14688c6e50a91126a107083f8f861b28a9ebd0db90f6d0478260"
+    },
+    {
+      "bytes": 1610,
+      "mode": "100644",
+      "path": "generated/slot/envelope.schema.json",
+      "sha256": "6c3907e6ad94b8734f5f209284d6b806d5790dd2bdf5831f3e506eec7e8fc221"
+    },
+    {
+      "bytes": 922,
+      "mode": "100644",
+      "path": "generated/slot/operations.json",
+      "sha256": "74cc11774433f81321d439ff5116d917b0b27eb4b283150eeeafb5cd66a6cbf3"
+    },
+    {
+      "bytes": 583,
+      "mode": "100644",
+      "path": "generated/slot/transcript.json",
+      "sha256": "f8adff3cac9da2a7fc644e159cf4ddaef8f9e918730b375f460d42ec2b437d4b"
+    },
+    {
+      "bytes": 160,
+      "mode": "100644",
+      "path": "generated/solidity/foundry.toml",
+      "sha256": "d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "bytes": 2382,
+      "mode": "100644",
+      "path": "generated/solidity/src/DualBoundOffer.sol",
+      "sha256": "775d132b2102054af0f348d76cdc32ed1e3bf3048ab67520c3943dfce184973e"
+    },
+    {
+      "bytes": 3915,
+      "mode": "100644",
+      "path": "generated/solidity/test/DualBoundOffer.t.sol",
+      "sha256": "d238db81ad81289ff5ac223202719ec059d0a80d90c31e44a3970002b30b015b"
+    },
+    {
+      "bytes": 732,
+      "mode": "100644",
+      "path": "generated/test-realization/test-realization.json",
+      "sha256": "b47a0a1a70a7441a72fefcb3b8c6a83212ae338915259d38294d67c57678b10d"
+    },
+    {
+      "bytes": 1494,
+      "mode": "100644",
+      "path": "generated/views/Merchant.json",
+      "sha256": "11e8f9d86049db88a407d3426a0450be1fe56c710198398b2523f82fe62efcf5"
+    },
+    {
+      "bytes": 1478,
+      "mode": "100644",
+      "path": "generated/views/Sponsor.json",
+      "sha256": "58dc32666d66ea9be6756ed651d35e80b74a7d3b9116153e0eb51cadfc21e9f2"
+    },
+    {
+      "bytes": 435,
+      "mode": "100644",
+      "path": "scenario/dual_bound_offer_happy_path.json",
+      "sha256": "c068f0795ec8db7d5e492df91348bf50719e58a57adf89b8b54bbf79ef465a45"
+    },
+    {
+      "bytes": 2847,
+      "mode": "100644",
+      "path": "source/dual_bound_offer.neu",
+      "sha256": "41bb84035ad16f045f4194e58d828adaf02464577f99613deb6e7c733c0f412a"
+    }
+  ],
+  "packId": "dual_bound_offer",
+  "packPath": "domains/packs/dual_bound_offer/pack",
+  "receiptIdentity": "sha256:0934d414883940f361473216cfdd939c37e07d98565a178421e0fa226d056b18",
+  "schemaVersion": 1
+}

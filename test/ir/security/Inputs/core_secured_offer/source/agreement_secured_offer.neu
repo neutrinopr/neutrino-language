@@ -1,0 +1,57 @@
+// `agreement` surface sugar — the same secured capability as
+// `core_secured_offer.neu`, written with the high-level header.
+//
+//   agreement NAME between A and B { ... }
+//
+// desugars (in the frontend) to `procedure NAME { ... }` plus:
+//   - two declared participants A and B, each with a default role = the party
+//     name lowercased. A `participant A { ... }` block in the body augments that
+//     declaration (adds org/capabilities, overrides role) instead of repeating
+//     it — so here Sponsor/Merchant need only supply their org.
+//   - an auto-emitted `allow "<orgA>" with "<orgB>"` org-pair policy, inferred
+//     from the two parties' orgs, so cross-org coordination satisfies the
+//     topology gate without a hand-written `allow` line.
+//
+// The result is byte-identical to the explicit procedure form: same participants,
+// same allow policy, same security report (asserted by self-test [29]).
+
+agreement core_secured_offer between Sponsor and Merchant {
+    trigger sponsored_offer_proposed
+    version "1.0.0"
+
+    participant Sponsor {
+        capabilities = ["commit_funds"]
+        org          = "sponsorco"
+    }
+    participant Merchant {
+        org = "acme"
+    }
+
+    input offer_id     : string
+    input sponsor_id   : party
+    input merchant_id  : party
+    input contribution : money
+    input currency     : currency
+
+    debit sponsor_commitment {
+        ledger          = "sponsor.commitment"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    credit merchant_expected_contribution {
+        ledger          = "merchant.expected_contribution"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %contribution
+        currency        = %currency
+        idempotency_key = %offer_id
+    }
+
+    assert balanced
+}

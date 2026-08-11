@@ -1,0 +1,8 @@
+// Deterministic, receipt-verified M6 pack resolver (): positive hydration of
+// the in-repo pack-v2 fixture with zero diagnostics, end-to-end fail-closed
+// rejection of a tampered payload byte through the reused public verifier, the
+// required complete `packs` schema block, and pack-only no-fallback behavior.
+//
+// RUN: python3 %S/check_pack_resolver.py %examples/.. \
+// RUN:   %S/Inputs/pack-v2 %S/Inputs/pack-v2-receipt/receipt.json \
+// RUN:   %scripts/gates/m6_pack_resolver.py

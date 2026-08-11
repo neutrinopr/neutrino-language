@@ -1,0 +1,177 @@
+{
+  "compileDefinitions": [
+    "NEUTRINO_PROJECTION_CONSUMER_ONLY"
+  ],
+  "consumerHeaders": [
+    "include/Neutrino/BackendProjectionDriver.h",
+    "include/Neutrino/RecipeSessionStore.h"
+  ],
+  "contractDigest": "sha256:580572b4a62dbcd9d174050b83956cbf0d17d47a4e23cc3c86924c18e1f0fd1a",
+  "dependencies": [
+    {
+      "identity": "LLVM Support",
+      "majorVersion": 15
+    }
+  ],
+  "headers": [
+    {
+      "byteLen": 29237,
+      "path": "include/Neutrino/BackendProjection.h",
+      "sha256": "sha256:a624d5e7151f613da75ff5b257f096d16684c18974723b80c1fd3d0503c4136d"
+    },
+    {
+      "byteLen": 828,
+      "path": "include/Neutrino/BackendProjectionCodec.h",
+      "sha256": "sha256:ba09dd35490311a73a821fffc3665f12796071661b7af97077753a63450d8af2"
+    },
+    {
+      "byteLen": 3318,
+      "path": "include/Neutrino/BackendProjectionDriver.h",
+      "sha256": "sha256:44ecdad2d9097841bdd87a44c37bc1ec956a0d454374040c882c0d7498c39ede"
+    },
+    {
+      "byteLen": 5027,
+      "path": "include/Neutrino/BackendProtocol.h",
+      "sha256": "sha256:e740bddddf57219fbfbf45b9efb30e3d003cfbf31d8beb462855124c6f6e9fa2"
+    },
+    {
+      "byteLen": 830,
+      "path": "include/Neutrino/BackendStartup.h",
+      "sha256": "sha256:d6df2b7aa1fa95efae7db81d83997c85538a3ab448f4164aa07fecd74854e4bd"
+    },
+    {
+      "byteLen": 12060,
+      "path": "include/Neutrino/CodeText.h",
+      "sha256": "sha256:7461f763ab2080c02613ecb4fda2686ed6c0c46db91f7944ab969d0a3984d439"
+    },
+    {
+      "byteLen": 7422,
+      "path": "include/Neutrino/Expr.h",
+      "sha256": "sha256:b1cdbf2bdd9fba61fb567c9b969ee1764dc5f98f1806dc3298453f457be92fcc"
+    },
+    {
+      "byteLen": 2826,
+      "path": "include/Neutrino/JsonUtil.h",
+      "sha256": "sha256:8e6bbb647093bad33506dde03aa112abec99aae57025a3046a10ccb0cc5c7e91"
+    },
+    {
+      "byteLen": 513,
+      "path": "include/Neutrino/ProjectionGateMode.h",
+      "sha256": "sha256:18cb213e9c97adf5295a0447a9a48bfa6bff4d4c4fd8436497f72b76ad1d2765"
+    },
+    {
+      "byteLen": 10113,
+      "path": "include/Neutrino/RecipeModule.h",
+      "sha256": "sha256:f26b0b3cc2b714f96dabf0584c2a01d868ed103f7accb58ca86576e746742121"
+    },
+    {
+      "byteLen": 2603,
+      "path": "include/Neutrino/RecipeProviderRegistry.h",
+      "sha256": "sha256:7001a1df78ed28ef5728dfae98225a25ca1a613a6a275025b887844fc9ae31e5"
+    },
+    {
+      "byteLen": 15223,
+      "path": "include/Neutrino/RecipeRuntime.h",
+      "sha256": "sha256:0d4521963910d3415815e3897f9d568d706f945021b7f49ff597b1b727299e9e"
+    },
+    {
+      "byteLen": 11444,
+      "path": "include/Neutrino/RecipeSessionStore.h",
+      "sha256": "sha256:f69203df27a165437e4ff8086d51f69898c3555ea82b3f0e7ddf500841f2bf68"
+    },
+    {
+      "byteLen": 581,
+      "path": "include/Neutrino/StrCase.h",
+      "sha256": "sha256:e94c7ac0a192bcba1c3f26c54a1254df12b029ecbb458c456439c9bbe8ef68c4"
+    },
+    {
+      "byteLen": 8236,
+      "path": "include/Neutrino/TargetPrinter.h",
+      "sha256": "sha256:8e36e4db2b7ad0773d5beb2d528d268a321808adc0c73dadec65129e409007bf"
+    },
+    {
+      "byteLen": 3594,
+      "path": "include/Neutrino/ValueModel.h",
+      "sha256": "sha256:94f0922f76d371d45d8abd4f0cdab0340c05ee8430ece846f46b3d5520819bad"
+    }
+  ],
+  "kind": "neutrino.backend-source-runtime/1",
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "byteLen": 8538,
+      "path": "lib/codetext/CodeText.cpp",
+      "sha256": "sha256:dfb3e12185bf871d07678e3eb8039e28fd0f9a23478c75dda3c466feb510db4f"
+    },
+    {
+      "byteLen": 20632,
+      "path": "lib/codetext/TargetPrinter.cpp",
+      "sha256": "sha256:87ba11d148e6f367f7dd67fb8a4f9d803b75757a2716db81bf3c2bf910888f11"
+    },
+    {
+      "byteLen": 3082,
+      "path": "lib/recipe/RecipeExecutor.cpp",
+      "sha256": "sha256:9609c075abd256f438f85999751298929b13781070f4f2c99a573da73dec894a"
+    },
+    {
+      "byteLen": 16201,
+      "path": "lib/recipe/RecipeInterpreter.cpp",
+      "sha256": "sha256:31945b412ccae34b2a0fc7c1ed9b7e28fa42ce40d32d147330e7f3c05b7fb7fd"
+    },
+    {
+      "byteLen": 1101,
+      "path": "lib/recipe/RecipeModule.cpp",
+      "sha256": "sha256:7e1abc1229bc52dc57aead34ee08253c9600005a16154658f88fe2cd5b9a6de3"
+    },
+    {
+      "byteLen": 2126,
+      "path": "lib/recipe/RecipeProviderRegistry.cpp",
+      "sha256": "sha256:d354d2ec342cb8dee2201680ed64537691075d6ec7525ddcda41024380e58599"
+    },
+    {
+      "byteLen": 2591,
+      "path": "lib/recipe/RecipeRuntime.cpp",
+      "sha256": "sha256:1defccf7752c13e0a1a7f1ad4697d7365fd1f4f74cddc4c90b9ba3ee5890b839"
+    },
+    {
+      "byteLen": 86350,
+      "path": "lib/spec-contract/BackendProjection.cpp",
+      "sha256": "sha256:a41ee12b25025b050dfc00583ce27ab87a3693237f55c417cd61492093e5067c"
+    },
+    {
+      "byteLen": 23410,
+      "path": "lib/spec-contract/BackendProjectionCodec.cpp",
+      "sha256": "sha256:a3f17a817e8e5ffc73fa3e3b7b86c461257dd60ae62fa651fd0ffa18e1c76c47"
+    },
+    {
+      "byteLen": 41577,
+      "path": "lib/spec-contract/BackendProtocol.cpp",
+      "sha256": "sha256:a9272554456215fea7a0d0120664f95bce618cdbfc1ef7ce87c8e4c3a7fd67ac"
+    },
+    {
+      "byteLen": 2904,
+      "path": "lib/spec-contract/BackendStartup.cpp",
+      "sha256": "sha256:b65389ec37a44fe7f68c9f5714bfe3282e1a2885435c4bb459a7dc58838f6231"
+    },
+    {
+      "byteLen": 22754,
+      "path": "lib/spec-contract/Expr.cpp",
+      "sha256": "sha256:fe3a581ad20defd6ad266cc1f88439a7a203af0288f3aa27239cb26092fd7db3"
+    },
+    {
+      "byteLen": 4070,
+      "path": "lib/spec-contract/JsonUtil.cpp",
+      "sha256": "sha256:9d84bc91bdc03911b235a34d1a46a503546a5bfa53bb6bd7cdece76d039a9ead"
+    },
+    {
+      "byteLen": 1239,
+      "path": "lib/spec-contract/StrCase.cpp",
+      "sha256": "sha256:214cd77c138f7d6ced5bca1870d25a70cda8e93c6cac9928f947ae569c52b39d"
+    },
+    {
+      "byteLen": 2798,
+      "path": "lib/spec-contract/ValueModel.cpp",
+      "sha256": "sha256:55c499dbea4d7684697e6ab12a0d00fbd7f4bc8e1950ba2396be09d0de3084e1"
+    }
+  ]
+}

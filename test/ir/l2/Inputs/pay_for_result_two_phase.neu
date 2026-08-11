@@ -1,0 +1,61 @@
+// S8 () narrow negative control: an unguarded debit paired with a guarded
+// credit is a mixed-guard partial transfer. The balance verifier refuses it
+// ([kernel.balance.unbalanced] ) because guarded legs must balance under the
+// same guard. This fixture does not encode or claim a timeout refund/reversal.
+procedure pay_for_result {
+    trigger job_posted
+    version "1.0.0"
+    instance_key job_id
+
+    participant Requester {
+        role = "requester"
+        org  = "requesterco"
+    }
+    participant Worker {
+        role = "worker"
+        org  = "workerco"
+    }
+    allow "requesterco" with "workerco" {
+        "requesterco" as "requester"
+        "workerco" as "worker"
+    }
+
+    input job_id       : string
+    input requester_id : party
+    input worker_id    : party
+    input bounty       : money
+    input currency     : currency
+    input result_proof : evidence
+
+    attest result_proof {
+        quorum           = 2
+        observer_set     = "result_validators"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT48H"
+        fallback         = "abort"
+    }
+
+    debit bounty_out {
+        ledger          = "requester.escrow"
+        owner           = "requester"
+        participant     = "Requester"
+        party           = %requester_id
+        amount          = %bounty
+        currency        = %currency
+        idempotency_key = %job_id
+    }
+    credit bounty_in {
+        ledger          = "worker.wallet"
+        owner           = "worker"
+        participant     = "Worker"
+        party           = %worker_id
+        amount          = %bounty
+        currency        = %currency
+        idempotency_key = %job_id
+        when            = accepted(result_proof)
+    }
+
+    assert balanced
+}

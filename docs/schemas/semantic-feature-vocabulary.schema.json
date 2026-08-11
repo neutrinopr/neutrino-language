@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/semantic-feature-vocabulary/v1",
+  "title": "neutrino.semantic-feature-vocabulary",
+  "description": "The CLOSED  semantic-requirement vocabulary: the finite set of <dimension>:<value> feature strings a verified CoordinationPlan may require, pinned to semanticProfileVersion. Emitted by `neutrino-translate --semantic-feature-vocabulary` from neutrino::knownSemanticFeatures() (the single source of truth) and byte-matched by CI; consumed by the target-profile validator, the bundle generator, and the released domain-pack verifier so no hand-maintained table drifts. Distinct from the OPEN  supportedFeatures namespace. Fail-closed (additionalProperties:false).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "semanticProfileVersion", "features"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "neutrino.semantic-feature-vocabulary"
+    },
+    "semanticProfileVersion": {
+      "description": "The closed semantic-profile contract version (VersionInfo.h kSemanticProfileVersion) this vocabulary is pinned to; a target profile pinned to a different version fails closed.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "features": {
+      "description": "The closed, sorted, unique set of semantic-requirement feature strings.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z_]*:[a-z][a-z0-9_]*$"
+      }
+    }
+  }
+}

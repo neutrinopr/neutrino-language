@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/m7-core-export-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "manifestDigest",
+    "files",
+    "configuredTargets",
+    "tests",
+    "dependencies",
+    "installedInterface",
+    "installedExport"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.m7-core-export-report/1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "manifestDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "byteLen",
+          "mode",
+          "provenance"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "byteLen": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "pattern": "^0[0-7]{3}$"
+          },
+          "provenance": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "build-graph",
+                "configure-graph",
+                "reviewed-overlay"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "configuredTargets": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "installedInterface": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "byteLen",
+          "mode"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "byteLen": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "pattern": "^0[0-7]{3}$"
+          }
+        }
+      }
+    },
+    "installedExport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "cppAbiPolicy",
+        "internalTargets",
+        "internalSourceHeaders",
+        "internalGeneratedHeaders",
+        "publicTargets",
+        "publicHeaders",
+        "cmakeExports",
+        "protocolContract"
+      ],
+      "properties": {
+        "kind": {
+          "const": "neutrino.m7-core-installed-export/1"
+        },
+        "cppAbiPolicy": {
+          "const": "forbidden"
+        },
+        "internalTargets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "internalSourceHeaders": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "internalGeneratedHeaders": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "publicTargets": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "publicHeaders": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "cmakeExports": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "protocolContract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "boundary",
+            "canonicalProjectionSchema",
+            "protocol",
+            "startup"
+          ],
+          "properties": {
+            "boundary": {
+              "type": "string"
+            },
+            "canonicalProjectionSchema": {
+              "type": "string"
+            },
+            "protocol": {
+              "const": "neutrino.backend-protocol/1"
+            },
+            "startup": {
+              "const": "neutrino.backend-startup/1"
+            }
+          }
+        }
+      }
+    }
+  }
+}

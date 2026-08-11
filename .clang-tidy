@@ -1,0 +1,39 @@
+# Translator static-analysis gate (Trust lane — Translator track, step 2).
+#
+# Security-first: bugprone / clang static-analyzer / cert (security-relevant)
+# findings BLOCK (promoted to errors below). Backend generators and verifiers are
+# treated as security-critical surfaces that must fail closed. Performance /
+# readability stay advisory (run as warnings, not errors). Generated TableGen
+# (*.inc) and LLVM/MLIR headers are out of scope via the header filter + the
+# `make tidy` file list.
+#
+# A few bugprone/cert checks are disabled as pure noise for this codebase, not as
+# a weakening of the gate:
+#   - bugprone-exception-escape: fires on every plain data struct with STL members
+#     (the implicit special members "may throw"); not an escape risk here and the
+#     CLI tools' error handling is intentional.
+#   - bugprone-easily-swappable-parameters / -narrowing-conversions / cert-err58-cpp:
+#     style/aggressive, high false-positive rate against MLIR/LLVM idioms.
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  cert-*,
+  misc-definitions-in-headers,
+  misc-misplaced-const,
+  misc-redundant-expression,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  -bugprone-exception-escape,
+  -cert-err58-cpp
+
+# Only diagnose this project's own hand-written headers. Matching just `.h`
+# excludes generated TableGen (*.inc, e.g. the `__mlir_ods_*` reserved identifiers)
+# and all LLVM/MLIR/system headers. The lib/tools .cpp are main TUs, always analyzed.
+HeaderFilterRegex: 'include/Neutrino/.*\.h$'
+
+# The blocking set: any of these fails `make tidy`. Advisory checks (if added
+# later, e.g. performance-*/readability-*) are intentionally NOT listed here.
+WarningsAsErrors: 'bugprone-*,clang-analyzer-*,cert-*,misc-*'
+
+FormatStyle: none

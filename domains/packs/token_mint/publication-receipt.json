@@ -1,0 +1,102 @@
+{
+  "contentDigest": "sha256:f477d88b3f60c75e9cbd9b3f2b6d779add10e4206606878e17252cd53aa2f524",
+  "coreContractBundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+  "declaredPackDigest": "sha256:476387fda9d8114bf206e635637c46e7695a10f035981693c09c33b662cbb645",
+  "kind": "neutrino.public-pack-receipt/1",
+  "members": [
+    {
+      "bytes": 3828,
+      "mode": "100644",
+      "path": "pack.json",
+      "sha256": "4ba7888d4d589e0179e13cb7f1b61cc8faa37108d5c6453f2d1a20fb0cd7f4a5"
+    },
+    {
+      "bytes": 10583,
+      "mode": "100644",
+      "path": "generated/capability-spec/capability-spec.json",
+      "sha256": "c707fc39128c81d44755e60420de3734ab4ea2c966e6b119265b344a9920838d"
+    },
+    {
+      "bytes": 3340,
+      "mode": "100644",
+      "path": "generated/postgres/procedure.sql",
+      "sha256": "ad635d363b9e15afddbf0fd331de244868627e9970dd645bb5340d859d5a4b2a"
+    },
+    {
+      "bytes": 265,
+      "mode": "100644",
+      "path": "generated/postgres/reconciliation.sql",
+      "sha256": "9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "bytes": 3806,
+      "mode": "100755",
+      "path": "generated/postgres/run_db_test.sh",
+      "sha256": "54ce3c02ab95d904c4ef2c78cb6af202913ceda01e1266993760033109935adc"
+    },
+    {
+      "bytes": 1909,
+      "mode": "100644",
+      "path": "generated/postgres/schema.sql",
+      "sha256": "a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "bytes": 2033,
+      "mode": "100644",
+      "path": "generated/security/security.json",
+      "sha256": "245ab0e655bf9453646d16e6eff8b501877f8a1151c42efbfcac21ecf1283861"
+    },
+    {
+      "bytes": 160,
+      "mode": "100644",
+      "path": "generated/solidity/foundry.toml",
+      "sha256": "d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "bytes": 2373,
+      "mode": "100644",
+      "path": "generated/solidity/src/TokenMint.sol",
+      "sha256": "f9e58e354221071e3eca26d882349a7ac0c250a1115987a9043dcf9fb3e902e5"
+    },
+    {
+      "bytes": 3798,
+      "mode": "100644",
+      "path": "generated/solidity/test/TokenMint.t.sol",
+      "sha256": "cb503ac2278070a667d3dda535921a26359225670a29aa495b9f1a21908f04e7"
+    },
+    {
+      "bytes": 676,
+      "mode": "100644",
+      "path": "generated/test-realization/test-realization.json",
+      "sha256": "d3143ecf76d39ff30876919a33320b307d8acef77b871d51e30835fdd9ebf223"
+    },
+    {
+      "bytes": 1451,
+      "mode": "100644",
+      "path": "generated/views/Holder.json",
+      "sha256": "8bbd4c799cbe3045ad90519fc3e58359c129ae4e13f828737158baae37e8337b"
+    },
+    {
+      "bytes": 1466,
+      "mode": "100644",
+      "path": "generated/views/SupplyAuthority.json",
+      "sha256": "081bff9fb6cc9f365d1b132ec74cb0c059fc1de9dca2cc5c8dbf2441edb46ec4"
+    },
+    {
+      "bytes": 413,
+      "mode": "100644",
+      "path": "scenario/token_mint_happy_path.json",
+      "sha256": "8ccee61bf5befc3123ada15f63e7910f8e211a37e02c514b8e2372371c491359"
+    },
+    {
+      "bytes": 2932,
+      "mode": "100644",
+      "path": "source/token_mint.neu",
+      "sha256": "973d47bed99c351e76d40d7425bbb1b4474fe3ce526af8ea30cee16f6bf0315e"
+    }
+  ],
+  "packId": "token_mint",
+  "packPath": "domains/packs/token_mint/pack",
+  "receiptIdentity": "sha256:ce3ee32fc1b9ab24c5948686dfed8ee5cf5a2d61da6ddb5c6c72c529b35a2b37",
+  "schemaVersion": 1
+}

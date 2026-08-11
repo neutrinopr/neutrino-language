@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/observation-binding/v1",
+  "title": "Neutrino Observation Binding",
+  "description": "The BINDING-side contract (M5 oracle S5, ) that maps a portable oracle attestation policy (neutrino.capability-spec `attestations[]`, ) to CONCRETE observers: the observer-set membership, each observer's identity + public key, and a mocked external source descriptor. Deployment-specific, so it lives OUTSIDE the portable spec — the spec declares WHICH observer-set REFERENCE gates an evidence input and the M threshold; this binding supplies the concrete observers, keys, N, and source. The oracle-observer backend () and the on-chain acceptance guard () render FROM this. Fail-closed (additionalProperties:false everywhere). Validated by scripts/validators/validate_observation_binding.py, which mirrors this schema AND enforces the cross-references JSON Schema cannot express: observer-identity uniqueness within a set, and — given the capability-spec — that every attestation observer-set reference is bound and its M is achievable by the bound N (M <= N). See docs/binding/ORACLE_OBSERVATION_BINDING.md.",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "observerSets"],
+  "additionalProperties": false,
+  "$defs": {
+    "member": {
+      "type": "object",
+      "description": "One concrete observer: a binding-local identity and its public key. Members are binding-level (never portable spec).",
+      "required": ["id", "publicKey"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._-]+$",
+          "description": "Observer identity, unique within its set. Restricted to a safe identifier charset (it reaches generated filenames + code, so no path traversal / control chars / injection)."
+        },
+        "publicKey": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The observer's public key (secp256k1). Non-empty: the aggregator authorizes the quorum by public key, so a missing key would let an unauthenticated attestation count."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "The mocked external source descriptor the observers read. Deployment-specific and NEVER moved into the portable spec. Only `mock` is supported today (deterministic, injectable); real source kinds are a declared extension point.",
+      "required": ["type", "id", "claimField"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["mock"], "description": "Supported source descriptor kind. `mock` is the only kind today; an unsupported type is rejected fail-closed." },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._-]+$",
+          "description": "Source identity (safe identifier charset — it reaches generated code)."
+        },
+        "claimField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The observation field the observers canonicalize into the signed claim."
+        }
+      }
+    },
+    "observerSet": {
+      "type": "object",
+      "description": "The concrete binding of one observer-set REFERENCE (matching a capability-spec attestation's observerSet.ref).",
+      "required": ["ref", "source", "members"],
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._-]+$",
+          "description": "The observer-set reference this entry binds — matches attestations[].observerSet.ref in the capability-spec."
+        },
+        "assurance": {
+          "enum": ["A1", "A2", "A3", "A4"],
+          "description": "Declared deployment-side assurance tier for this observer set. When the portable capability-spec declares observerSet.assurance, this binding value must match it exactly."
+        },
+        "independence": {
+          "enum": ["independent", "correlated"],
+          "description": "Declared deployment-side independence posture for this observer set. When the portable capability-spec declares observerSet.independence, this binding value must match it exactly."
+        },
+        "source": { "$ref": "#/$defs/source" },
+        "domain": { "$ref": "#/$defs/domain" },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The concrete observers (N). N is binding-level; the validator checks M <= N against the spec's threshold. Identities MUST be unique within the set (schema uniqueItems is insufficient — the validator enforces id-uniqueness precisely).",
+          "items": { "$ref": "#/$defs/member" }
+        }
+      }
+    },
+    "domain": {
+      "type": "object",
+      "description": "OPTIONAL EIP-712 acceptance-guard domain (oracle S7, ): the deployment-side facts that domain-separate the signed digest so the rendered observers sign EXACTLY the preimage the on-chain guard (ThresholdQuorumAcceptance.sol, /) verifies — the observer↔guard parity point. Absent = the observer signs the naked canonical-claim digest (S4 default, no bound guard). Present = the observer co-signs the EIP-712 digest over (chainId, verifyingContract, capabilityHash-from-spec, claimId, canonicalClaimHash, executionClaim) — the evidence claim AND the  execution claim, binding the attested evidence to the exact execution it authorizes. The third domain field, capabilityHash, is NOT here — it is the spec's identity, bound at render.",
+      "required": ["chainId", "verifyingContract"],
+      "additionalProperties": false,
+      "properties": {
+        "chainId": { "type": "integer", "minimum": 1, "description": "EIP-155 chain id of the deployed acceptance guard." },
+        "verifyingContract": { "type": "string", "pattern": "^0x[0-9a-fA-F]{40}$", "description": "The deployed guard contract address (EIP-712 verifyingContract)." }
+      }
+    }
+  },
+  "properties": {
+    "kind": { "const": "neutrino.observation-binding" },
+    "schemaVersion": { "const": 1 },
+    "observerSets": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One entry per bound observer-set reference.",
+      "items": { "$ref": "#/$defs/observerSet" }
+    }
+  }
+}

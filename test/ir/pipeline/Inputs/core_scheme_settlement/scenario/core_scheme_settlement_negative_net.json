@@ -1,0 +1,34 @@
+{
+  "scenario": "core_scheme_settlement_negative_net",
+  "procedure": "core_scheme_settlement",
+  "_note": "M5 release-review regression (): a fee_bps over 100% drives `net = gross_position - fee` below zero. `net` is a money-typed compute, so this must FAIL CLOSED at scenario validation (scenario.invalid, exit 3) BEFORE any backend renders — not pass the waist and make Solidity emit a non-compiling `uint256 constant EXPECT_NET = -500000` / invert a PostgreSQL transfer. Every other field is well-formed so the negative money result is the sole reason for refusal.",
+  "inputs": {
+    "settlement_id": "set-neg-001",
+    "scheme_id": "scheme-visa",
+    "bank_id": "bank-001",
+    "treasury_id": "treasury-001",
+    "gross_position": 1000000,
+    "fee_bps": 15000,
+    "currency": "EUR"
+  },
+  "expect": {
+    "computed": { "fee": 1500000, "net": -500000 },
+    "events": [
+      "SchemePositionFinalized",
+      "FeeComputed",
+      "NetComputed",
+      "SchemePrincipalDebited",
+      "BankPrincipalCredited",
+      "SchemeFeeDebited",
+      "TreasuryFeeCredited",
+      "CoreSchemeSettlementReconciled"
+    ],
+    "ledger": {
+      "scheme.net_payable": 500000,
+      "bank.settlement_account": -500000,
+      "scheme.fee_payable": -1500000,
+      "treasury.fee_income": 1500000
+    },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

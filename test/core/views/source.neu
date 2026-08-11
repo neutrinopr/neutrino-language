@@ -1,0 +1,44 @@
+agreement synthetic_views between LeftActor and RightActor {
+    trigger operation_requested
+    version "1.0.0"
+
+    participant LeftActor {
+        role = "left"
+        org = "alpha"
+    }
+    participant RightActor {
+        role = "right"
+        org = "beta"
+    }
+    allow "alpha" with "beta" {
+        "alpha" as "left"
+        "beta" as "right"
+    }
+
+    input operation_id : string
+    input left_id      : party
+    input right_id     : party
+    input quantity     : money
+    input unit         : currency
+
+    debit decrease {
+        ledger          = "synthetic.left"
+        owner           = "left"
+        participant     = "LeftActor"
+        party           = %left_id
+        amount          = %quantity
+        currency        = %unit
+        idempotency_key = %operation_id
+    }
+    credit increase {
+        ledger          = "synthetic.right"
+        owner           = "right"
+        participant     = "RightActor"
+        party           = %right_id
+        amount          = %quantity
+        currency        = %unit
+        idempotency_key = %operation_id
+    }
+
+    assert balanced
+}

@@ -1,0 +1,599 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "workflow_key"
+      },
+      "kind": "debit",
+      "ledger": "acme.settlement_out",
+      "name": "settle_out",
+      "owner": "acme",
+      "participant": "MerchantA",
+      "party": {
+        "kind": "ref",
+        "value": "merchant_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "workflow_key"
+      },
+      "kind": "credit",
+      "ledger": "bankco.settlement_in",
+      "name": "settle_in",
+      "owner": "bankco",
+      "participant": "Bank",
+      "party": {
+        "kind": "ref",
+        "value": "bank_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "workflow_key"
+      },
+      "kind": "debit",
+      "ledger": "acme.audit_out",
+      "name": "audit_out",
+      "owner": "acme",
+      "participant": "AuditorA",
+      "party": {
+        "kind": "ref",
+        "value": "acme_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "workflow_key"
+      },
+      "kind": "credit",
+      "ledger": "auditorco.audit_in",
+      "name": "audit_in",
+      "owner": "auditorco",
+      "participant": "Auditor",
+      "party": {
+        "kind": "ref",
+        "value": "auditor_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "a29d4593041be3d69d9dc1aaba3e9001427d171a1be0510c642707e117559e9e",
+    "specHash": "3d81e0a1ae9def5d476e1fb739804186e72a3230eef9703b2d149ddf066582f7"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "workflow_key",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "merchant_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "bank_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "acme_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "auditor_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "workflow_key"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      },
+      {
+        "name": "CONTESTED",
+        "terminal": true,
+        "terminalKind": "contested"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": "CONTESTED",
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CONTEST",
+        "to": "CONTESTED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "MerchantA",
+      "org": "acme",
+      "role": "merchant"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "AuditorA",
+      "org": "acme",
+      "role": "auditor"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Bank",
+      "org": "bankco",
+      "role": "settler"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Auditor",
+      "org": "auditorco",
+      "role": "reviewer"
+    }
+  ],
+  "procedure": "core_multi_pair_role",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input workflow_key",
+      "source": {
+        "column": 1,
+        "line": 44
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input merchant_id",
+      "source": {
+        "column": 1,
+        "line": 45
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input bank_id",
+      "source": {
+        "column": 1,
+        "line": 46
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input acme_id",
+      "source": {
+        "column": 1,
+        "line": 47
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input auditor_id",
+      "source": {
+        "column": 1,
+        "line": 48
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 49
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 50
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "debit settle_out",
+      "source": {
+        "column": 1,
+        "line": 52
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit settle_in",
+      "source": {
+        "column": 1,
+        "line": 61
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "debit audit_out",
+      "source": {
+        "column": 1,
+        "line": 70
+      },
+      "specPath": "effects[2]"
+    },
+    {
+      "construct": "credit audit_in",
+      "source": {
+        "column": 1,
+        "line": 79
+      },
+      "specPath": "effects[3]"
+    },
+    {
+      "construct": "participant MerchantA",
+      "source": {
+        "column": 1,
+        "line": 18
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant AuditorA",
+      "source": {
+        "column": 1,
+        "line": 22
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "participant Bank",
+      "source": {
+        "column": 1,
+        "line": 26
+      },
+      "specPath": "participants[2]"
+    },
+    {
+      "construct": "participant Auditor",
+      "source": {
+        "column": 1,
+        "line": 30
+      },
+      "specPath": "participants[3]"
+    },
+    {
+      "construct": "allow acme with bankco",
+      "source": {
+        "column": 1,
+        "line": 35
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "allow acme with auditorco",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "topology.allowedOrgPairs[1]"
+    },
+    {
+      "construct": "allow bankco with auditorco",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "topology.allowedOrgPairs[2]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 89
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input workflow_key",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 44
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input merchant_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 45
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 49
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 50
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit settle_out",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 52
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit settle_in",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 61
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 89
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant MerchantA",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 18
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow acme with bankco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 35
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "acme",
+        "orgB": "bankco",
+        "roleA": "merchant",
+        "roleB": ""
+      },
+      {
+        "orgA": "acme",
+        "orgB": "auditorco",
+        "roleA": "auditor",
+        "roleB": ""
+      },
+      {
+        "orgA": "bankco",
+        "orgB": "auditorco",
+        "roleA": "",
+        "roleB": ""
+      }
+    ]
+  },
+  "trigger": "thing_happened"
+}

@@ -1,0 +1,11 @@
+// [82] M5 (): participant views are derived from the spec — scenario-free, with capability+source
+// provenance and no invented semantics. Views need NO --scenario and are scenario-independent; every
+// committed view fixture (nv>=20) regenerates byte-identically from source alone and its capability
+// identity / lifecycle ops / specContract / per-field source AND the input/effect semantics at each
+// specPath cross-check the spec; the validator fails closed on a tampered hash (view.hash_mismatch), an
+// unknown field (view.unknown_field), a bad nested shape / line-0 span (view.schema) and an invented input
+// name (view.contract_mismatch); and the core_document_escrow guarded participants (EscrowAgent/Seller)
+// include their when-guard input dep (agreed_amount) while the unguarded Buyer does not. See
+// check_participant_views.py.
+//
+// RUN: python3 %S/check_participant_views.py %neutrino-gen %examples

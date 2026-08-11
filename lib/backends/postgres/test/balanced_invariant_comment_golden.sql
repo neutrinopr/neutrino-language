@@ -1,0 +1,4 @@
+--  C3 byte-faithful fixture: the balanced-workflow invariant banner.
+-- Pins the exact production line rendered by the zero-operand
+-- BalancedInvariantComment node.
+    -- balanced invariant: this workflow key must net to zero

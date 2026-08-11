@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/slot-binding-topology/v1",
+  "title": "Neutrino Slot Binding Topology",
+  "description": "D1b / translator Phase 22B: the base organization -> participant -> slot hierarchy with stable ids and late-binding metadata, emitted alongside the slot wire contract (docs/spec/SLOT_ARTIFACT_CONTRACT.md). A later Binding Manifest names and validates an (organizationId, participantId, slotId) triple against this artifact. Advisory model metadata, NOT the wire contract: it is EXCLUDED from capabilityHash, and is emitted only when a source declares participants. Fail-closed (additionalProperties:false everywhere). Validated by scripts/validators/validate_binding_topology.py.",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "capability", "capabilityVersion", "procedure", "organizations", "crossOrganization"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"const": "neutrino.slot-binding-topology"},
+    "schemaVersion": {"const": 1},
+    "capability": {"type": "string", "minLength": 1},
+    "capabilityVersion": {"type": "string", "minLength": 1},
+    "procedure": {"type": "string", "minLength": 1},
+    "crossOrganization": {
+      "type": "boolean",
+      "description": "true iff two or more distinct named organizations participate (a null/unscoped org is not counted)."
+    },
+    "organizations": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Non-empty: this artifact exists only when the source declares participants, so an empty topology is invalid.",
+      "items": {"$ref": "#/$defs/organization"}
+    }
+  },
+  "$defs": {
+    "organization": {
+      "type": "object",
+      "required": ["organizationId", "participants"],
+      "additionalProperties": false,
+      "properties": {
+        "organizationId": {
+          "type": ["string", "null"],
+          "description": "Declared trust/organization boundary; null for a participant with no declared org (the unscoped bucket).",
+          "minLength": 1
+        },
+        "participants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/participant"}
+        }
+      }
+    },
+    "participant": {
+      "type": "object",
+      "required": ["participantId", "role", "slots"],
+      "additionalProperties": false,
+      "properties": {
+        "participantId": {"type": "string", "minLength": 1},
+        "role": {"type": "string", "minLength": 1},
+        "slots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/slot"}
+        }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "required": ["slotId", "lateBindingMode", "allowedRuntimes", "minAssurance", "evidenceProfile"],
+      "additionalProperties": false,
+      "properties": {
+        "slotId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable, unique abstract-slot id: `<capability>#<participantId>` in the base model."
+        },
+        "lateBindingMode": {
+          "enum": ["fixed", "to_be_bound"],
+          "description": "fixed = statically bound by generation; to_be_bound = bound at realization time, governed by the fields below."
+        },
+        "allowedRuntimes": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "description": "Allowed runtime/backend families for a to_be_bound slot; empty for a fixed slot."
+        },
+        "minAssurance": {
+          "enum": ["A1", "A2", "A3", "A4"],
+          "description": "Minimum assurance floor. Static generation never claims above A1; a flexible slot may require more, satisfied only by runtime evidence."
+        },
+        "evidenceProfile": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "description": "Reserved: required evidence profile id, or null until the DSL models it."
+        },
+        "authorizedBinder": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Org/participant permitted to bind a to_be_bound slot (defaults to the participant's org). Absent for a fixed slot."
+        }
+      }
+    }
+  }
+}

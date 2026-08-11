@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/core-contract-bundle/v1",
+  "title": "Core Contract Bundle",
+  "description": "The published, versioned, machine-readable boundary an external domain pack validates against without importing translator source (). GENERATED (scripts/generators/make_core_contract_bundle.py) from the authoritative core contracts + the VersionInfo.h surface + the diagnostic taxonomy; never hand maintained. Deterministic: sorted keys, sha256 digests, no timestamps. bundleDigest = lowercase 'sha256:'-prefixed sha256 over the compact canonical bundle (sort_keys, separators) with the bundleDigest field removed. Verified by scripts/validators/verify_domain_pack.py; completeness/integrity pinned by scripts/gates/check_core_contract_bundle.py and the regeneration byte-match.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "bundleId",
+    "bundleVersion",
+    "translatorCompatibility",
+    "versions",
+    "contracts",
+    "diagnosticTaxonomy",
+    "semanticVocabulary",
+    "semanticCapabilityRegistry",
+    "canonicalization",
+    "bundleDigest"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.core-contract-bundle"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "bundleId": {
+      "const": "neutrino.core-contract-bundle"
+    },
+    "bundleVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "translatorCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "toolVersion",
+        "policy"
+      ],
+      "properties": {
+        "toolVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy": {
+          "type": "object",
+          "description": "Per-axis negotiation policy an external consumer applies against a translator surface (mirrors check_compatibility.py). Each value describes how that axis is checked (exact, or semver same-major and >=).",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "versions": {
+      "type": "object",
+      "description": "The version axes the bundle publishes, sourced from neutrino-translate --version-json (VersionInfo.h).",
+      "required": [
+        "toolVersion",
+        "mlirDialectVersion",
+        "schemaBundleVersion",
+        "capabilitySpecVersion",
+        "semanticProfileVersion",
+        "conformanceVectorVersion",
+        "compatibilityManifestVersion",
+        "semanticLanguageVersion",
+        "schemas"
+      ],
+      "additionalProperties": true
+    },
+    "contracts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "family",
+          "contractId",
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "family": {
+            "enum": [
+              "capability-spec",
+              "l2-domain",
+              "profile",
+              "binding",
+              "scenario-result",
+              "conformance",
+              "semantic"
+            ]
+          },
+          "contractId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "diagnosticTaxonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "categories"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "semanticVocabulary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semanticProfileVersion",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "semanticProfileVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "semanticCapabilityRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semanticProfileVersion",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "semanticProfileVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "canonicalization": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "bundleDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

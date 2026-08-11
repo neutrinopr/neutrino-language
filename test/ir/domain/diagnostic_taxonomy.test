@@ -1,0 +1,12 @@
+// [78] M5 WP1c (): shared diagnostic taxonomy — compiler-owned + byte-matched; the kernel verifier
+// emits coded [kernel.*] diagnostics; every code the C++ tools (gen + equiv) write is registered + active
+// + root-cause ordered; and each stdlib validator's diag() codes match the taxonomy exactly (no drift).
+// See check_diagnostic_taxonomy.py.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: python3 %S/check_diagnostic_taxonomy.py %neutrino-translate %neutrino-opt %neutrino-gen %neutrino-equiv \
+// RUN:   %docs/diagnostic-taxonomy.json %scripts \
+// RUN:   %{msi}/source/core_sample_installment.neu \
+// RUN:   %{msi}/scenario/core_sample_installment_happy_path.json \
+// RUN:   %S/../equiv/bad_scenario.json %S/../neg_value_type_mismatch.neu \
+// RUN:   %S/../oracle/accepted_unbound_policy.neu %S/../oracle/accepted_unbound_policy.scn.json

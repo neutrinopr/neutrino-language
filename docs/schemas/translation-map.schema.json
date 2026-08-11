@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/translation-map/v1",
+  "title": "Neutrino Lower-Layer Translation Map",
+  "description": "D4 / translator Phase 25: a reviewed, hash-pinned Lower-Layer mapping between core Neutrino value/evidence concepts and one concrete rail profile (e.g. ISO 20022 interbank pacs.009 request / pacs.002 status). Translation maps are EXPLICIT artifacts, never hidden adapter code: every mapping carries acknowledged lossiness, and the map carries accepted provenance. The translator owns the reviewed map + static conformance fixtures; network/fabric owns concrete runtime execution. Fail-closed (additionalProperties:false everywhere). Validated + hashed by scripts/rails/validate_translation_map.py; applied by scripts/rails/translate_rail.py.",
+  "type": "object",
+  "required": ["kind", "rail", "version", "profiles", "provenance", "lower", "liftStatus", "preservesAs", "rejects"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"const": "neutrino.translation-map"},
+    "rail": {"type": "string", "minLength": 1, "description": "Rail/profile family, e.g. 'iso20022.interbank'."},
+    "version": {"type": "string", "minLength": 1},
+    "profiles": {
+      "type": "object",
+      "required": ["lower", "liftStatus"],
+      "additionalProperties": false,
+      "properties": {
+        "lower": {"type": "string", "minLength": 1, "description": "Rail message the core lowers into, e.g. 'pacs.009'."},
+        "liftStatus": {"type": "string", "minLength": 1, "description": "Rail status message lifted into core evidence, e.g. 'pacs.002'."}
+      }
+    },
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "lower": {
+      "type": "array",
+      "description": "core value/party concept -> rail field projection (core .neu / IR -> rail-shaped fixture).",
+      "items": {
+        "type": "object",
+        "required": ["carries", "to", "lossiness"],
+        "additionalProperties": false,
+        "properties": {
+          "carries": {"enum": ["value.amount", "value.currency", "party.debtor", "party.creditor", "evidence.correlationId"]},
+          "to": {"type": "string", "minLength": 1, "description": "Rail field path, e.g. 'pacs.009/CdtTrfTxInf/IntrBkSttlmAmt'."},
+          "lossiness": {"$ref": "#/$defs/lossiness"}
+        }
+      }
+    },
+    "liftStatus": {
+      "type": "array",
+      "description": "rail status field -> core evidence/diagnostic interpretation (rail status fixture -> canonical runtime evidence).",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "lossiness"],
+        "additionalProperties": false,
+        "properties": {
+          "from": {"type": "string", "minLength": 1, "description": "Rail field path, e.g. 'pacs.002/TxInfAndSts/TxSts'."},
+          "to": {"enum": ["evidence.runtimeState", "evidence.correlationId", "diagnostics.reasonCode", "diagnostics.additionalInfo"]},
+          "codeList": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {"type": "string", "minLength": 1},
+            "description": "Required when to == evidence.runtimeState: reviewed rail-code -> core-state map. A status code absent from this list is rejected, never silently passed."
+          },
+          "lossiness": {"$ref": "#/$defs/lossiness"}
+        }
+      }
+    },
+    "preservesAs": {
+      "type": "array",
+      "description": "Mandatory non-semantic rail fields preserved verbatim in ExtensionData (fidelity, not core semantics).",
+      "items": {
+        "type": "object",
+        "required": ["field", "extension", "lossiness"],
+        "additionalProperties": false,
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "extension": {"type": "string", "minLength": 1},
+          "lossiness": {"const": "lossy-preserved-in-extensionData"}
+        }
+      }
+    },
+    "rejects": {
+      "type": "array",
+      "description": "Rail fields explicitly NOT mapped into core (must fail closed if encountered, never silently dropped).",
+      "items": {
+        "type": "object",
+        "required": ["field", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "translationMapHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "lossiness": {
+      "enum": ["lossless", "lossy-preserved-in-extensionData", "unsupported"],
+      "description": "Every mapping must acknowledge its lossiness; 'unsupported' means the field cannot be carried and must be rejected, not silently lost."
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source", "standardVersion", "reviewer", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "standardVersion": {"type": "string", "minLength": 1},
+        "reviewer": {"type": "string", "minLength": 1},
+        "status": {"enum": ["proposed", "accepted", "rejected"]}
+      }
+    }
+  }
+}

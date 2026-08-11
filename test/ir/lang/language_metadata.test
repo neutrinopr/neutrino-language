@@ -1,0 +1,8 @@
+// [37] language intelligence: the committed docs/language-metadata.json byte-matches the compiler
+// (`--language-metadata` — the grammar facts are the compiler's, Python owns no list), and the full
+// neutrino_lang.py contract (consume-not-rederive, example-grammar drift, fail-closed on a dropped
+// compiler-owned field / wrong kind, and parser diagnostics) holds — see check_language_metadata.py.
+//
+// RUN: %neutrino-translate --language-metadata > %t.comp.json
+// RUN: diff %t.comp.json %docs/language-metadata.json
+// RUN: python3 %S/check_language_metadata.py %neutrino-translate %scripts/generators/neutrino_lang.py %examples %S/.. %curated3-source

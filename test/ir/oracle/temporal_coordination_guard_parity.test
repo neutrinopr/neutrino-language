@@ -1,0 +1,135 @@
+// [] TEMPORAL coordination↔guard parity gate — the temporal co-evolution of the  claimId parity
+// invariant. The per-policy commit-ledger contract (/) renders a DIFFERENT cross-artifact
+// invariant than the single-shot isAccepted gate: EACH policy GROUP commits only when the guard's recorded
+// EXECUTION CLAIM for the workflow key EQUALS the payload's recomputed claim — Solidity
+// `acceptanceGuard_<policy>.acceptedExecutionClaim(_k) == _claim`, PostgreSQL `... AND execution_claim =
+// v_claim` — and the policy that authorizes a group must be THAT group's policy, exactly once, no more.
+// The gate derives the authoritative {group ordinal → policy} mapping from the normalized
+// coordination plan and requires an exact per-policy bijection on both rails: a missing predicate (unconditional
+// commit), a duplicate/extra gate, and a cross-policy rewire (one policy authorizing another's group) are
+// all caught — not just the shape of whichever predicates survive. Single-sourced from the spec/coordination-plan, with
+// the mismatch cases proving non-vacuity.
+//
+// DEFINE: %{scen} = %S/accepted_multi_policy.scn.json
+// DEFINE: %{par} = %scripts/gates/check_coordination_guard_parity.py
+//
+// Render both rails + the spec + the authoritative coordination plan from the worked temporal sample.
+// RUN: rm -rf %t.sol %t.pg %t.d %t.coord
+// RUN: %neutrino-gen --target=solidity --scenario=%{scen} %S/accepted_multi_policy.neu -o %t.sol
+// RUN: %neutrino-gen --target=postgres --scenario=%{scen} %S/accepted_multi_policy.neu -o %t.pg
+// RUN: %neutrino-gen --target=capability-spec %S/accepted_multi_policy.neu -o %t.d
+// RUN: %neutrino-gen --target=coordination-plan %S/accepted_multi_policy.neu -o %t.coord
+//
+// DEFINE: %{args} = --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pg/procedure.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json
+//
+// HAPPY PATH: every coordination-plan-declared policy binds to its own commit ordinal + the recomputed claim → parity holds.
+// RUN: python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol %{args}
+//
+// [] PRODUCTION-BYTES progress-flag pin: the migrated typed ProgressFlag node must emit BOTH closed
+// `v_progress := <bool>;` assigns in the REAL PostgreSQL backend output — the `:= false;` reset before the
+// per-group commit ledger and the `:= true;` commit progress inside a group's leg. This binds the emitted
+// bytes to the two production PgStmt::progressFlag(...) calls: deleting either one drops its line and fails
+// this FileCheck (the non-vacuity governing tamper, the SQL-bytes half of the  witness).
+// RUN: %FileCheck %s --check-prefix=PROGRESS < %t.pg/procedure.sql
+// PROGRESS-DAG: v_progress := false;
+// PROGRESS-DAG: v_progress := true;
+//
+// NON-VACUOUS  — the Solidity per-policy gate compares acceptedExecutionClaim to a DIFFERENT var than the
+// recomputed _claim → a group could commit against a foreign accepted claim → fails.
+// RUN: sed 's/acceptedExecutionClaim(_k) == _claim/acceptedExecutionClaim(_k) == _other/' %t.sol/src/AcceptedMultiPolicy.sol > %t.b1.sol
+// RUN: %not python3 %{par} --solidity %t.b1.sol %{args} 2>&1 | %FileCheck %s --check-prefix=SOLBIND
+// SOLBIND: parity.temporal_solidity_binding
+//
+// NON-VACUOUS  — the Solidity gate reads the guard under a DIFFERENT key than the derived workflow-key
+// hash (claimId != workflowKey) → fails.
+// RUN: sed 's/acceptedExecutionClaim(_k)/acceptedExecutionClaim(_other)/' %t.sol/src/AcceptedMultiPolicy.sol > %t.b2.sol
+// RUN: %not python3 %{par} --solidity %t.b2.sol %{args} 2>&1 | %FileCheck %s --check-prefix=SOLKEY
+// SOLKEY: parity.temporal_solidity_binding
+//
+// NON-VACUOUS  — the Solidity execute() does not recompute CoordinationEnvelope.claim(...) at all → the
+// commit is bound to no payload claim → fails.
+// RUN: sed 's/CoordinationEnvelope.claim(/CoordinationEnvelope.notclaim(/' %t.sol/src/AcceptedMultiPolicy.sol > %t.b3.sol
+// RUN: %not python3 %{par} --solidity %t.b3.sol %{args} 2>&1 | %FileCheck %s --check-prefix=SOLCLAIM
+// SOLCLAIM: parity.temporal_solidity_claim
+//
+// NON-VACUOUS  — CROSS-POLICY REWIRE (Solidity): the beta GROUP is authorized by the ALPHA policy's guard
+// (every surviving call still has the right key/claim shape) → a policy authorizes another's group → fails
+// on the coordination-plan-derived per-policy coverage.
+// RUN: sed 's/acceptanceGuard_beta_proof.acceptedExecutionClaim/acceptanceGuard_alpha_proof.acceptedExecutionClaim/' %t.sol/src/AcceptedMultiPolicy.sol > %t.b4.sol
+// RUN: %not python3 %{par} --solidity %t.b4.sol %{args} 2>&1 | %FileCheck %s --check-prefix=SOLREWIRE
+// SOLREWIRE: parity.temporal_solidity_coverage
+//
+// NON-VACUOUS  — MISSING PREDICATE (Solidity): the beta authorization predicate is removed while the beta
+// effects and the committedGroup[_k][1] write remain → beta commits unconditionally. The call count merely
+// falls from two to one; the coordination-plan-derived coverage catches the ungated commit ordinal → fails.
+// RUN: sed 's/acceptanceGuard_beta_proof.acceptedExecutionClaim(_k) == _claim/true/' %t.sol/src/AcceptedMultiPolicy.sol > %t.b5.sol
+// RUN: %not python3 %{par} --solidity %t.b5.sol %{args} 2>&1 | %FileCheck %s --check-prefix=SOLDROP
+// SOLDROP: parity.temporal_solidity_coverage
+//
+// NON-VACUOUS  — TWO-SIDED: a GUARD-side rename of the acceptedExecutionClaim accessor is caught even
+// with a valid coordination (the coordination's interface would call a non-existent accessor).
+// RUN: sed 's/public acceptedExecutionClaim;/public wasExecClaim;/' %t.sol/src/ThresholdQuorumAcceptance.sol > %t.guard.sol
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.guard.sol --postgres %t.pg/procedure.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=GUARDSIDE
+// GUARDSIDE: parity.temporal_solidity_interface
+//
+// NON-VACUOUS  — the PostgreSQL alpha per-policy gate DROPS `execution_claim = v_claim` → its commit
+// ordinal falls out of the guarded set while the commit write remains → fails on coverage (any accepted
+// claim would commit).
+// RUN: sed "s/AND policy = 'alpha_proof' AND execution_claim = v_claim/AND policy = 'alpha_proof'/" %t.pg/procedure.sql > %t.b7.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b7.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGBIND
+// PGBIND: parity.temporal_postgres_coverage
+//
+// NON-VACUOUS  — the PostgreSQL alpha per-policy gate checks a DIFFERENT claim_id than the workflow key
+// (claimId != workflowKey) → fails.
+// RUN: sed "s/claim_id = p_settlement_id AND policy = 'alpha_proof'/claim_id = p_amount AND policy = 'alpha_proof'/" %t.pg/procedure.sql > %t.b8.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b8.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGKEY
+// PGKEY: parity.temporal_postgres_binding
+//
+// NON-VACUOUS  — CROSS-POLICY REWIRE (PostgreSQL): the beta GROUP's gate is keyed on the ALPHA policy →
+// a policy authorizes another's group → fails on coverage.
+// RUN: sed "s/policy = 'beta_proof' AND execution_claim/policy = 'alpha_proof' AND execution_claim/" %t.pg/procedure.sql > %t.b9.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b9.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGREWIRE
+// PGREWIRE: parity.temporal_postgres_coverage
+//
+// NON-VACUOUS  — MISSING PREDICATE (PostgreSQL): the entire beta authorization predicate is removed while
+// the beta effects and the committed_group(..., 1) write remain → beta commits unconditionally → fails on
+// coverage (the ungated commit ordinal).
+// RUN: sed "s/(EXISTS (SELECT 1 FROM quorum_acceptance WHERE procedure = 'accepted_multi_policy' AND claim_id = p_settlement_id AND policy = 'beta_proof' AND execution_claim = v_claim)) AND //" %t.pg/procedure.sql > %t.b10.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b10.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGDROP
+// PGDROP: parity.temporal_postgres_coverage
+//
+// NON-VACUOUS  — POSITIONAL SWAP (PostgreSQL accept_): the INSERT VALUES swaps canonical_claim_hash and
+// p_execution_claim, so the database persists the canonical hash AS the execution_claim (both are still
+// "present") → the positional alignment catches it → fails.
+// RUN: sed "s/p_policy, p_canonical_claim_hash, p_execution_claim, (SELECT/p_policy, p_execution_claim, p_canonical_claim_hash, (SELECT/" %t.pg/procedure.sql > %t.b11.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b11.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGSWAP
+// PGSWAP: parity.temporal_postgres_accept_record
+//
+// NON-VACUOUS  — the PostgreSQL accept_ records a CONSTANT for execution_claim instead of the payload
+// param p_execution_claim → the guard would accept under a fixed claim → fails.
+// RUN: sed "s/p_policy, p_canonical_claim_hash, p_execution_claim/p_policy, p_canonical_claim_hash, 'stale'/" %t.pg/procedure.sql > %t.b12.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b12.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGREC
+// PGREC: parity.temporal_postgres_accept_record
+//
+// NON-VACUOUS  — SWAPPED COMMIT WRITES (Solidity): each policy's guard, replay check, and effects are
+// left intact, but the two commit WRITES are swapped — alpha's block writes committedGroup[_k][1] and beta's
+// writes [0]. Every ordinal still appears in some condition and some write (a condition-map-vs-global-write
+// reconciliation would pass), but the guard for a group no longer protects the commit of ITS OWN group
+// (if only alpha is accepted, alpha effects run yet group 1 is marked; group 0 stays false → alpha replays
+// while the ledger claims beta committed). The per-block write check catches it.
+// RUN: sed -e 's/committedGroup\[_k\]\[0\] = true;/committedGroup[_k][9] = true;/' -e 's/committedGroup\[_k\]\[1\] = true;/committedGroup[_k][0] = true;/' -e 's/committedGroup\[_k\]\[9\] = true;/committedGroup[_k][1] = true;/' %t.sol/src/AcceptedMultiPolicy.sol > %t.b13.sol
+// RUN: %not python3 %{par} --solidity %t.b13.sol %{args} 2>&1 | %FileCheck %s --check-prefix=SOLSWAPWRITE
+// SOLSWAPWRITE: parity.temporal_solidity_coverage
+//
+// NON-VACUOUS  — SWAPPED COMMIT WRITES (PostgreSQL): symmetric to  — alpha's block inserts committed
+// group ordinal 1 and beta's inserts 0, with predicates/replay-checks/effects intact → the per-block write
+// check catches that a guard's block commits a foreign ordinal.
+// RUN: sed -e "s/p_settlement_id, 0);/p_settlement_id, 9);/" -e "s/p_settlement_id, 1);/p_settlement_id, 0);/" -e "s/p_settlement_id, 9);/p_settlement_id, 1);/" %t.pg/procedure.sql > %t.b14.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/AcceptedMultiPolicy.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.b14.sql --spec %t.d/capability-spec.json --plan %t.coord/coordination-plan.json 2>&1 | %FileCheck %s --check-prefix=PGSWAPWRITE
+// PGSWAPWRITE: parity.temporal_postgres_coverage
+//
+// NON-VACUOUS  — the rails DISAGREE on the shape: the Solidity coordination drops its temporal
+// commit-ledger while PostgreSQL keeps it → fails (a rail rendering the wrong contract shape).
+// RUN: sed 's/committedGroup/committedGrp/g' %t.sol/src/AcceptedMultiPolicy.sol > %t.b15.sol
+// RUN: %not python3 %{par} --solidity %t.b15.sol %{args} 2>&1 | %FileCheck %s --check-prefix=RAILMISMATCH
+// RAILMISMATCH: parity.temporal_rail_mismatch

@@ -1,0 +1,20 @@
+{
+  "scenario": "core_memo_fixture_happy_path",
+  "procedure": "core_memo_fixture",
+  "inputs": {
+    "proof_id": "fixture-001",
+    "origin_id": "fixture-origin",
+    "destination_id": "fixture-destination",
+    "amount": 7,
+    "currency": "TST"
+  },
+  "expect": {
+    "ledger": {
+      "core.fixture.balance": 0
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

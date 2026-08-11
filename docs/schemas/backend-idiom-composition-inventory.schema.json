@@ -1,0 +1,584 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/backend-idiom-composition-inventory.schema.json",
+  "title": "Read-only backend idiom AST census",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "sourceRevision",
+    "schema",
+    "discovery",
+    "securityRegistry",
+    "totals",
+    "ownershipSlices",
+    "symbolSummary",
+    "authenticatedExclusions",
+    "sourceDispositions",
+    "completion",
+    "occurrences"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.backend-idiom-composition-inventory"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "sourceRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "schema": {
+      "const": "docs/schemas/backend-idiom-composition-inventory.schema.json"
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backends",
+        "sources",
+        "clangAstFilter"
+      ],
+      "properties": {
+        "backends": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sources": {
+          "type": "object",
+          "minProperties": 2,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "files",
+              "translationUnits",
+              "translationUnitAuthority"
+            ],
+            "properties": {
+              "files": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^lib/backends/"
+                }
+              },
+              "translationUnits": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^lib/backends/.*\\.(cpp|cc|cxx)$"
+                }
+              },
+              "translationUnitAuthority": {
+                "const": "compile_commands.json"
+              }
+            }
+          }
+        },
+        "clangAstFilter": {
+          "const": "neutrino"
+        }
+      }
+    },
+    "securityRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "entryIds",
+        "resolverRows"
+      ],
+      "properties": {
+        "path": {
+          "const": "docs/security-primitive-carveout-registry.json"
+        },
+        "entryIds": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "resolverRows": {
+          "const": 5
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrences",
+        "byClassification"
+      ],
+      "properties": {
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "byClassification": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unassignedOwnerOccurrences",
+        "umbrellaCandidateOccurrences",
+        "backendSpecificGenericOccurrences",
+        "forbiddenResidueOccurrences",
+        "verdict"
+      ],
+      "properties": {
+        "unassignedOwnerOccurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "umbrellaCandidateOccurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "backendSpecificGenericOccurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "forbiddenResidueOccurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verdict": {
+          "enum": [
+            "complete",
+            "blocked-pending-owner-partition"
+          ]
+        }
+      }
+    },
+    "ownershipSlices": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/ownershipSlice"
+      }
+    },
+    "symbolSummary": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/symbolSummary"
+      }
+    },
+    "authenticatedExclusions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/authenticatedExclusion"
+      }
+    },
+    "sourceDispositions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/sourceDisposition"
+      }
+    },
+    "occurrences": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/occurrence"
+      }
+    }
+  },
+  "$defs": {
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "target",
+        "file",
+        "symbol",
+        "symbolUsr",
+        "astKind",
+        "astPath",
+        "occurrenceKind",
+        "offset",
+        "endOffset",
+        "line",
+        "callee",
+        "tokenSha256",
+        "classification",
+        "classificationProof",
+        "ownerIssue",
+        "ownershipSlice",
+        "carveoutId",
+        "recipeKey",
+        "hookId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^idiom:[0-9a-f]{24}$"
+        },
+        "target": {
+          "enum": [
+            "postgres",
+            "solidity"
+          ]
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^lib/backends/"
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "symbolUsr": {
+          "type": "string",
+          "pattern": "^c:"
+        },
+        "astKind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "astPath": {
+          "type": "string"
+        },
+        "occurrenceKind": {
+          "enum": [
+            "target-node-construction",
+            "ordered-insertion",
+            "bundle-return",
+            "bundle-pass",
+            "conditional-include",
+            "dispatch",
+            "repeated-group",
+            "generic-driver-function",
+            "security-carveout-use"
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "endOffset": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "callee": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tokenSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "classification": {
+          "enum": [
+            "declarative-recipe-candidate",
+            "pure-leaf-hook",
+            "security-carveout-656",
+            "generic-driver-validation",
+            "generated-provider-construction",
+            "generated-provider-invocation",
+            "provider-plumbing",
+            "forbidden-residue"
+          ]
+        },
+        "classificationProof": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ownerIssue": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ownershipSlice": {
+          "type": "string",
+          "minLength": 1
+        },
+        "carveoutId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recipeKey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hookId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "ownershipSlice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ownerIssue",
+        "id",
+        "target",
+        "occurrences",
+        "symbols"
+      ],
+      "properties": {
+        "ownerIssue": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "enum": [
+            "postgres",
+            "solidity"
+          ]
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "symbols": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "symbolSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "symbol",
+        "symbolUsr",
+        "classification",
+        "ownerIssue",
+        "ownershipSlice",
+        "occurrences"
+      ],
+      "properties": {
+        "target": {
+          "enum": [
+            "postgres",
+            "solidity"
+          ]
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "symbolUsr": {
+          "type": "string",
+          "pattern": "^c:"
+        },
+        "classification": {
+          "enum": [
+            "declarative-recipe-candidate",
+            "pure-leaf-hook",
+            "security-carveout-656",
+            "generic-driver-validation",
+            "generated-provider-construction",
+            "generated-provider-invocation",
+            "provider-plumbing",
+            "forbidden-residue"
+          ]
+        },
+        "ownerIssue": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "ownershipSlice": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurrences": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "authenticatedExclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "target",
+        "file",
+        "symbol",
+        "symbolUsr",
+        "astKind",
+        "astPath",
+        "occurrenceKind",
+        "offset",
+        "endOffset",
+        "line",
+        "callee",
+        "tokenSha256",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^excluded:[0-9a-f]{24}$"
+        },
+        "target": {
+          "enum": [
+            "postgres",
+            "solidity"
+          ]
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^lib/backends/"
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "symbolUsr": {
+          "type": "string",
+          "pattern": "^c:"
+        },
+        "astKind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "astPath": {
+          "type": "string"
+        },
+        "occurrenceKind": {
+          "enum": [
+            "target-node-construction",
+            "ordered-insertion",
+            "bundle-return",
+            "bundle-pass",
+            "conditional-include",
+            "dispatch",
+            "repeated-group",
+            "generic-driver-function",
+            "security-carveout-use"
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "endOffset": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "callee": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tokenSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "sourceDisposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "file",
+        "translationUnit",
+        "governedOccurrences",
+        "authenticatedExclusions",
+        "disposition",
+        "proof"
+      ],
+      "properties": {
+        "target": {
+          "enum": [
+            "postgres",
+            "solidity"
+          ]
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^lib/backends/"
+        },
+        "translationUnit": {
+          "type": "boolean"
+        },
+        "governedOccurrences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authenticatedExclusions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disposition": {
+          "enum": [
+            "covered",
+            "authenticated-leaf-formatting-only",
+            "authenticated-no-governed-ast-occurrence"
+          ]
+        },
+        "proof": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

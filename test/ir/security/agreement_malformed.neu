@@ -1,0 +1,7 @@
+// [29] a malformed agreement header is rejected at the frontend with the coded message.
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: agreement header must be 'agreement NAME between A and B {'
+
+agreement a between X {
+    trigger t
+}

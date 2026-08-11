@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/component-compatibility-manifest/v1",
+  "title": "Component Compatibility Manifest",
+  "description": "Records the exact versions/digests of every component that can affect interpretation or verification, so a verifier can refuse stale combinations. See docs/binding/TRUST_LATE_BINDING_CONTRACT.md.",
+  "type": "object",
+  "required": ["kind", "dslVersion", "translator", "schemas"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": { "const": "neutrino.component-compatibility-manifest" },
+    "dslVersion": { "type": "string", "description": "DSL/semantic version of the capability." },
+    "mlirDialectVersion": { "type": "string", "description": "Neutrino MLIR dialect / IR schema version." },
+    "translator": {
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [
+        { "required": ["toolVersion"] },
+        { "required": ["imageDigest"] }
+      ],
+      "description": "Concrete translator identity: at least one of toolVersion / imageDigest.",
+      "properties": {
+        "toolVersion": { "type": "string" },
+        "imageDigest": { "type": "string", "description": "GHCR translator image digest." },
+        "wrapperVersion": { "type": "string", "description": "Maven neutrino-translator-wrapper version." }
+      }
+    },
+    "agents": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "sdkVersion": { "type": "string" } }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "jvmSdkVersion": { "type": "string" },
+        "tsSdkVersion": { "type": "string" },
+        "wasmCoreDigest": { "type": "string", "description": "Digest of the normative Rust->wasm core." }
+      }
+    },
+    "schemas": {
+      "type": "object",
+      "description": "Versions of the trust/binding schemas in effect (all required).",
+      "required": ["bindingPolicy", "bindingReceipt", "runtimeEvidence"],
+      "additionalProperties": false,
+      "properties": {
+        "bindingPolicy": { "type": "string" },
+        "bindingReceipt": { "type": "string" },
+        "runtimeEvidence": { "type": "string" }
+      }
+    },
+    "conformanceVectorVersion": { "type": "string" }
+  }
+}

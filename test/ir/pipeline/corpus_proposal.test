@@ -1,0 +1,6 @@
+// [75c] M5 S2 (): corpus-to-proposal generator — the committed vocabulary-proposal regenerates
+// byte-identically, validates as a Stage-3 proposal via validate_domain_proposal.py --corpus, and
+// re-verifies its corpus binding (--check); the fail-closed teeth are pinned by the generator self-test;
+// confidence is high=code/derived, medium=editorial; all statuses proposed. See check_corpus_proposal.py.
+//
+// RUN: python3 %S/check_corpus_proposal.py %examples

@@ -1,0 +1,10 @@
+{
+  "scenario": "value_types_bad_evidence",
+  "procedure": "value_types",
+  "inputs": {
+    "amount": 100000, "rate": 10, "payer": "party-1", "ccy": "EUR",
+    "occurred_at": "2026-01-01T00:00:00Z",
+    "doc": "notaref"
+  },
+  "expect": { "computed": { "fee": 10000 } }
+}

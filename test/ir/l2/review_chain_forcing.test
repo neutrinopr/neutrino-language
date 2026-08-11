@@ -1,0 +1,47 @@
+//  /  S7 — build-tier REAL-TOOL witness for the bounded review-chain
+// composite forcing. Drives the BUILT neutrino-gen + neutrino-emit (not a mock)
+// through the pressure-loop forcing harness on the committed flow and proves the
+// derived register row AND the full derived evidence object match the committed
+// artifacts. This is the non-vacuous real-tool integration the fast harness test
+// cannot provide.
+//
+// Leaf concepts reduce to the closed requirement set through the AUTHORITATIVE L2
+// bridge (domain-reduction), and the stage-permuted twin reduces identically:
+// RUN: %neutrino-gen --target=capability-spec %S/Inputs/review_chain_leaf.neu -o %t.spec
+// RUN: %neutrino-emit --kind=domain-reduction %S/Inputs/review_chain.l2.mlir --reduce-against %t.spec/capability-spec.json > %t.reda
+// RUN: %neutrino-emit --kind=domain-reduction %S/Inputs/review_chain_permuted.l2.mlir --reduce-against %t.spec/capability-spec.json > %t.redb
+// RUN: diff %t.reda %t.redb
+// RUN: %FileCheck %s --check-prefix=L2RED < %t.reda
+//
+// A recursive stage->stage relation is refused by the reducer at its anchor:
+// RUN: %not %neutrino-emit --kind=domain-semantics %S/Inputs/review_chain_recursive.l2.mlir 2>&1 | %FileCheck %s --check-prefix=RECURSE
+//
+// The source-level ordered variant is refused before dispatch, fabricating no coordination-plan:
+// RUN: %not %neutrino-gen --target=coordination-plan %S/Inputs/review_chain_ordered.neu -o %t.ord 2>&1 | %FileCheck %s --check-prefix=ORDERED
+// RUN: test ! -e %t.ord/coordination-plan.json
+// RUN: %FileCheck %s --check-prefix=ORDDIAG < %t.ord/diagnostics.json
+//
+// The bounded stage posts on quorum-met but NO partial effect on an unmet quorum:
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/Inputs/review_chain_stage_miss.scn.json %S/Inputs/review_chain_stage.neu -o %t.miss
+// RUN: %FileCheck %s --check-prefix=MISS < %t.miss/coordination-trace.json
+//
+// Drive the composite harness with the BUILT tools and match BOTH the committed
+// register row and the committed evidence object byte-for-byte:
+// RUN: python3 %scripts/generators/run_pressure_loop_forcing.py %examples/pressure-loop-forcing/s7-review-chain-fixtures.json --out %t.reg --evidence-dir %t.ev --neutrino-gen %neutrino-gen --neutrino-emit %neutrino-emit
+// RUN: python3 %S/compare_s7_register.py %t.reg %examples/pressure-loop-register/s7-review-chain.json
+// RUN: diff %t.ev/plf-s7-review-chain-overload.orchestration-overload.json %examples/pressure-loop-forcing/evidence/plf-s7-review-chain-overload.orchestration-overload.json
+// RUN: %FileCheck %s --check-prefix=ROW < %t.reg
+//
+// L2RED: "concept": "assessor_review"
+// L2RED: "feature": "attestation:quorum"
+//
+// RECURSE: reduction edge targets undeclared L1 feature 'stage_b'
+//
+// ORDERED: guard references 'after'
+// ORDDIAG: "code": "source.parse"
+// MISS: "no-progress"
+//
+// ROW: "class": "3"
+// ROW: "disposition": "LAYER_DECISION_REQUIRED"
+// ROW: "failedVerifierObligation": "L2 cannot preserve the required assessor-before-reviewer dependency through reduction"
+// ROW: "linkedDecision": "neutrino-

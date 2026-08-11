@@ -1,0 +1,22 @@
+{
+  "scenario": "core_promo_campaign_happy_path",
+  "procedure": "core_promo_campaign",
+  "inputs": {
+    "redemption_id": "redeem-001",
+    "sponsor_id": "sponsor-001",
+    "promoter_id": "promoter-001",
+    "fulfiller_id": "fulfiller-001",
+    "commission": 20,
+    "reimbursement": 80,
+    "currency": "EUR"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "sponsor.promo_pool": -100,
+      "promoter.commission": 20,
+      "fulfiller.reimbursement": 80
+    },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "capabilityHash": "bcf3856936ea1dfc4523d41b197109ee0b87448c1b640bf9843ed4890164dd44",
+  "computed": {},
+  "eventChain": [
+    "BurnRequested",
+    "HolderDebitDebited",
+    "SupplyCreditCredited",
+    "TokenBurnReconciled"
+  ],
+  "inputs": {
+    "amount": 2500,
+    "burn_id": "burn-001",
+    "currency": "EUR",
+    "holder_id": "holder-001",
+    "supply_approved": 1,
+    "supply_id": "token-reserve"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "token.balance": -2500,
+    "token.supply": 2500
+  },
+  "procedure": "token_burn",
+  "scenario": "token_burn_happy_path",
+  "schemaVersion": 1
+}

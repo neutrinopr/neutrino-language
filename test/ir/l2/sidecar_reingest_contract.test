@@ -1,0 +1,108 @@
+// The v2-sidecar RE-INGEST TRUST SEAM ( PR3): the C++ load path
+// (validateDomainSemanticsSidecarV2, reached via `neutrino-emit
+// --kind=domain-reduction <sidecar.json>`) must enforce the SAME contract as
+// the stdlib validator (validate_l2_domain_semantics_v3.py; the producer emits v3) — full per-record
+// shape, the cross-record semantics, and the recomputed hash — so a validated
+// artifact is a faithful stand-in for the source and the two seams cannot drift.
+//
+// This is a DRIFT CORPUS: every case is run through BOTH validators and they
+// must agree. `%not` on both = both reject; a clean run on both = both accept.
+// Each invalid case is RE-HASHED (via the stdlib validator's --canonicalize) so
+// the shape/semantics gate — not a stale hash — is what bites (except the stale-
+// hash case itself). All mutations use python only (no jq), so the corpus stays
+// hermetic and regenerates from the emitter.
+
+// RUN: %neutrino-emit --kind=domain-semantics %S/Inputs/reingest_domain.mlir > %t.base.json
+
+// --- (0) a valid sidecar — both ACCEPT (and the C++ path reduces) ------------
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.base.json
+// RUN: %neutrino-emit --kind=domain-reduction %t.base.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json | %FileCheck %s --check-prefix=VALID
+// VALID: "bindings"
+
+// --- (1) NESTED UNKNOWN field, re-hashed: both REJECT (shape) ----------------
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["reductions"][0]["unexpected"]="silently-ignored"; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.nu.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.nu.mut > %t.nu.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.nu.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.nu.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=NU
+// NU: l2v2.shape: reductions[{{[0-9]+}}] has an unknown property
+
+// --- (2) OPTIONAL FIELD emptiness (reviewer=""), re-hashed: both REJECT ------
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["provenance"][0]["reviewer"]=""; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.oe.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.oe.mut > %t.oe.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.oe.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.oe.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=OE
+// OE: l2v2.shape: provenance[{{[0-9]+}}].reviewer must be a non-empty string
+
+// --- (3) DANGLING cross-record reduction reference, re-hashed: both REJECT ---
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); [r.update(to="effect:ghost") for r in o["reductions"] if r["relation"] in ("expands","discharges")]; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.dl.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.dl.mut > %t.dl.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.dl.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.dl.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=DL
+// DL: undeclared L1 feature 'effect:ghost'
+
+// --- (4) STALE hash (NOT re-hashed): both REJECT (hash) ----------------------
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["domainSemanticsHash"]="0"*64; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.sh.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.sh.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.sh.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=SH
+// SH: l2v2.hash: domainSemanticsHash {{0+}} != recomputed
+
+// --- (5) IMPORT added but NOT re-hashed: both REJECT (hash) — proves the
+//         imports array is part of the hashed contract (an import change bites).
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["imports"].append({"capability":"coordinate.z","version":"1.0.0"}); json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.ih.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.ih.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.ih.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=IH
+// IH: l2v2.hash: domainSemanticsHash
+
+// --- (6) IMPORT with a non-semver version, re-hashed: both REJECT (shape) -----
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["imports"].append({"capability":"coordinate.z","version":"v1"}); json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.iv.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.iv.mut > %t.iv.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.iv.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.iv.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=IV
+// IV: l2v2.shape: imports[{{[0-9]+}}].version is not a semantic version
+
+// --- (7) IMPORT with an unknown nested field, re-hashed: both REJECT (shape) --
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["imports"].append({"capability":"coordinate.z","version":"1.0.0","sneaky":1}); json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.iu.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.iu.mut > %t.iu.json
+// RUN: %not python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.iu.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.iu.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=IU
+// IU: l2v2.shape: imports[{{[0-9]+}}] has an unknown property
+
+// ---  VERSION TRUST SEAM -------------------------------------------------
+// The intakeVersioning tuple is a TRUST-SEAM check the C++ re-ingest enforces
+// BEFORE reduction (direct sidecar re-ingest is a public path into reduction, so
+// the version binding cannot live only in the Python admission gate). These
+// cases are re-signed and therefore SHAPE-VALID — the stdlib v3 validator (which
+// validates the artifact contract, not the environment) ACCEPTS them — but the
+// C++ reduction REFUSES them because the stamped versions no longer match the
+// compiler's own kSemanticProfileVersion / kReductionSemanticsVersion.
+
+// --- (8) STALE VOCABULARY axis, re-hashed: stdlib ACCEPTS, reduction REFUSES --
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["intakeVersioning"]["semanticProfileVersion"]=999; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.sv.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.sv.mut > %t.sv.json
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.sv.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.sv.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=SV
+// SV: l2v2.intake_version: stale-vocabulary
+
+// --- (9) STALE REDUCER axis, re-hashed: stdlib ACCEPTS, reduction REFUSES -----
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["intakeVersioning"]["reductionSemanticsVersion"]=999; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.sr.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.sr.mut > %t.sr.json
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.sr.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.sr.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=SR
+// SR: l2v2.intake_version: stale-reducer
+
+// --- (10) MIXED tuple (both axes drifted), re-hashed: reduction REFUSES -------
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["intakeVersioning"]={"semanticProfileVersion":999,"reductionSemanticsVersion":888}; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.mx.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.mx.mut > %t.mx.json
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.mx.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.mx.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=MX
+// MX: l2v2.intake_version: stale-
+
+// --- (11) NUMERIC-WIDTH WRAPAROUND, re-hashed: reduction REFUSES (no narrowing).
+//          2^32+3 / 2^32+1 would wrap to the current 3/1 constants under a 32-bit
+//          cast; the seam parses/compares them as int64 so they cannot slip
+//          through. (An int64-overflowing value is rejected at shape instead.)
+// RUN: python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["intakeVersioning"]={"semanticProfileVersion":4294967299,"reductionSemanticsVersion":4294967297}; json.dump(o,open(sys.argv[2],"w"))' %t.base.json %t.wr.mut
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --canonicalize %t.wr.mut > %t.wr.json
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v3.py --artifact %t.wr.json
+// RUN: %not %neutrino-emit --kind=domain-reduction %t.wr.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=WR
+// WR: l2v2.intake_version: stale-vocabulary — intakeVersioning.semanticProfileVersion 4294967299

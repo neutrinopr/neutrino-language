@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/solidity-classification/v2",
+  "title": "Neutrino Solidity-samples Classification",
+  "description": "The normative SHAPE of neutrino-solidity-samples/classification.json (schemaVersion 2): the controlled coordination dimensions and the per-sample profile labels the translator targets to match a generated contract to the closest reference shape via its stable profileId. Fail-closed (additionalProperties:false everywhere). Validated by scripts/corpus/validate_solidity_classification.py, which mirrors this schema AND enforces the cross-references JSON Schema cannot express (dimension-value vocabulary membership, profileId `.vN` == profileVersion, source basename == contract, uniqueness of profileId + contract) — a self-test keeps the validator's field set / pattern / const aligned with this file. See docs/backends/SOLIDITY_CLASSIFICATION.md.",
+  "type": "object",
+  "required": ["schemaVersion", "description", "dimensions", "samples"],
+  "additionalProperties": false,
+  "$defs": {
+    "profileId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+\\.v([0-9]+)$",
+      "description": "<family>.<name>[...].v<major>; its version must equal profileVersion (enforced by the validator, not expressible here)."
+    },
+    "vocabulary": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "scalarDimensionValue": { "type": "string", "minLength": 1 }
+  },
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "description": { "type": "string", "minLength": 1 },
+    "dimensions": {
+      "type": "object",
+      "description": "The governed dimensions: seven scalar axes + the list axis `characteristics`. A new dimension is a schemaVersion change, not an ad-hoc field.",
+      "required": ["partyModel", "timeBound", "oracleDependency", "accessControl",
+                   "identityBinding", "orderingModel", "evidenceStyle", "characteristics"],
+      "additionalProperties": false,
+      "properties": {
+        "partyModel": { "$ref": "#/$defs/vocabulary" },
+        "timeBound": { "$ref": "#/$defs/vocabulary" },
+        "oracleDependency": { "$ref": "#/$defs/vocabulary" },
+        "accessControl": { "$ref": "#/$defs/vocabulary" },
+        "identityBinding": { "$ref": "#/$defs/vocabulary" },
+        "orderingModel": { "$ref": "#/$defs/vocabulary" },
+        "evidenceStyle": { "$ref": "#/$defs/vocabulary" },
+        "characteristics": { "$ref": "#/$defs/vocabulary" }
+      }
+    },
+    "dimensionDocs": {
+      "type": "object",
+      "description": "Optional per-dimension semantics; keys are a subset of the dimension names.",
+      "additionalProperties": false,
+      "properties": {
+        "partyModel": { "type": "string", "minLength": 1 },
+        "timeBound": { "type": "string", "minLength": 1 },
+        "oracleDependency": { "type": "string", "minLength": 1 },
+        "accessControl": { "type": "string", "minLength": 1 },
+        "identityBinding": { "type": "string", "minLength": 1 },
+        "orderingModel": { "type": "string", "minLength": 1 },
+        "evidenceStyle": { "type": "string", "minLength": 1 },
+        "characteristics": { "type": "string", "minLength": 1 }
+      }
+    },
+    "samples": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["contract", "profileId", "profileVersion", "source", "partyModel",
+                     "timeBound", "oracleDependency", "accessControl", "identityBinding",
+                     "orderingModel", "evidenceStyle", "characteristics", "strength", "whenToUse"],
+        "additionalProperties": false,
+        "properties": {
+          "contract": { "type": "string", "minLength": 1 },
+          "profileId": { "$ref": "#/$defs/profileId" },
+          "profileVersion": { "type": "integer", "minimum": 1 },
+          "source": { "type": "string", "pattern": "^.+\\.sol$" },
+          "partyModel": { "$ref": "#/$defs/scalarDimensionValue" },
+          "timeBound": { "$ref": "#/$defs/scalarDimensionValue" },
+          "oracleDependency": { "$ref": "#/$defs/scalarDimensionValue" },
+          "accessControl": { "$ref": "#/$defs/scalarDimensionValue" },
+          "identityBinding": { "$ref": "#/$defs/scalarDimensionValue" },
+          "orderingModel": { "$ref": "#/$defs/scalarDimensionValue" },
+          "evidenceStyle": { "$ref": "#/$defs/scalarDimensionValue" },
+          "characteristics": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "strength": { "type": "string", "minLength": 1 },
+          "whenToUse": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

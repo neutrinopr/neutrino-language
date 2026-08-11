@@ -1,0 +1,25 @@
+// [85] the Solidity contract's FIXED 2-state on-chain surface stays PINNED to the spec (it is a
+// coordination projection, not derived from the full lifecycle machine — "not derived" must not mean
+// "disconnected"). For every committed EFFECTFUL solidity domain: the spec declares a `success` terminal
+// AND a `balanced` invariant, and the .sol carries the Reconciled terminal AND the balance guard (all
+// committed effectful solidity domains are balanced, so terminal+guard correspondence is both-present
+// here). An evidence-only domain (top-level `"effects": []`) projects a DIFFERENT 2-state surface
+// (Status{None, Accepted}, no ledger/balance) and is skipped here — it is pinned by its own evidence
+// trace-equivalence fixture instead.
+//
+// RUN: n=0; for d in %curated-pack-root/*/; do \
+// RUN:   soldir="$d/generated/solidity/src"; [ -d "$soldir" ] || continue; \
+// RUN:   sol=$(ls "$soldir"/*.sol 2>/dev/null | head -1); [ -n "$sol" ] || continue; \
+// RUN:   src=$(ls "$d"source/*.neu 2>/dev/null | head -1); [ -n "$src" ] || continue; \
+// RUN:   rm -rf %t.spec && %neutrino-gen --target=capability-spec "$src" -o %t.spec || exit 1; \
+// RUN:   if grep -qE '^  "effects": \[\]' %t.spec/capability-spec.json; then continue; fi; \
+// RUN:   %FileCheck --check-prefix=SPEC %s < %t.spec/capability-spec.json || exit 1; \
+// RUN:   %FileCheck --check-prefix=SOL %s < "$sol" || exit 1; \
+// RUN:   n=$((n+1)); \
+// RUN: done; [ "$n" -ge 3 ]
+//
+// SPEC-DAG: "success"
+// SPEC-DAG: "kind": "balanced"
+// SOL-DAG: Status.Reconciled
+// SOL-DAG: Reconciled(
+// SOL-DAG: debitTotal[_k] == creditTotal[_k]

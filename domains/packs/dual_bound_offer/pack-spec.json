@@ -1,0 +1,114 @@
+{
+  "packId": "dual_bound_offer",
+  "requiredContracts": [
+    "capability-spec",
+    "participant-view",
+    "test-realization"
+  ],
+  "payloads": [
+    {
+      "role": "capability-spec",
+      "path": "generated/capability-spec/capability-spec.json",
+      "mediaType": "application/json",
+      "contract": "capability-spec"
+    },
+    {
+      "role": "postgres-procedure",
+      "path": "generated/postgres/procedure.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "postgres-reconciliation",
+      "path": "generated/postgres/reconciliation.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "postgres-test-helper",
+      "path": "generated/postgres/run_db_test.sh",
+      "mediaType": "application/x-sh"
+    },
+    {
+      "role": "postgres-schema",
+      "path": "generated/postgres/schema.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "slot-binding-topology",
+      "path": "generated/slot/binding-topology.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "slot-capability",
+      "path": "generated/slot/capability.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "slot-capability",
+      "path": "generated/slot/capability.lock",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "slot-compensation",
+      "path": "generated/slot/compensation.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "slot-envelope",
+      "path": "generated/slot/envelope.schema.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "slot-operations",
+      "path": "generated/slot/operations.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "slot-transcript",
+      "path": "generated/slot/transcript.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "solidity-config",
+      "path": "generated/solidity/foundry.toml",
+      "mediaType": "application/toml"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/src/DualBoundOffer.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/test/DualBoundOffer.t.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "test-realization",
+      "path": "generated/test-realization/test-realization.json",
+      "mediaType": "application/json",
+      "contract": "test-realization"
+    },
+    {
+      "role": "participant-view",
+      "path": "generated/views/Merchant.json",
+      "mediaType": "application/json",
+      "contract": "participant-view"
+    },
+    {
+      "role": "participant-view",
+      "path": "generated/views/Sponsor.json",
+      "mediaType": "application/json",
+      "contract": "participant-view"
+    },
+    {
+      "role": "scenario",
+      "path": "scenario/dual_bound_offer_happy_path.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "source",
+      "path": "source/dual_bound_offer.neu",
+      "mediaType": "text/x-neutrino"
+    }
+  ]
+}

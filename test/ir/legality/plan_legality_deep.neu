@@ -1,0 +1,76 @@
+//  semantic realization-legality: the coordination-plan legality gate matches
+// a VERIFIED CoordinationPlan's normalized semantic requirements + metrics against
+// each target's SemanticProfile BEFORE evaluator/lowering dispatch. ONE requirement
+// derivation, ONE matcher, MANY profile sources — this deep-expression coordination
+// (compute AST depth ~21) is ACCEPTED by the reference evaluator (built-in
+// reference.v1, unbounded) and by PostgreSQL (generous limit) but REFUSED by
+// gas-bounded Solidity; and a profile pinning an unknown semantic contract version
+// is refused before any renderer runs. The plan-only diagnostic codes
+// (legality.limit_exceeded / legality.unknown_profile_version) prove the coordination
+// -plan gate fired, and the absent artifact proves it fired BEFORE dispatch.
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+//
+// (1) Reference evaluator ACCEPTS the deep coordination (unbounded reference profile):
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/plan_legality_deep.scn.json %s -o %t.ev
+// RUN: %FileCheck %s --check-prefix=EVAL < %t.ev/coordination-trace.json
+// EVAL: "outcome": "terminal"
+//
+// (2) Solidity REFUSES it — gas-bounded expression-depth limit — before render,
+// and emits NO artifact (the gate ran before dispatch):
+// RUN: %not %neutrino-gen --target=solidity --from-spec %t.spec/capability-spec.json -o %t.sol
+// RUN: %FileCheck %s --check-prefix=SOL < %t.sol/diagnostics.json
+// SOL: "legality.limit_exceeded"
+// RUN: test ! -e %t.sol/src
+//
+// (3) PostgreSQL ACCEPTS the SAME coordination (a different profile source, generous limit):
+// RUN: %neutrino-gen --target=postgres --from-spec --profile %examples/target-profiles/postgres.target-profile.json %t.spec/capability-spec.json -o %t.pg
+//
+// (4) Solidity is an EXTERNAL target: a caller-supplied profile is REFUSED outright, so an
+// unknown-version profile never reaches version negotiation. Core lit asserts the refusal
+// boundary; generic profile-version validation stays with check_spec_legality.py, and any
+// package-specific profile behaviour belongs to the receiving package's tests
+// (M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9, 2026-07-31).
+// RUN: sed 's/"version": 3/"version": 99/' %examples/target-profiles/solidity.target-profile.json > %t.badver.json
+// RUN: %not %neutrino-gen --target=solidity --from-spec --profile %t.badver.json %t.spec/capability-spec.json -o %t.bv 2>&1 | %FileCheck %s --check-prefix=VER
+// VER: bound to its verified package profile
+// RUN: test ! -e %t.bv/src
+//
+// (5) MANDATORY gating — with NO --profile, Solidity STILL refuses via its
+// built-in default profile (a no-profile render never means "unbounded"), on the
+// external-spec path...
+// RUN: %not %neutrino-gen --target=solidity --from-spec %t.spec/capability-spec.json -o %t.solnp
+// RUN: %FileCheck %s --check-prefix=SOL < %t.solnp/diagnostics.json
+// RUN: test ! -e %t.solnp/src
+// ...and the SOURCE path (with a scenario, no --profile):
+// RUN: %not %neutrino-gen --target=solidity --scenario=%S/plan_legality_deep.scn.json %s -o %t.solsrc
+// RUN: %FileCheck %s --check-prefix=SOL < %t.solsrc/diagnostics.json
+// RUN: test ! -e %t.solsrc/src
+
+procedure deep_probe {
+    trigger opened
+    input flow_id  : string
+    input payer    : party
+    input amount   : money
+    input currency : currency
+
+    compute deep = amount + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1
+
+    debit pay_out {
+        ledger          = "a.src"
+        owner           = "o"
+        party           = %payer
+        amount          = %deep
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    credit pay_in {
+        ledger          = "b.dst"
+        owner           = "o"
+        party           = %payer
+        amount          = %deep
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    assert balanced
+}

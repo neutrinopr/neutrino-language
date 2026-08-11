@@ -1,0 +1,57 @@
+{
+  "packId": "example.external-pack.v2",
+  "translatorPins": {
+    "toolVersion": "0.2.0",
+    "mlirDialectVersion": "0.1.0",
+    "capabilitySpecVersion": "v1"
+  },
+  "requiredContracts": [
+    "binding-policy",
+    "target-profile"
+  ],
+  "optionalContracts": [],
+  "payloads": [
+    {
+      "role": "binding-policy",
+      "path": "artifacts/policy.json",
+      "mediaType": "application/json",
+      "contract": "binding-policy"
+    },
+    {
+      "role": "target-profile",
+      "path": "artifacts/profile.json",
+      "mediaType": "application/json",
+      "contract": "target-profile"
+    },
+    {
+      "role": "postgres-test-helper",
+      "path": "generated/postgres/run.sh",
+      "mediaType": "application/x-sh"
+    },
+    {
+      "role": "postgres-schema",
+      "path": "generated/postgres/schema.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "solidity-project-config",
+      "path": "generated/solidity/foundry.toml",
+      "mediaType": "application/toml"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/Synthetic.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "scenario",
+      "path": "scenario/happy_path.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "source",
+      "path": "source/synthetic.neu",
+      "mediaType": "text/x-neutrino"
+    }
+  ]
+}

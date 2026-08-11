@@ -1,0 +1,22 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_installment_fulfillment",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "187ca27a356cc48f289862da216c7401582642f85245b9c59a3b03c792561db8", "specVersion": "1.0.0" },
+  "participant": { "name": "Merchant", "role": "merchant", "org": "acme", "slotId": "coordinate.core_installment_fulfillment#Merchant" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "installment_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 31, "column": 1 } },
+    { "name": "merchant_id", "type": "party", "specPath": "inputs[2]", "source": { "line": 33, "column": 1 } },
+    { "name": "principal", "type": "money", "specPath": "inputs[3]", "source": { "line": 34, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[4]", "source": { "line": 35, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "bankco", "role": "issuer" }
+  ],
+  "evidenceObligations": [
+    { "leg": "merchant_settlement", "kind": "credit", "ledger": "merchant.settlement", "specPath": "effects[1]", "source": { "line": 47, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

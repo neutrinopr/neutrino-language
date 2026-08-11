@@ -1,0 +1,9 @@
+{
+  "kind": "neutrino.solidity-syntax-authority.v2",
+  "scope": "raw statement-authoring sites across the recursively-discovered Solidity backend surface.  reached its endpoint: every construct is a typed SolidityTargetNodes.td node, the raw seam was deleted, and this gate now PROHIBITS any raw authoring \u2014 the only legal state is zero sites.",
+  "note": "Prohibition gate (not a ratchet): no inventory reconcile, no PR-base compare. The public SolStmt::line/::block factories and the RawCap/rawLine/rawBlock seam are gone; the SolStmt encapsulation makes forging raw Line/Block a compile error.",
+  "primaryTU": "lib/backends/solidity/provider/SolidityTargetAdapter.cpp",
+  "baseline": 0,
+  "executable": [],
+  "comments": []
+}

@@ -1,0 +1,9 @@
+--  C1 byte-faithful fixture: the per-effect ledger comment header.
+-- Pins the EXACT production line the generated EffectLedgerComment handler (a
+-- projected `line`) must render — the fixed `-- <kind> <name> (<ledger>)<suffix>`
+-- shape with the four dense operands the render harness feeds. The
+-- kind/name/ledger and the already-decided guard suffix here are fixture values;
+-- only the LINE SHAPE is the byte anchor for the .td->generated->golden render
+-- pair. The suffix (" when v_ok") is the legalization-decided guard clause,
+-- carried verbatim — the node never selects on it.
+    -- credit settle_fee (escrow) when v_ok

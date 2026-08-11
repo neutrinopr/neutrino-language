@@ -1,0 +1,19 @@
+{
+  "scenario": "channel_verified_payout_happy_path",
+  "procedure": "channel_verified_payout",
+  "inputs": {
+    "payout_id": "pay-001",
+    "payer_id": "payer-001",
+    "recipient_id": "recipient-001",
+    "amount": 100,
+    "currency": "EUR"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "payer.funding": -100,
+      "recipient.settlement": 100
+    },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

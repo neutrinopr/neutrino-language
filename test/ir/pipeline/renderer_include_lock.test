@@ -1,0 +1,6 @@
+// [89] M5 WP8 (): FINAL anti-backslide sweep — the migrated spec renderers are DISCOVERED
+// structurally and pinned to the spec (no ProcedureView/parseExpr), across all migrated paths at once.
+// scripts/gates/check_renderer_includes.py --selftest is the gate (it also carries the source-structural
+// _need/_forbid pins added in ).
+//
+// RUN: python3 %scripts/gates/check_renderer_includes.py --selftest

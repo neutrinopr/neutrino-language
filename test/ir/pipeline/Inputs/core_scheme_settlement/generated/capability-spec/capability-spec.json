@@ -1,0 +1,666 @@
+{
+  "computes": [
+    {
+      "ast": {
+        "dtype": "money",
+        "kind": "bin",
+        "lhs": {
+          "dtype": "money",
+          "kind": "bin",
+          "lhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "gross_position"
+          },
+          "op": "*",
+          "rhs": {
+            "dtype": "decimal",
+            "kind": "var",
+            "name": "fee_bps"
+          }
+        },
+        "op": "/",
+        "rhs": {
+          "dtype": "decimal",
+          "kind": "num",
+          "num": 10000
+        }
+      },
+      "category": "money",
+      "deps": [
+        "gross_position",
+        "fee_bps"
+      ],
+      "expr": "gross_position * fee_bps / 10000",
+      "name": "fee"
+    },
+    {
+      "ast": {
+        "dtype": "money",
+        "kind": "bin",
+        "lhs": {
+          "dtype": "money",
+          "kind": "var",
+          "name": "gross_position"
+        },
+        "op": "-",
+        "rhs": {
+          "dtype": "money",
+          "kind": "var",
+          "name": "fee"
+        }
+      },
+      "category": "money",
+      "deps": [
+        "gross_position",
+        "fee"
+      ],
+      "expr": "gross_position - fee",
+      "name": "net"
+    }
+  ],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "net"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "debit",
+      "ledger": "scheme.net_payable",
+      "name": "scheme_principal",
+      "owner": "scheme",
+      "participant": "Scheme",
+      "party": {
+        "kind": "ref",
+        "value": "scheme_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "net"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "credit",
+      "ledger": "bank.settlement_account",
+      "name": "bank_principal",
+      "owner": "settlement_bank",
+      "participant": "SettlementBank",
+      "party": {
+        "kind": "ref",
+        "value": "bank_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "fee"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "debit",
+      "ledger": "scheme.fee_payable",
+      "name": "scheme_fee",
+      "owner": "scheme",
+      "participant": "Scheme",
+      "party": {
+        "kind": "ref",
+        "value": "scheme_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "fee"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "credit",
+      "ledger": "treasury.fee_income",
+      "name": "treasury_fee",
+      "owner": "treasury",
+      "participant": "Treasury",
+      "party": {
+        "kind": "ref",
+        "value": "treasury_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "b90fda8311d8fdc72cd36f0c9e3a4d94a4cbfdd406532602e13f42717d573d8d",
+    "specHash": "672450bccacfe8bedb69bef0c254b4d9b9183aa258f425893a360466d6bc82de"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "settlement_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "scheme_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "bank_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "treasury_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "gross_position",
+      "type": "money"
+    },
+    {
+      "category": "decimal",
+      "name": "fee_bps",
+      "type": "decimal"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "settlement_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Scheme",
+      "org": "scheme-net",
+      "role": "scheme"
+    },
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "swift",
+        "jvm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "SettlementBank",
+      "org": "bankco",
+      "role": "settlement_bank"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Treasury",
+      "org": "treasuryco",
+      "role": "treasury"
+    }
+  ],
+  "procedure": "core_scheme_settlement",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input settlement_id",
+      "source": {
+        "column": 1,
+        "line": 52
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input scheme_id",
+      "source": {
+        "column": 1,
+        "line": 53
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input bank_id",
+      "source": {
+        "column": 1,
+        "line": 54
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input treasury_id",
+      "source": {
+        "column": 1,
+        "line": 55
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input gross_position",
+      "source": {
+        "column": 1,
+        "line": 56
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input fee_bps",
+      "source": {
+        "column": 1,
+        "line": 57
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 58
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "compute fee",
+      "source": {
+        "column": 1,
+        "line": 60
+      },
+      "specPath": "computes[0]"
+    },
+    {
+      "construct": "compute net",
+      "source": {
+        "column": 1,
+        "line": 61
+      },
+      "specPath": "computes[1]"
+    },
+    {
+      "construct": "debit scheme_principal",
+      "source": {
+        "column": 1,
+        "line": 63
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit bank_principal",
+      "source": {
+        "column": 1,
+        "line": 73
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "debit scheme_fee",
+      "source": {
+        "column": 1,
+        "line": 83
+      },
+      "specPath": "effects[2]"
+    },
+    {
+      "construct": "credit treasury_fee",
+      "source": {
+        "column": 1,
+        "line": 93
+      },
+      "specPath": "effects[3]"
+    },
+    {
+      "construct": "participant Scheme",
+      "source": {
+        "column": 1,
+        "line": 18
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant SettlementBank",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "participant Treasury",
+      "source": {
+        "column": 1,
+        "line": 31
+      },
+      "specPath": "participants[2]"
+    },
+    {
+      "construct": "allow scheme-net with bankco",
+      "source": {
+        "column": 1,
+        "line": 36
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "allow scheme-net with treasuryco",
+      "source": {
+        "column": 1,
+        "line": 40
+      },
+      "specPath": "topology.allowedOrgPairs[1]"
+    },
+    {
+      "construct": "allow bankco with treasuryco",
+      "source": {
+        "column": 1,
+        "line": 47
+      },
+      "specPath": "topology.allowedOrgPairs[2]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 103
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input settlement_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 52
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input scheme_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 53
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input gross_position",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 56
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:decimal",
+        "primitive": "input fee_bps",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 57
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 58
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit scheme_principal",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 63
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit bank_principal",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 73
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 103
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant SettlementBank",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 23
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Scheme",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 18
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow scheme-net with bankco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 36
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "scheme-net",
+        "orgB": "bankco",
+        "roleA": "scheme",
+        "roleB": "settlement_bank"
+      },
+      {
+        "orgA": "scheme-net",
+        "orgB": "treasuryco",
+        "roleA": "scheme",
+        "roleB": "treasury"
+      },
+      {
+        "orgA": "bankco",
+        "orgB": "treasuryco",
+        "roleA": "settlement_bank",
+        "roleB": "treasury"
+      }
+    ]
+  },
+  "trigger": "scheme_position_finalized"
+}

@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-dialect/v1",
+  "title": "Neutrino Domain Dialect",
+  "description": "A reviewed, hash-pinned Upper-Layer domain vocabulary + Lower-Layer translation maps. Fail-closed (additionalProperties:false everywhere): stale, ambiguous, or provenance-free vocabulary cannot enter the compiler pipeline. Validated + hashed by scripts/domain/validate_domain_dialect.py. See docs/domains/DOMAIN_DIALECT.md and neutrino-strategy/09-debates/two-layer-domain-dialect-model.md.",
+  "type": "object",
+  "required": ["kind", "domain", "version", "mappingGraph"],
+  "additionalProperties": false,
+  "$defs": {
+    "layer": {
+      "enum": ["L1", "L2", "L3", "L4"],
+      "description": "L1 Core IR (translator-owned) · L2 Capability IR/Vocabulary (the dialect product) · L3 Binding Context (rail/protocol) · L4 ExtensionData (fidelity-preserving, non-semantic)."
+    },
+    "lossiness": {
+      "enum": ["lossless", "lossy-preserved-in-extensionData", "unsupported"]
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "minLength": 1, "description": "Source artifact/document path or standard id that motivates this item." },
+        "standardVersion": { "type": "string", "minLength": 1 },
+        "excerptHash": { "type": "string", "minLength": 1, "description": "Hash of the cited excerpt, when available." },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["proposed", "accepted", "rejected"], "description": "Review status. A dialect promoted into the pipeline should be 'accepted'." }
+      }
+    },
+    "term": {
+      "type": "object",
+      "required": ["layer"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "$ref": "#/$defs/layer" },
+        "role": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "provenanceRefs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Ids of mappingGraph edges that justify this term."
+        }
+      }
+    },
+    "obligation": {
+      "type": "object",
+      "required": ["name", "participant", "kind", "ledger"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "participant": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["debit", "credit"], "description": "Value-movement direction. Only the two core leg kinds — no executable semantics." },
+        "ledger": { "type": "string", "minLength": 1 }
+      }
+    },
+    "template": {
+      "type": "object",
+      "required": ["layer", "expandsTo"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "$ref": "#/$defs/layer" },
+        "expandsTo": { "type": "string", "minLength": 1, "description": "The core .neu construct this template expands to (e.g. 'procedure')." },
+        "provenanceRefs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "participants": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["role"],
+            "additionalProperties": false,
+            "properties": { "role": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "requiredInputs": {
+          "type": "object",
+          "additionalProperties": { "enum": ["string", "party", "money", "currency", "number", "evidence"] }
+        },
+        "obligations": { "type": "array", "items": { "$ref": "#/$defs/obligation" } }
+      }
+    },
+    "railMapEntry": {
+      "type": "object",
+      "required": ["lossiness"],
+      "additionalProperties": false,
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "concept": { "type": "string", "minLength": 1 },
+        "lossiness": { "$ref": "#/$defs/lossiness" }
+      }
+    },
+    "translationMap": {
+      "type": "object",
+      "required": ["provenance"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "lower": { "type": "object", "additionalProperties": { "$ref": "#/$defs/railMapEntry" } },
+        "lift": { "type": "object", "additionalProperties": { "$ref": "#/$defs/railMapEntry" } },
+        "extensionData": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["preserve", "reason"],
+            "additionalProperties": false,
+            "properties": {
+              "preserve": { "type": "boolean" },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "graphNode": {
+      "type": "object",
+      "required": ["id", "layer", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "layer": { "$ref": "#/$defs/layer" },
+        "kind": { "enum": ["sourceField", "capabilityConcept", "coreConstruct", "railField", "extensionField"] }
+      }
+    },
+    "graphEdge": {
+      "type": "object",
+      "required": ["id", "type", "from", "to", "provenance"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["cites", "expandsTo", "lowersTo", "liftsFrom", "preservesAs", "rejects"] },
+        "from": { "type": "string", "minLength": 1, "description": "A mappingGraph node id." },
+        "to": { "type": "string", "minLength": 1, "description": "A mappingGraph node id." },
+        "direction": { "enum": ["expand", "lower", "lift", "preserve", "reject"] },
+        "lossiness": { "$ref": "#/$defs/lossiness" },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    }
+  },
+  "properties": {
+    "kind": { "const": "neutrino.domain-dialect" },
+    "domain": { "type": "string", "minLength": 1, "description": "Dialect domain id, e.g. 'sponsored_finance'." },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "description": "Dialect semantic version (separate from agreement versions)." },
+    "capabilitySpecVersion": {
+      "type": "string",
+      "pattern": "^v[0-9]+$",
+      "description": "The capability-spec CONTRACT version this dialect's templates were authored against, pinning the translator's emitted kCapabilitySpecVersion. Enforced fail-closed by scripts/gates/check_artifact_pins.py (R3/). Part of the hashed body, so a repin re-hashes. Distinct from `version` (the dialect's own semantic version)."
+    },
+    "terms": { "type": "object", "additionalProperties": { "$ref": "#/$defs/term" } },
+    "templates": { "type": "object", "additionalProperties": { "$ref": "#/$defs/template" } },
+    "translationMaps": { "type": "object", "additionalProperties": { "$ref": "#/$defs/translationMap" } },
+    "mappingGraph": {
+      "type": "object",
+      "required": ["nodes", "edges"],
+      "additionalProperties": false,
+      "properties": {
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/graphNode" } },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/graphEdge" } }
+      }
+    },
+    "domainDialectHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 over the canonical JSON of this artifact with the domainDialectHash field removed (sort_keys, compact separators). Computed/verified by the validator; never affects nor is affected by other fields' content beyond what is hashed."
+    }
+  }
+}

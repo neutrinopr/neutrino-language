@@ -1,0 +1,63 @@
+// M5 oracle (): coordination↔guard claimId parity gate — the THIRD oracle single-sourcing invariant
+// (alongside cross-backend equivalence  and observer↔guard parity ). / gate the generated
+// coordination on the quorum guard, keyed by the WORKFLOW KEY (the spec's idempotency_key), making
+// `claimId ≡ workflowKey` a live cross-artifact invariant: the id the guard accepts under must equal the
+// id execute() checks, or the guard accepts one id and the coordination reads another (isAccepted → false
+// forever). Fail-safe (a drift bricks liveness, never bypasses quorum), but until now enforced only by a
+// doc comment. This pins it, single-sourced from the spec, two-sided per rail; the mismatch cases prove
+// the gate is non-vacuous.
+//
+// DEFINE: %{scen} = %S/oracle_delivery_scenario.json
+// DEFINE: %{par} = %scripts/gates/check_coordination_guard_parity.py
+//
+// Render the coordination (+ guard) on both rails from the worked oracle sample.
+// RUN: rm -rf %t.sol %t.pg %t.d
+// RUN: %neutrino-gen --target=solidity --scenario=%{scen} %S/oracle_delivery.neu -o %t.sol
+// RUN: %neutrino-gen --target=postgres --scenario=%{scen} %S/oracle_delivery.neu -o %t.pg
+// RUN: %neutrino-gen --target=capability-spec %S/oracle_delivery.neu -o %t.d
+//
+// HAPPY PATH: both rails key acceptance on the same spec workflow key → parity holds.
+// RUN: python3 %{par} --solidity %t.sol/src/OracleDelivery.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pg/procedure.sql --spec %t.d/capability-spec.json
+//
+// NON-VACUOUS  — the Solidity gate checks a DIFFERENT variable than the derived workflow-key hash
+// (claimId != the derived _k) → fails.
+// RUN: sed 's/isAccepted(_k)/isAccepted(_other)/' %t.sol/src/OracleDelivery.sol > %t.gc.sol
+// RUN: %not python3 %{par} --solidity %t.gc.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pg/procedure.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=SOLCHECK
+// SOLCHECK: parity.solidity_guard_check
+//
+// NON-VACUOUS  — the Solidity workflow key is derived from the WRONG input (not the idempotency_key) → fails.
+// RUN: sed 's/keccak256(bytes(u_order_id))/keccak256(bytes(u_amount))/' %t.sol/src/OracleDelivery.sol > %t.gd.sol
+// RUN: %not python3 %{par} --solidity %t.gd.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pg/procedure.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=SOLDERIV
+// SOLDERIV: parity.solidity_derivation
+//
+// NON-VACUOUS  — the PostgreSQL EXECUTE gate checks a different claim_id than the workflow key → fails.
+// Mutates ONLY execute_'s `NOT EXISTS (…)` gate (accept_'s replay guard uses `EXISTS`, so it is left at
+// p_order_id) — this pins that the check is scoped to the execute_ body, not satisfied by accept_'s
+// occurrence of the same table ( review).
+// RUN: sed 's/NOT EXISTS (SELECT 1 FROM quorum_acceptance WHERE claim_id = p_order_id AND procedure/NOT EXISTS (SELECT 1 FROM quorum_acceptance WHERE claim_id = p_amount AND procedure/' %t.pg/procedure.sql > %t.pc.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/OracleDelivery.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pc.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=PGCHECK
+// PGCHECK: parity.postgres_claim_check
+//
+// NON-VACUOUS  — PostgreSQL accept_ RECORDS under a different claim_id than execute checks → fails
+// (the accept and check sides must key on the same workflow key).
+// RUN: sed 's/, p_order_id, p_canonical_claim_hash/, p_amount, p_canonical_claim_hash/' %t.pg/procedure.sql > %t.pr.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/OracleDelivery.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pr.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=PGREC
+// PGREC: parity.postgres_accept_record
+//
+// NON-VACUOUS  — TWO-SIDED: a GUARD-side rename of the acceptance accessor is caught even with a valid
+// coordination (the coordination's interface would call a non-existent accessor).
+// RUN: sed 's/function isAccepted(bytes32 claimId) external view/function wasAccepted(bytes32 claimId) external view/' %t.sol/src/ThresholdQuorumAcceptance.sol > %t.guard.sol
+// RUN: %not python3 %{par} --solidity %t.sol/src/OracleDelivery.sol --guard %t.guard.sol --postgres %t.pg/procedure.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=GUARDSIDE
+// GUARDSIDE: parity.solidity_interface
+//
+// NON-VACUOUS  — PostgreSQL accept_ RECORDS under a FOREIGN procedure namespace (right key, wrong
+// procedure) → fails: the acceptance lives in a namespace execute() never reads ().
+// RUN: sed 's/VALUES ('\''oracle_delivery'\'', p_order_id, p_canonical_claim_hash/VALUES ('\''some_sibling'\'', p_order_id, p_canonical_claim_hash/' %t.pg/procedure.sql > %t.pp.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/OracleDelivery.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pp.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=PGPROCREC
+// PGPROCREC: parity.postgres_accept_record
+//
+// NON-VACUOUS  — the PostgreSQL execute_ gate CHECKS a FOREIGN procedure namespace → fails. Scoped to
+// execute_'s NOT EXISTS (accept_'s replay guard uses EXISTS), so it pins the execute-side predicate.
+// RUN: sed 's/NOT EXISTS (SELECT 1 FROM quorum_acceptance WHERE claim_id = p_order_id AND procedure = '\''oracle_delivery'\'')/NOT EXISTS (SELECT 1 FROM quorum_acceptance WHERE claim_id = p_order_id AND procedure = '\''some_sibling'\'')/' %t.pg/procedure.sql > %t.pq.sql
+// RUN: %not python3 %{par} --solidity %t.sol/src/OracleDelivery.sol --guard %t.sol/src/ThresholdQuorumAcceptance.sol --postgres %t.pq.sql --spec %t.d/capability-spec.json 2>&1 | %FileCheck %s --check-prefix=PGPROCCHK
+// PGPROCCHK: parity.postgres_claim_check

@@ -1,0 +1,8 @@
+// [48] D8: dialect registry/status/provenance from a VALIDATOR-verified artifact — the registry
+// surfaces terms/templates with rolled-up status + resolved provenance; a stale (hash-mismatched) or
+// missing artifact fails closed; and a YAML-authored dialect renders via the validator's normalized
+// output (where PyYAML is available). See check_dialect.py.
+//
+// RUN: python3 %S/check_dialect.py %scripts/generators/neutrino_lang.py \
+// RUN:   %examples/domain-dialects/sponsored_finance.dialect.json \
+// RUN:   %examples/domain-dialects/negatives/hash_mismatch.dialect.json

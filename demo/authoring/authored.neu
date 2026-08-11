@@ -1,0 +1,53 @@
+// UNTRUSTED MACHINE-AUTHORED INPUT — produced by applying demo/authoring/PROMPT.md
+// to demo/authoring/agreement.md. The language model proposes; the translator
+// verifies and refuses. Guarantees come from compilation, not from the model.
+//
+// This file is committed as a demonstration artifact, not as trusted source.
+
+procedure kyc_paid_verification {
+    trigger kyc_verification_requested
+    version "1.0.0"
+
+    participant Requester {
+        role = "requester"
+        org  = "acmebank"
+    }
+    participant Verifier {
+        role = "verifier"
+        org  = "kycpro"
+    }
+    allow "acmebank" with "kycpro" {
+        "acmebank" as "requester"
+        "kycpro" as "verifier"
+    }
+
+    input case_id      : string
+    input dossier_sha  : string
+    input requester_id : party
+    input verifier_id  : party
+    input fee          : money
+    input currency     : currency
+    input verified     : number
+
+    debit fee_escrow_debit {
+        ledger          = "kyc.escrow"
+        owner           = "requester"
+        participant     = "Requester"
+        party           = %requester_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = verified == 1
+    }
+    credit verifier_fee_credit {
+        ledger          = "kyc.compensation"
+        owner           = "verifier"
+        participant     = "Verifier"
+        party           = %verifier_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = verified == 1
+    }
+    assert balanced
+}

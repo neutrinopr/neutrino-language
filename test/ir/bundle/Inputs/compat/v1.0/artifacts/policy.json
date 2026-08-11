@@ -1,0 +1,7 @@
+{
+  "mode": "to_be_bound",
+  "authorizedBinder": "example-org",
+  "runtimes": [
+    "evm"
+  ]
+}

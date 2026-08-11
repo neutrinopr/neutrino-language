@@ -1,0 +1,25 @@
+{
+  "scenario": "frozen_compensating",
+  "procedure": "core_freeze_guard_fixture",
+  "inputs": {
+    "transfer_id": "xfer-001",
+    "sender_id": "sender-001",
+    "receiver_id": "receiver-001",
+    "amount": 2500,
+    "currency": "EUR",
+    "sender_frozen": -1,
+    "receiver_frozen": 1
+  },
+  "expect": {
+    "computed": {
+      "freeze_signal": 2
+    },
+    "ledger": {
+      "token.balance": 0
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

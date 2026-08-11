@@ -1,0 +1,268 @@
+// [] M6 replacement-grade printer substrate: SolidityTargetNodes.td generates both the
+// typed-target-model kind registry and the first shared target-printer handler (Require). This pins
+// handler coverage, rejects retained handwritten fallback beside generated handlers, and ratchets the
+// handwritten Solidity/Postgres per-node printer inventory downward. The full stale-output +
+// deterministic-order checks run under pinned llvm-tblgen in the CMake ctest `target-node-registry`;
+// here we drive the tblgen-free non-vacuity tampers.
+//
+// DEFINE: %{rawgate} = %scripts/gates/check_target_node_registry.py
+// The PR-relative ratchet needs the AUTHORITATIVE base (); this surface names origin/main as the
+// declared base. `%{gate}` carries it so every tamper below runs base-relatively.
+// DEFINE: %{gate} = %{rawgate} --base-ref origin/main
+// DEFINE: %{sol} = %S/../../../lib/backends/solidity
+// DEFINE: %{generated} = %{sol}/generated
+// DEFINE: %{provider} = %{sol}/provider
+// DEFINE: %{printer} = %{generated}/SolidityPrinterHandlers.inc
+//
+// HAPPY PATH: the committed registry reconciles with generated + remaining handwritten handlers.
+// RUN: python3 %{gate} --selftest --reconcile-only
+//
+// NO-BASE FAIL-CLOSED — a shallow single-SHA checkout whose PR base cannot be resolved NOR fetched must
+// NOT skip the anti-decoration ratchet: it FAILS CLOSED (a silent skip would let a decorative generated
+// node slip through, and the pre-substrate `(11,0)` fallback false-failed `8 > 0`). --simulate-no-base
+// forces the truly-unresolvable path.
+// RUN: %not python3 %{gate} --selftest --reconcile-only --simulate-no-base 2>&1 | %FileCheck %s --check-prefix=NOBASE
+// NOBASE: fails closed
+//
+// AUTHORITATIVE BASE (): with NO --base-ref and NO PR_BASE_SHA/GITHUB_BASE_SHA, the ratchet does NOT
+// silently fall back to HEAD^1 or origin/main — it fails closed, so a stacked PR (whose HEAD^1 differs
+// from its real base) cannot be validated against the wrong base.
+// RUN: env -u PR_BASE_SHA -u GITHUB_BASE_SHA -u GITHUB_BASE_REF %not python3 %{rawgate} --selftest --reconcile-only 2>&1 | %FileCheck %s --check-prefix=NOFALLBACK
+// NOFALLBACK: no authoritative PR base
+//
+// DECLARED-BASE-ONLY (): an explicitly declared but UNRESOLVABLE base fails closed rather than
+// falling back to any other ref — the declared base is the only base consulted.
+// RUN: env -u PR_BASE_SHA -u GITHUB_BASE_SHA -u GITHUB_BASE_REF %not python3 %{rawgate} --base-ref refs/neutrino/does-not-exist --selftest --reconcile-only 2>&1 | %FileCheck %s --check-prefix=BADBASE
+// BADBASE: no authoritative PR base
+//
+// NON-VACUOUS  — a required record is REMOVED from the registry: the generated handler still handles
+// that kind, so the reconciliation finds an unreachable generated handler → fails.
+// RUN: grep -v 'NEU_SOL_NODE(Require,' %{generated}/SolidityTargetNodes.inc > %t.drop.inc
+// RUN: %not python3 %{gate} --inc %t.drop.inc 2>&1 | %FileCheck %s --check-prefix=DROPREC
+// DROPREC: unreachable from the registry
+//
+// NON-VACUOUS  — a generated printer HANDLER is removed and no handwritten fallback exists: the
+// registry kind then has no handler → fails.
+// RUN: grep -v '"Require"' %{printer} > %t.nohandler.inc
+// RUN: %not python3 %{gate} --printer %t.nohandler.inc 2>&1 | %FileCheck %s --check-prefix=NOHANDLER
+// NOHANDLER: have NO generated or handwritten printer handler
+//
+// NON-VACUOUS  — a DUPLICATE registry record (same symbol twice) → fails.
+// RUN: sed 's/NEU_SOL_NODE(Emit, 5,/NEU_SOL_NODE(Emit, 5, "emit", true, "event")\nNEU_SOL_NODE(Emit, 5,/' %{generated}/SolidityTargetNodes.inc > %t.dup.inc
+// RUN: %not python3 %{gate} --inc %t.dup.inc 2>&1 | %FileCheck %s --check-prefix=DUP
+// DUP: duplicate kind
+//
+// NON-VACUOUS  — a non-contiguous / duplicate ORDINAL (the enum's integer identity) → fails.
+// RUN: sed 's/NEU_SOL_NODE(Emit, 5,/NEU_SOL_NODE(Emit, 99,/' %{generated}/SolidityTargetNodes.inc > %t.ord.inc
+// RUN: %not python3 %{gate} --inc %t.ord.inc 2>&1 | %FileCheck %s --check-prefix=ORD
+// ORD: not contiguous
+//
+// NON-VACUOUS  — the model header stops expanding the registry (a hand-written enum that could drift) → fails.
+// RUN: sed 's/#include "SolidityTargetNodes.inc"/enum_body_hand_written/' %{provider}/SolidityTargetAdapter.h > %t.hdr.h
+// RUN: %not python3 %{gate} --header %t.hdr.h 2>&1 | %FileCheck %s --check-prefix=HANDENUM
+// HANDENUM: does not expand the generated registry
+//
+// NON-VACUOUS  — a generated handler is duplicated → fails.
+// RUN: sed 's/{2, "solidity", "Require"/{2, "solidity", "Require", "require", target_printer::LayoutKind::Line, "require(${condition}, \\"${message}\\");", kRequireFields, 2 },\n  {2, "solidity", "Require"/' %{printer} > %t.dup-handler.inc
+// RUN: %not python3 %{gate} --printer %t.dup-handler.inc 2>&1 | %FileCheck %s --check-prefix=DUPHANDLER
+// DUPHANDLER: duplicate handler
+//
+// NON-VACUOUS  — a generated handler is unreachable from the registry → fails.
+// RUN: sed 's/"Require"/"Ghost"/' %{printer} > %t.unreachable.inc
+// RUN: %not python3 %{gate} --printer %t.unreachable.inc 2>&1 | %FileCheck %s --check-prefix=UNREACHABLE
+// UNREACHABLE: unreachable from the registry
+//
+// NON-VACUOUS  — a migrated (leaf) generated handler regrows a handwritten toNode case → fails.
+// The handwritten switch was DELETED at inventory→0, so the tamper is re-anchored on the live generic
+// dispatch (`return generated_printer::render(...)`) and injects a fresh handwritten case for a
+// generated LEAF kind (Require); the anti-regrowth control must still trip.
+// RUN: sed 's|return generated_printer::render(s, std::move(children));|switch (s.kind) { case SolStmt::Kind::Require: return line("require"); default: break; } return generated_printer::render(s, std::move(children));|' %{provider}/SolidityTargetAdapter.cpp > %t.fallback.cpp
+// RUN: %not python3 %{gate} --cpp %t.fallback.cpp 2>&1 | %FileCheck %s --check-prefix=FALLBACK
+// FALLBACK: retained handwritten toNode fallback
+//
+// NON-VACUOUS  — a migrated NESTING (block-layout) generated handler regrows a handwritten toNode
+// case → fails. Covers the new Guarded/Block nesting path, not only leaves, so the anti-regrowth
+// guarantee holds for the recursively-framed kinds too.
+// RUN: sed 's|return generated_printer::render(s, std::move(children));|switch (s.kind) { case SolStmt::Kind::Block: return block(s.text, s.aux, std::move(children)); default: break; } return generated_printer::render(s, std::move(children));|' %{provider}/SolidityTargetAdapter.cpp > %t.fallback-block.cpp
+// RUN: %not python3 %{gate} --cpp %t.fallback-block.cpp 2>&1 | %FileCheck %s --check-prefix=FALLBACKBLOCK
+// FALLBACKBLOCK: retained handwritten toNode fallback
+//
+// NON-VACUOUS  — a rogue target-specific per-node switch outside toNode is caught by the governed
+// repo-wide inventory and must fail (switch-form detection). At inventory→0 there is no governed
+// Solidity site left to *duplicate*, so the rogue Solidity kind switch is flagged as an UNGOVERNED
+// site. Generic target-printer helpers do not use SolStmt::Kind and remain outside this inventory.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue.cpp
+// RUN: printf '\nstatic int roguePrinter(neutrino::solidity_model::SolStmt::Kind kind) { switch (kind) { case neutrino::solidity_model::SolStmt::Kind::Line: return 1; default: return 0; } }\n' >> %t.rogue.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUE
+// ROGUE: ungoverned handwritten site
+//
+// NON-VACUOUS  — a rogue non-switch emitter that compares a target kind and emits syntax is
+// also governed even when the comparison spans lines; the inventory is not limited to `case` labels.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-if.cpp
+// RUN: printf '\nstatic int rogueIf(const neutrino::solidity_model::SolStmt &s) { if (s.kind ==\n    neutrino::solidity_model::SolStmt::Kind::Line)\n    return codetext::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-if.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-if.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEIF
+// ROGUEIF: ungoverned handwritten site
+//
+// NON-VACUOUS  — assigning the kind literal to an alias and emitting later in the helper body
+// is also rejected.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-alias.cpp
+// RUN: printf '\nstatic int rogueAlias(const neutrino::solidity_model::SolStmt &s) { auto k = neutrino::solidity_model::SolStmt::Kind::Line; if (s.kind == k) { return codetext::line("rogue-target-syntax").text.size(); } return 0; }\n' >> %t.rogue-alias.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-alias.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEALIAS
+// ROGUEALIAS: ungoverned handwritten site
+//
+// NON-VACUOUS  — splitting selection and emission across helper calls is rejected by the
+// call-aware boundary.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-split.cpp
+// RUN: printf '\nstatic bool rogueIsLine(const neutrino::solidity_model::SolStmt &s) { return s.kind == neutrino::solidity_model::SolStmt::Kind::Line; }\nstatic int rogueEmit(const neutrino::solidity_model::SolStmt &s) { if (rogueIsLine(s)) return neutrino::codetext::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-split.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-split.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUESPLIT
+// ROGUESPLIT: ungoverned handwritten site
+//
+// NON-VACUOUS  — aliasing the codetext namespace does not hide target emission.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-ct-alias.cpp
+// RUN: printf '\nnamespace rogue_ct = neutrino::codetext;\nstatic int rogueCtAlias(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return rogue_ct::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-ct-alias.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-ct-alias.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUECTALIAS
+// ROGUECTALIAS: ungoverned handwritten site
+//
+// NON-VACUOUS  — using-declarations for individual codetext symbols are also target
+// emission aliases and cannot hide a handwritten emitter.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-using.cpp
+// RUN: printf '\nusing neutrino::codetext::line;\nstatic int rogueUsing(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-using.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-using.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEUSING
+// ROGUEUSING: ungoverned handwritten site
+//
+// NON-VACUOUS  — simple function aliases keep their call edge, so a selector helper
+// assigned to a local callable cannot hide the kind-dependent target emission.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-fn-alias.cpp
+// RUN: printf '\nstatic bool rogueIsLine2(const neutrino::solidity_model::SolStmt &s) { return s.kind == neutrino::solidity_model::SolStmt::Kind::Line; }\nstatic int rogueIndirect(const neutrino::solidity_model::SolStmt &s) { auto predicate = rogueIsLine2; if (predicate(s)) return neutrino::codetext::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-fn-alias.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-fn-alias.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEFNALIAS
+// ROGUEFNALIAS: ungoverned handwritten site
+//
+// NON-VACUOUS  — assigning a codetext callable to a local alias still records
+// target emission at the alias call site.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-emitter-callable.cpp
+// RUN: printf '\nstatic int rogueEmitterCallable(const neutrino::solidity_model::SolStmt &s) { auto emit = neutrino::codetext::line; if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return emit("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-emitter-callable.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-emitter-callable.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEEMITTERCALLABLE
+// ROGUEEMITTERCALLABLE: ungoverned handwritten site
+//
+// NON-VACUOUS  — typed function-pointer aliases keep their selector edge.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-fn-pointer.cpp
+// RUN: printf '\nstatic bool rogueIsLine3(const neutrino::solidity_model::SolStmt &s) { return s.kind == neutrino::solidity_model::SolStmt::Kind::Line; }\nstatic int rogueFunctionPointer(const neutrino::solidity_model::SolStmt &s) { bool (*predicate)(const neutrino::solidity_model::SolStmt &) = rogueIsLine3; if (predicate(s)) return neutrino::codetext::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-fn-pointer.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-fn-pointer.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEFNPOINTER
+// ROGUEFNPOINTER: ungoverned handwritten site
+//
+// NON-VACUOUS  — namespace-scope aliases to emitters are forbidden in governed
+// backend printer sources, so they cannot hide target syntax.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-global-emitter.cpp
+// RUN: printf '\nauto rogueGlobalEmit = neutrino::codetext::line;\nstatic int rogueGlobalEmitter(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return rogueGlobalEmit("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-global-emitter.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-global-emitter.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEGLOBALEMITTER
+// ROGUEGLOBALEMITTER: ungoverned handwritten site
+//
+// NON-VACUOUS  — brace-initialized callable aliases are also forbidden.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-brace-emitter.cpp
+// RUN: printf '\nstatic int rogueBraceEmitter(const neutrino::solidity_model::SolStmt &s) { auto emit{neutrino::codetext::line}; if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return emit("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-brace-emitter.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-brace-emitter.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEBRACEEMITTER
+// ROGUEBRACEEMITTER: ungoverned handwritten site
+//
+// NON-VACUOUS  — namespace-scope aliases to selector helpers are forbidden too,
+// so they cannot hide the target-kind edge.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-global-predicate.cpp
+// RUN: printf '\nstatic bool rogueIsLine4(const neutrino::solidity_model::SolStmt &s) { return s.kind == neutrino::solidity_model::SolStmt::Kind::Line; }\nauto rogueGlobalPredicate = rogueIsLine4;\nstatic int rogueGlobalPredicateUser(const neutrino::solidity_model::SolStmt &s) { if (rogueGlobalPredicate(s)) return neutrino::codetext::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-global-predicate.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-global-predicate.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEGLOBALPREDICATE
+// ROGUEGLOBALPREDICATE: ungoverned handwritten site
+//
+// NON-VACUOUS  — hiding the selector edge behind std::function still cannot
+// pair with direct target emission outside the reviewed printer functions.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-std-function.cpp
+// RUN: printf '\n#include <functional>\nstatic bool rogueIsLine5(const neutrino::solidity_model::SolStmt &s) { return s.kind == neutrino::solidity_model::SolStmt::Kind::Line; }\nstatic std::function<bool(const neutrino::solidity_model::SolStmt &)> predicate = rogueIsLine5;\nstatic int rogueStdFunction(const neutrino::solidity_model::SolStmt &s) { if (predicate(s)) return neutrino::codetext::line("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-std-function.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-std-function.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUESTDFUNCTION
+// ROGUESTDFUNCTION: ungoverned handwritten site
+//
+// NON-VACUOUS  — parenthesized direct emitter designators are still emitter
+// symbol references and are forbidden outside reviewed printer functions.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-parenthesized.cpp
+// RUN: printf '\nstatic int rogueParenthesized(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return (neutrino::codetext::line)("rogue-target-syntax").text.size(); return 0; }\n' >> %t.rogue-parenthesized.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-parenthesized.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEPARENTHESIZED
+// ROGUEPARENTHESIZED: ungoverned handwritten site
+//
+// NON-VACUOUS  — public codetext node shape constructors are also part of
+// the governed emission surface, not only convenience factories.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-node-ctor.cpp
+// RUN: printf '\nstatic neutrino::codetext::Node rogueNodeCtor(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return neutrino::codetext::Line{"rogue-target-syntax"}; return neutrino::codetext::Blank{}; }\n' >> %t.rogue-node-ctor.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-node-ctor.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUENODECTOR
+// ROGUENODECTOR: ungoverned handwritten site
+//
+// NON-VACUOUS  — file-scope target-emitter initializers are governed too:
+// target syntax cannot be seeded outside a reviewed printer function and selected later.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-file-scope.cpp
+// RUN: printf '\nstatic const neutrino::codetext::Node reviewLineNode = neutrino::codetext::line("rogue-target-syntax");\nstatic const neutrino::codetext::Node reviewBlankNode = neutrino::codetext::blank();\n[[maybe_unused]] static neutrino::codetext::Node reviewFileScopeConstruction(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return reviewLineNode; return reviewBlankNode; }\n' >> %t.rogue-file-scope.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-file-scope.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEFILESCOPE
+// ROGUEFILESCOPE: ungoverned handwritten site
+//
+// NON-VACUOUS  — macros cannot synthesize target-emitter factory references
+// outside the reviewed printer spans.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-macro.cpp
+// RUN: printf '\n#define REVIEW_EMIT(symbol) neutrino::codetext::symbol\n[[maybe_unused]] static neutrino::codetext::Node reviewMacroConstruction(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return REVIEW_EMIT(line)("rogue-target-syntax"); return REVIEW_EMIT(blank)(); }\n#undef REVIEW_EMIT\n' >> %t.rogue-macro.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-macro.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEMACRO
+// ROGUEMACRO: ungoverned handwritten site
+//
+// NON-VACUOUS  — include-guard-shaped names are not enough: an allowed
+// guard must be object-like, empty, and match the owning header.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-guard-macro.cpp
+// RUN: printf '\n#define NEUTRINO_REVIEW_H(symbol) neutrino::codetext::symbol\n[[maybe_unused]] static neutrino::codetext::Node reviewAllowedMacroConstruction(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return NEUTRINO_REVIEW_H(line)("rogue-target-syntax"); return NEUTRINO_REVIEW_H(blank)(); }\n#undef NEUTRINO_REVIEW_H\n' >> %t.rogue-guard-macro.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-guard-macro.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEGUARDMACRO
+// ROGUEGUARDMACRO: ungoverned handwritten site
+//
+// NON-VACUOUS  — TableGen-style macro names are location/body-specific
+// plumbing, not a general macro escape hatch in backend printer sources.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-get-macro.cpp
+// RUN: printf '\n#define GET_REVIEW_CLASSES(symbol) neutrino::codetext::symbol\n[[maybe_unused]] static neutrino::codetext::Node reviewGetMacroConstruction(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return GET_REVIEW_CLASSES(line)("rogue-target-syntax"); return GET_REVIEW_CLASSES(blank)(); }\n#undef GET_REVIEW_CLASSES\n' >> %t.rogue-get-macro.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-get-macro.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUEGETMACRO
+// ROGUEGETMACRO: ungoverned handwritten site
+//
+// NON-VACUOUS  — generic-framing allowlist closure (unlisted bare pass-through): a typed-syntax
+// handler mutated into a bare `${field}`-only template (here `Require`) is NOT on the reviewed
+// genericFramingHandlers allowlist, so it launders handwritten target syntax past the ratchet and the
+// gate must reject it. Guards the new derived closure check.
+// RUN: sed 's|"require(${condition}, \\"${message}\\");"|"${condition}"|' %{printer} > %t.bare.inc
+// RUN: %not python3 %{gate} --printer %t.bare.inc 2>&1 | %FileCheck %s --check-prefix=UNLISTEDBARE
+// UNLISTEDBARE: not on the reviewed generic-framing allowlist
+//
+// NON-VACUOUS  — generic-framing allowlist closure (stale allowlist entry): an allowlisted framing
+// handler (`Line`) mutated to carry literal target syntax is no longer a bare pass-through, so the
+// exact-set closure must fail rather than silently keep crediting it as generic framing.
+// RUN: sed 's|"${text}", ""|"x ${text}", ""|' %{printer} > %t.literal-line.inc
+// RUN: %not python3 %{gate} --printer %t.literal-line.inc 2>&1 | %FileCheck %s --check-prefix=STALEFRAMING
+// STALEFRAMING: no longer a bare pass-through
+//
+// NON-VACUOUS  [ slice 2a] — piggyback guard: a slice that migrates one grammar shape (a legitimate
+// +1 generated handler) but ALSO smuggles extra generated handlers alongside it must be rejected — the
+// ratchet caps a migration slice at ONE new generated handler so decoration cannot ride in on a real
+// retirement. Injecting two decoy handlers grows the generated count by more than one → fails.
+// RUN: sed 's|{2, "solidity", "Require"|{97, "solidity", "Decoy1", "decoy1", target_printer::LayoutKind::Line, false, "decoy1();", "", kRequireFields, 0 },\n  {98, "solidity", "Decoy2", "decoy2", target_printer::LayoutKind::Line, false, "decoy2();", "", kRequireFields, 0 },\n  {2, "solidity", "Require"|' %{printer} > %t.piggyback.inc
+// RUN: %not python3 %{gate} --printer %t.piggyback.inc 2>&1 | %FileCheck %s --check-prefix=PIGGYBACK
+// PIGGYBACK: at most ONE generated handler
+//
+// NON-VACUOUS  [ slice 2a] — piggyback in a NO-BASE shallow checkout: injecting extra generated
+// handlers when the PR base is unresolvable must STILL fail (fail closed), never silently pass — so the
+// anti-decoration invariant is not suppressed in shallow CI. (The same tamper also trips the committed
+// exact-count check, which survives shallow clones.)
+// RUN: sed 's|{2, "solidity", "Require"|{97, "solidity", "Decoy1", "decoy1", target_printer::LayoutKind::Line, false, "decoy1();", "", kRequireFields, 0 },\n  {98, "solidity", "Decoy2", "decoy2", target_printer::LayoutKind::Line, false, "decoy2();", "", kRequireFields, 0 },\n  {2, "solidity", "Require"|' %{printer} > %t.nobase-piggyback.inc
+// RUN: %not python3 %{gate} --printer %t.nobase-piggyback.inc --simulate-no-base 2>&1 | %FileCheck %s --check-prefix=NOBASEPIGGY
+// NOBASEPIGGY: {{fails closed|inventory count}}
+//
+// NON-VACUOUS  [] — the Lines-substrate `lineGroup` factory is a raw target
+// emitter: a direct call from a governed backend printer is an ungoverned route
+// around the sealed authority seams and must be flagged, exactly like line/block.
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-linegroup.cpp
+// RUN: printf '\nstatic int rogueLineGroup(const neutrino::solidity_model::SolStmt &s) { if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return neutrino::codetext::lineGroup({"rogue-target-syntax", "COMMIT;"}).lines.size(); return 0; }\n' >> %t.rogue-linegroup.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-linegroup.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUELINEGROUP
+// ROGUELINEGROUP: ungoverned handwritten site
+//
+// NON-VACUOUS  [] — the `LineGroup` node shape is part of the governed emission
+// surface too: even a type reference paired with a target-kind selection in a governed
+// printer is flagged (the shape's ctor is private, so this — not construction — is the
+// residual route the capital-symbol guard must catch).
+// RUN: cp %{provider}/SolidityTargetAdapter.cpp %t.rogue-linegroup-type.cpp
+// RUN: printf '\nstatic int rogueLineGroupType(const neutrino::solidity_model::SolStmt &s) { const neutrino::codetext::LineGroup *g = nullptr; if (s.kind == neutrino::solidity_model::SolStmt::Kind::Line) return g ? 1 : 0; return 0; }\n' >> %t.rogue-linegroup-type.cpp
+// RUN: %not python3 %{gate} --cpp %t.rogue-linegroup-type.cpp 2>&1 | %FileCheck %s --check-prefix=ROGUELINEGROUPTYPE
+// ROGUELINEGROUPTYPE: ungoverned handwritten site

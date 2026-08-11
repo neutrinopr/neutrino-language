@@ -1,0 +1,37 @@
+// Cross-border logistics milestone — an evidence-only custody-handoff record.
+//
+// A shipment moves across borders through a chain of custody handoffs (origin
+// carrier, last-mile courier, final delivery). Each handoff is an INDEPENDENT
+// milestone: an independent logistics oracle quorum attests the handoff
+// evidence, and the coordination records the ACCEPTED milestone. It moves NO
+// ledger value — the on-chain/relational record is an acceptance marker, and the
+// authoritative goods stay in the parties' own systems.
+//
+// Identity is the explicit `milestone_id` (the instance/replay key), so every
+// milestone has independent replay state. `shipment_id` is a CORRELATION field
+// shared by every milestone of one shipment — it is NOT the identity, and sharing
+// it does NOT by itself order the milestones or prove a shipment chronology; that
+// lifecycle lives outside this coordination. Only `milestone_id` keys the record.
+procedure core_evidence_only_milestone {
+    trigger milestone_reported
+    version "0.1.0"
+
+    input milestone_id       : string
+    input shipment_id        : string
+    input milestone_kind     : string
+    input custody_from       : party
+    input custody_to         : party
+    input milestone_evidence : evidence
+
+    instance_key milestone_id
+
+    attest milestone_evidence {
+        quorum           = 2
+        observer_set     = "fixture_oracles"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT48H"
+        fallback         = "abort"
+    }
+}

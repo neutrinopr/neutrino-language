@@ -1,0 +1,729 @@
+{
+  "attestations": [
+    {
+      "canonicalization": {
+        "mode": "exact",
+        "tolerance": null
+      },
+      "fallback": "abort",
+      "input": "clearance_proof",
+      "observerSet": {
+        "assurance": "A3",
+        "independence": "independent",
+        "ref": "witness_oracles",
+        "role": null
+      },
+      "quorum": {
+        "threshold": 2
+      },
+      "timeout": "PT24H"
+    }
+  ],
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "ref_id"
+      },
+      "kind": "debit",
+      "ledger": "payer.reserve",
+      "memo": "r5b-memo",
+      "name": "reserve_debit",
+      "owner": "payer",
+      "participant": "Payer",
+      "party": {
+        "kind": "ref",
+        "value": "payer_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "ref_id"
+      },
+      "kind": "credit",
+      "ledger": "custody.holding",
+      "memo": "r5b-memo",
+      "name": "custody_credit",
+      "owner": "custodian",
+      "participant": "Custodian",
+      "party": {
+        "kind": "ref",
+        "value": "custodian_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "ref_id"
+      },
+      "kind": "debit",
+      "ledger": "custody.holding",
+      "name": "release_debit",
+      "owner": "custodian",
+      "participant": "Custodian",
+      "party": {
+        "kind": "ref",
+        "value": "custodian_id"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "amount"
+          },
+          "op": ">=",
+          "rhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "threshold"
+          }
+        },
+        "expr": "amount >= threshold"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "ref_id"
+      },
+      "kind": "credit",
+      "ledger": "payee.proceeds",
+      "name": "settle_credit",
+      "owner": "payee",
+      "participant": "Payee",
+      "party": {
+        "kind": "ref",
+        "value": "payee_id"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "amount"
+          },
+          "op": ">=",
+          "rhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "threshold"
+          }
+        },
+        "expr": "amount >= threshold"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "3fb7912a10988b9e878e38646b10661ccdca9e9f3956debe26d11334a19399a3",
+    "specHash": "7521da8284b79c016d3295a2036be23d5307c6e1577a73549199740427d30b40"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "ref_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "payer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "custodian_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "payee_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "money",
+      "name": "threshold",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    },
+    {
+      "category": "evidence",
+      "name": "clearance_proof",
+      "type": "evidence"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "ref_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_PENDING",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_MET",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_TIMEOUT",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "AWAIT_QUORUM",
+        "to": "QUORUM_PENDING"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REACH_QUORUM",
+        "to": "QUORUM_MET"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "TIMEOUT",
+        "to": "QUORUM_TIMEOUT"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "QUORUM_MET",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_TIMEOUT",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "ABORT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Payer",
+      "org": "payerco",
+      "role": "payer"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Payee",
+      "org": "payeeco",
+      "role": "payee"
+    },
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "evm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "Custodian",
+      "org": "custodyco",
+      "role": "custodian"
+    }
+  ],
+  "procedure": "r5b_effect_memo_witness",
+  "schemaVersion": 3,
+  "sourceMap": [
+    {
+      "construct": "input ref_id",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input payer_id",
+      "source": {
+        "column": 1,
+        "line": 42
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input custodian_id",
+      "source": {
+        "column": 1,
+        "line": 43
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input payee_id",
+      "source": {
+        "column": 1,
+        "line": 44
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 45
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input threshold",
+      "source": {
+        "column": 1,
+        "line": 46
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 47
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "input clearance_proof",
+      "source": {
+        "column": 1,
+        "line": 48
+      },
+      "specPath": "inputs[7]"
+    },
+    {
+      "construct": "debit reserve_debit",
+      "source": {
+        "column": 1,
+        "line": 64
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit custody_credit",
+      "source": {
+        "column": 1,
+        "line": 75
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "debit release_debit",
+      "source": {
+        "column": 1,
+        "line": 87
+      },
+      "specPath": "effects[2]"
+    },
+    {
+      "construct": "credit settle_credit",
+      "source": {
+        "column": 1,
+        "line": 98
+      },
+      "specPath": "effects[3]"
+    },
+    {
+      "construct": "participant Payer",
+      "source": {
+        "column": 1,
+        "line": 15
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Payee",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "participant Custodian",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "participants[2]"
+    },
+    {
+      "construct": "allow payerco with custodyco",
+      "source": {
+        "column": 1,
+        "line": 30
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "allow custodyco with payeeco",
+      "source": {
+        "column": 1,
+        "line": 34
+      },
+      "specPath": "topology.allowedOrgPairs[1]"
+    },
+    {
+      "construct": "allow payerco with payeeco",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "topology.allowedOrgPairs[2]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 109
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input ref_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 41
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input payer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 42
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 45
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 47
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:evidence",
+        "primitive": "input clearance_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 48
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit reserve_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 64
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit custody_credit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 75
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "guard:conditional",
+        "primitive": "when release_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 87
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 109
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "attestation:quorum",
+        "primitive": "attest clearance_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 53
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant Custodian",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 23
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Payer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 15
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow payerco with custodyco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 30
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "payerco",
+        "orgB": "custodyco",
+        "roleA": "payer",
+        "roleB": "custodian"
+      },
+      {
+        "orgA": "custodyco",
+        "orgB": "payeeco",
+        "roleA": "custodian",
+        "roleB": "payee"
+      },
+      {
+        "orgA": "payerco",
+        "orgB": "payeeco",
+        "roleA": "",
+        "roleB": ""
+      }
+    ]
+  },
+  "trigger": "witness_opened"
+}

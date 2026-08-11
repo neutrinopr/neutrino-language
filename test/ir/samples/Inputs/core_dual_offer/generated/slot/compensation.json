@@ -1,0 +1,16 @@
+{
+  "kind": "neutrino.slot-compensation",
+  "capability": "coordinate.core_dual_offer",
+  "compensable": {
+    "COMMIT": {
+      "how": "post the inverse of each committed leg",
+      "reverses": [
+        { "entry": "sponsor_commitment", "ledger": "sponsor.commitment", "inverseOf": "debit" },
+        { "entry": "merchant_expected_contribution", "ledger": "merchant.expected_contribution", "inverseOf": "credit" }
+      ],
+      "idempotency": "core_dual_offer:<idempotency_key>:compensation"
+    }
+  },
+  "nonCompensable": ["OPEN", "NEGOTIATE", "PROPOSE", "REJECT", "CLOSE"],
+  "invariantAfterCompensation": "balanced"
+}

@@ -1,0 +1,21 @@
+{
+  "_provenance": "AUTHOR-DESIGNATED WEB3 PILOT; NOT SELECTED BY . neutrino- returned a reproducible verdict of NO: no committed candidate cleared its frozen bar, and this pack was excluded there as E5_AMBIGUOUS_MEMBER_SELECTION because it declared no scenario. This scenario is authored design work under neutrino-. It must never be described as a corpus-selected winner.",
+  "_paths": "The contract carries both a coordination path and a refusal path. AUTHORIZED: the independent observer quorum (threshold 2, observer_set resolution_oracles) accepts resolution_evidence, the coordination reaches QUORUM_MET and closes at CLOSED (terminalKind success). REFUSAL: quorum is not reached before the PT24H timeout, so the attestation fallback 'escalate' drives TIMEOUT -> ESCALATE and the coordination ends at ESCALATED (terminalKind contested). This file pins the AUTHORIZED path, because the v0.5.0 scenario format encodes exactly one execution per scenario and  forbids a second one; the refusal path is a declared, reachable terminal of the same contract rather than an absent case.",
+  "_nonFinancial": "No debit, credit, amount, currency, ledger, token-standard or financial-product semantics. The capability-spec declares effects: [] and expect.ledger is empty: the coordination records an evidence decision and moves no value.",
+  "scenario": "contested_evidence_resolution_quorum_accepted",
+  "procedure": "contested_evidence_resolution",
+  "inputs": {
+    "resolution_id": "resolution-2026-08-01-0001",
+    "resolution_evidence": "sha256:3c2f1a7d9b4e6058c1d2a3b4c5d6e7f80912a3b4c5d6e7f8091a2b3c4d5e6f70"
+  },
+  "accepted": {
+    "resolution_evidence": true
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {},
+    "invariants": [
+      "replay_safe"
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+// Cross-border trade signature — LEG 3 of 3: damage-gated insurance-reserve (M5 signature domain ).
+//
+// The insurance side of the same cross-border trade: if the goods arrive damaged, the insurer's reserve
+// indemnifies the customer — but only once a `damage_proof` clears a STRICTER 3-of-N independent quorum
+// (inspection_oracles). A payout warrants a higher bar than a delivery acknowledgement, so the quorum is
+// 3, not 2. The reserve-debit / customer-credit is the  supply-ledger shape (/): the reserve
+// is a ledger counterparty and the payout is BALANCED. (Reserve-SOLVENCY capping — rejecting a payout
+// that would overdraw the reserve — is not enforced by the coordination backend yet; tracked in .)
+//
+// This is ONE of the THREE SINGLE-POLICY capabilities that compose the signature (see the siblings
+// a peer signature leg (externalized) and the peer delivery leg (externalized)). Each is a single attestation
+// policy on the landed oracle path (///); independence is achieved BY COMPOSITION across
+// the three procedures — the real in-procedure multi-policy path () is an M6 concern, not required.
+procedure core_reserve_authority {
+    trigger damage_reported
+    version "1.0.0"
+
+    participant Insurer {
+        role = "insurer"
+        org  = "insureco"
+    }
+    participant Customer {
+        role = "customer"
+        org  = "buyerco"
+    }
+    allow "insureco" with "buyerco" {
+        "insureco" as "insurer"
+        "buyerco" as "customer"
+    }
+
+    // shipment_id is the shared cross-border CORRELATION key (same across all three legs); claim_id is
+    // THIS leg's distinct execution/replay key. Correlation is not identity — the payout's idempotency
+    // is keyed on claim_id, so it neither collides with nor is suppressed by a sibling leg's replay key.
+    input shipment_id  : string
+    input claim_id     : string
+    input insurer_id   : party
+    input customer_id  : party
+    input amount       : money
+    input currency     : currency
+    input damage_proof : evidence
+
+    attest damage_proof {
+        quorum           = 3
+        observer_set     = "inspection_oracles"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        timeout          = "PT72H"
+        fallback         = "abort"
+    }
+
+    // debit the insurance reserve — the ledger counterparty that keeps the payout balanced (reserve
+    // solvency capping is not backend-enforced yet: ).
+    debit reserve_debit {
+        ledger          = "insurance.reserve"
+        owner           = "insurer"
+        participant     = "Insurer"
+        party           = %insurer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %claim_id
+    }
+    // credit the customer — the indemnity payout.
+    credit customer_payout {
+        ledger          = "customer.indemnity"
+        owner           = "customer"
+        participant     = "Customer"
+        party           = %customer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %claim_id
+    }
+    assert balanced
+}

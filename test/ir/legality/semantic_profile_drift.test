@@ -1,0 +1,7 @@
+// : the committed target-profile files' semanticProfile blocks are pinned to
+// the C++ BUILTIN (single source of truth) and the PUBLISHED semantic-profile
+// contract version — so a rigid lowering's default (no-profile) capability and
+// the file it ships cannot drift, and a downstream author can discover the
+// contract version from --version-json.
+//
+// RUN: python3 %S/check_semantic_profile_drift.py %neutrino-gen %examples

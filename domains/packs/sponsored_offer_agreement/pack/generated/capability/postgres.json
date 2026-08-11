@@ -1,0 +1,136 @@
+{
+  "kind": "neutrino.backend-capability-model",
+  "modelVersion": "0.1.0",
+  "target": "postgres",
+  "executionEnvironment": "PostgreSQL (PL/pgSQL)",
+  "dslVersion": "0.1.0",
+  "supports": { "multiParty": true, "topologyAware": false, "identityBinding": "abstract" },
+  "witness": {
+    "procedure": "sponsored_offer_agreement",
+    "exercises": {
+      "inputs": 5,
+      "computes": 0,
+      "debits": 1,
+      "credits": 1,
+      "balanced": true
+    }
+  },
+  "languageLevels": {
+    "supported": ["L1", "L3-partial", "L4", "L5"],
+    "ceiling": "L5",
+    "networkOwned": ["L6", "L7", "L8", "L9", "L10"],
+    "note": "sagas/compensation/topology/discovery/fabric are not expressed by this backend; reported as network-owned"
+  },
+  "maturity": {
+    "level": 1,
+    "name": "Core Compliant",
+    "rule": "a backend cannot exceed the maturity implied by its highest verifiably-supported language level"
+  },
+  "assuranceTier": "A1",
+  "assurance": {
+    "A1": { "name": "Compiler Attested", "status": "attested", "evidence": "capability hash + canonical IR" },
+    "A2": { "name": "Realization Validated", "status": "attainable", "via": "backend validation (docker+psql test) + cross-backend equivalence (neutrino-equiv); attested at realization time" },
+    "A3": { "name": "Runtime Evidenced", "status": "not-claimed", "reason": "runtime evidence is fabric-produced at execution time; not observable by static generation" },
+    "A4": { "name": "Formally Proven", "status": "not-claimed", "reason": "formal proof path not in scope" }
+  },
+  "features": [
+    {
+      "feature": "input",
+      "conformance": "Full",
+      "enforcement": "static",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": []
+    },
+    {
+      "feature": "compute",
+      "conformance": "Full",
+      "enforcement": "static",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": []
+    },
+    {
+      "feature": "debit",
+      "conformance": "Full",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": []
+    },
+    {
+      "feature": "credit",
+      "conformance": "Full",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": []
+    },
+    {
+      "feature": "assert_balanced",
+      "conformance": "Verified",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": "docker+psql test",
+      "security": ["balance-conservation"]
+    },
+    {
+      "feature": "idempotency_replay",
+      "conformance": "Verified",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": "docker+psql test",
+      "security": ["replay-protection"]
+    },
+    {
+      "feature": "reconciliation",
+      "conformance": "Verified",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": "docker+psql test",
+      "security": ["drift-detection"]
+    },
+    {
+      "feature": "attestation_gate",
+      "conformance": "Full",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": ["authorization-gate"]
+    },
+    {
+      "feature": "event_choreography",
+      "conformance": "Full",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": []
+    },
+    {
+      "feature": "net_positions",
+      "conformance": "Full",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": null,
+      "security": []
+    },
+    {
+      "feature": "atomic_rollback",
+      "conformance": "Verified",
+      "enforcement": "runtime",
+      "cost": "natural",
+      "verifiedBy": "docker+psql test",
+      "security": ["atomicity"]
+    }
+  ],
+  "valueModel": [
+    { "type": "money", "support": "Full", "representation": "integer minor units" },
+    { "type": "decimal", "support": "Full", "representation": "scaled integer" },
+    { "type": "string", "support": "Full", "representation": "text" },
+    { "type": "party", "support": "Full", "representation": "text id" },
+    { "type": "currency", "support": "Full", "representation": "3-letter code (string)" },
+    { "type": "timestamp", "support": "Emulated", "representation": "opaque value; not used in coordination logic" },
+    { "type": "evidence", "support": "Partial", "representation": "hashable reference carried as string" }
+  ],
+  "equivalence": "shared coordination semantics: computed values, event order, idempotency/replay, balance conservation, reconciliation. Storage shape is target-specific and intentionally not compared."
+}

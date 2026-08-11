@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/semantic-capability-registry/v1",
+  "title": "neutrino.semantic-capability-registry",
+  "description": "The authoritative machine-readable capability registry for the M7 intake seam (): one record per closed semantic capability, pinned to semanticProfileVersion. A pure projection of neutrino::knownSemanticFeatures() (the single source of truth) emitted by `neutrino-translate --capability-registry`, byte-matched by CI, and published in the core-contract bundle with its digest so a package-only producer/verifier can obtain and independently validate it. Each record carries only metadata the closed vocabulary authoritatively supports — the stable id (<dimension>:<value> feature string), its dimension (role) and value, and its category (primitive/obligation type, from semanticFeatureCategory, the same rule the L2->L1 reduction checks l1_feature kind against). The registry introduces no capability of its own and no domain/backend identity. The M7 intake classifier anchors executable reductions BY IDENTITY against this registry, never re-listing capabilities. Fail-closed (additionalProperties:false).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "semanticProfileVersion", "capabilities"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "neutrino.semantic-capability-registry"
+    },
+    "semanticProfileVersion": {
+      "description": "The closed semantic-profile contract version (VersionInfo.h kSemanticProfileVersion) this registry is pinned to; an artifact produced under a different version fails closed at the intake seam.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "capabilities": {
+      "description": "The closed, sorted-by-id, unique set of capability records.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "dimension", "value", "category"],
+        "properties": {
+          "id": {
+            "description": "The stable capability identity: the closed <dimension>:<value> feature string.",
+            "type": "string",
+            "pattern": "^[a-z][a-z_]*:[a-z][a-z0-9_]*$"
+          },
+          "dimension": {
+            "description": "The capability role: the token before ':' in the id.",
+            "type": "string",
+            "pattern": "^[a-z][a-z_]*$"
+          },
+          "value": {
+            "description": "The capability value: the token after ':' in the id.",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "category": {
+            "description": "The capability type: 'obligation' for constraint dimensions the coordination must uphold (invariant:/replay:), 'primitive' otherwise.",
+            "enum": ["primitive", "obligation"]
+          }
+        }
+      }
+    }
+  }
+}

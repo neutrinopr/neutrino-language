@@ -1,0 +1,43 @@
+// [88] the PostgreSQL renderer is a real ingestion entry point (`--from-spec`): a valid external spec
+// renders procedure.sql byte-identically, and each bad external spec fails closed BEFORE any SQL —
+// ill-typed -> expr.type; structurally-malformed and no-success-terminal -> spec.ast (exit 4, no SQL).
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// (a) valid -> byte-identical procedure.sql.
+// RUN: %neutrino-gen --target=postgres --from-spec %{msi}/generated/capability-spec/capability-spec.json -o %t.ok
+// RUN: diff %t.ok/procedure.sql %{msi}/generated/postgres/procedure.sql
+// (b) ill-typed -> exit 4, expr.type, no SQL.
+// RUN: %neutrino-gen --target=postgres --from-spec %S/illtyped.capability-spec.json -o %t.ill; [ $? -eq 4 ]
+// RUN: test ! -e %t.ill/procedure.sql
+// RUN: %FileCheck --check-prefix=ILL %s < %t.ill/diagnostics.json
+// (c) structurally malformed (missing operand) -> exit 4, spec.ast, no SQL.
+// RUN: %neutrino-gen --target=postgres --from-spec %S/malformed.capability-spec.json -o %t.mal; [ $? -eq 4 ]
+// RUN: test ! -e %t.mal/procedure.sql
+// RUN: %FileCheck --check-prefix=AST %s < %t.mal/diagnostics.json
+// (d) no success terminal () -> exit 4, spec.ast, no SQL.
+// RUN: %neutrino-gen --target=postgres --from-spec %S/no_success.capability-spec.json -o %t.ns; [ $? -eq 4 ]
+// RUN: test ! -e %t.ns/procedure.sql
+// RUN: %FileCheck --check-prefix=AST %s < %t.ns/diagnostics.json
+// (e) terminal.success names a state absent from the lifecycle transitions (a dangling,
+//     unreachable terminal) -> exit 4, spec.ast, no SQL. Enforced once in projectBackendGraph
+//     ( part 3), not re-derived per backend.
+// RUN: %neutrino-gen --target=postgres --from-spec %S/dangling_terminal.capability-spec.json -o %t.dt; [ $? -eq 4 ]
+// RUN: test ! -e %t.dt/procedure.sql
+// RUN: %FileCheck --check-prefix=DANGLE %s < %t.dt/diagnostics.json
+// (f) lifecycle-role soundness ( part 3 G1): a posting transition whose target
+//     can still reach an aborted/contested terminal makes the backend's 2-state
+//     None->reconciled collapse unsound. Enforced once in projectBackendGraph ->
+//     exit 4, spec.ast, no SQL. Byte-identical to a valid spec until the check runs.
+// RUN: %neutrino-gen --target=postgres --from-spec %S/posting_nonsuccess.capability-spec.json -o %t.pn; [ $? -eq 4 ]
+// RUN: test ! -e %t.pn/procedure.sql
+// RUN: %FileCheck --check-prefix=QUOTIENT %s < %t.pn/diagnostics.json
+// (g) dual failure: a posting whose target reaches NO terminal (dead end) also
+//     refuses — the set must be EXACTLY {success}, not merely non-success-free.
+// RUN: %neutrino-gen --target=postgres --from-spec %S/posting_deadend.capability-spec.json -o %t.pd; [ $? -eq 4 ]
+// RUN: test ! -e %t.pd/procedure.sql
+// RUN: %FileCheck --check-prefix=NODEST %s < %t.pd/diagnostics.json
+// ILL: expr.type
+// AST: spec.ast
+// DANGLE: unreachable-terminal:success:SETTLED
+// QUOTIENT: posting-reaches-non-success-terminal:COMMIT:REJECTED
+// NODEST: posting-reaches-no-success-terminal:STRAND

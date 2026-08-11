@@ -1,0 +1,11 @@
+// [44] D8: capability preview composes a card from real compiler artifacts (hash + IR + security
+// verdict + target-neutral backends + downstream assurance requirements) and FAILS CLOSED — the preview hash equals the gated slot's
+// capability.lock (composed, not recomputed); a non-lowering source, a missing security verdict, and a
+// missing capability.lock all yield ok:false + diagnostics; setup errors are versioned ok:false. See
+// check_preview.py.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: python3 %S/check_preview.py %scripts/generators/neutrino_lang.py %neutrino-gen \
+// RUN:   %{msi}/source/core_sample_installment.neu \
+// RUN:   %{msi}/scenario/core_sample_installment_happy_path.json \
+// RUN:   %S/../neg_missing_field.neu

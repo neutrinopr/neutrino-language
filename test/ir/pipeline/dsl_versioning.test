@@ -1,0 +1,5 @@
+// [19] DSL versioning: a declared version "9.9.9" flows source -> IR -> capability identity; undeclared
+// defaults to 0.1.0; a non-SemVer version is rejected at the frontend AND the IR verifier; a half-quoted
+// version is rejected, not silently normalized. See check_dsl_versioning.py.
+//
+// RUN: python3 %S/check_dsl_versioning.py %neutrino-gen %neutrino-translate %neutrino-opt %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

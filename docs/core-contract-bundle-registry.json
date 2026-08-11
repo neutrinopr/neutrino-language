@@ -1,0 +1,27 @@
+{
+  "bundles": [
+    {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "bundleFileSha256": "sha256:1cecbefb96f7c728b3cc24d8d985cff26fd71862500fe69fc5cf1816664305a5",
+      "bundlePath": "docs/core-contract-bundles/v1.10/core-contract-bundle.json",
+      "bundleVersion": "1.10.0",
+      "status": "historical"
+    },
+    {
+      "bundleDigest": "sha256:bbc5c645891cb15724c7c488a437b7f509ebaabf75a786069ec15199434ace11",
+      "bundleFileSha256": "sha256:1f221e8977c8ecb05be6b764a4e207cdcfc60c64ede73d170b383b23d266bb77",
+      "bundlePath": "docs/core-contract-bundles/v1.11/core-contract-bundle.json",
+      "bundleVersion": "1.11.0",
+      "status": "historical"
+    },
+    {
+      "bundleDigest": "sha256:2048ad363c1daa088539a8158e26b3497b7013cde2410db7353df619544c4a46",
+      "bundleFileSha256": "sha256:2f80ce60b76c5bd86e726a9bf5fdf79189f25674b7b2da24570349cf951dbee8",
+      "bundlePath": "docs/core-contract-bundle.json",
+      "bundleVersion": "1.12.0",
+      "status": "current"
+    }
+  ],
+  "kind": "neutrino.core-contract-bundle-registry",
+  "schemaVersion": 1
+}

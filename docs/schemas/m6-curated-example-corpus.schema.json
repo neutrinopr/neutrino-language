@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/m6-curated-example-corpus/v2",
+  "title": "neutrino.m6-curated-example-corpus",
+  "description": "Frozen curated example corpus and dialect-variance pairs for the M6 release gate. Structural membership only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "description",
+    "parentIssue",
+    "freeze",
+    "examples",
+    "variancePairs",
+    "packs"
+  ],
+  "properties": {
+    "kind": { "const": "neutrino.m6-curated-example-corpus" },
+    "schemaVersion": { "const": 2 },
+    "description": { "type": "string", "minLength": 1 },
+    "parentIssue": {
+      "type": "string",
+      "const": "urn:neutrino:document:m6-curated-corpus-v2"
+    },
+    "freeze": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue", "commentId", "url", "title"],
+      "properties": {
+        "issue": { "const": 725 },
+        "commentId": { "type": "integer", "minimum": 1 },
+        "url": {
+          "type": "string",
+          "const": "urn:neutrino:document:m6-curated-corpus-freeze-v2"
+        },
+        "title": { "type": "string", "minLength": 1 }
+      }
+    },
+    "examples": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "variancePairs": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "a", "b"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^pair-[1-9][0-9]*$"
+          },
+          "a": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "b": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        }
+      }
+    },
+    "packs": {
+      "description": "Required per-member published-pack hydration coordinates. Every curated member is verified against its local content-addressed publication receipt and the pinned core-contract bundle before use.",
+      "type": "object",
+      "minProperties": 7,
+      "maxProperties": 7,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["packPath", "receiptPath", "packDigest", "bundleDigest"],
+        "properties": {
+          "packPath": { "type": "string", "minLength": 1 },
+          "receiptPath": { "type": "string", "minLength": 1 },
+          "packDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "bundleDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

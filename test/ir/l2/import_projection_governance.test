@@ -1,0 +1,43 @@
+// Import-projection GOVERNANCE ( review): the cross-rail catalog's `imports`
+// are a canonical projection of the domain's own l2.import records, and the
+// catalog validator enforces it BIDIRECTIONALLY against the VALIDATED,
+// hash-recomputed v2 sidecar the fixture references. So the transitive graph is
+// governed by hash-pinned artifacts and the catalog annotation cannot drift.
+//
+// Emit a governed v2 sidecar (implements coordinate.a, imports coordinate.b@1),
+// then build catalog variants and check the validator's verdict. (Dummy fixture
+// paths make the validator exit non-zero regardless; %not captures its output so
+// each assertion is independent of the unrelated path errors.)
+//
+// RUN: rm -rf %t.d && mkdir %t.d
+// RUN: %neutrino-emit --kind=domain-semantics %S/Inputs/imports/importer.mlir > %t.d/a.l2v2.json
+// A malformed governed sidecar: corrupt an interior field WITHOUT re-hashing.
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['implements']='coordinate.zzz'; json.dump(o,open(sys.argv[2],'w'))" %t.d/a.l2v2.json %t.d/bad.l2v2.json
+// Build the catalog variants (ok / drift / missing-projection / forged-pin / malformed-artifact).
+// RUN: python3 -c "import json,os,sys; D=sys.argv[1]; L=lambda n: json.load(open(os.path.join(D,n))); C=lambda name,fx: json.dump({'kind':'neutrino.cross-rail-fixture-catalog','schemaVersion':1,'compatibility':{'compatibilityManifestVersion':'v1','toolVersion':'0.2.0','mlirDialectVersion':'0.1.0','schemaBundleVersion':'v1','conformanceVectorVersion':'envelope-v1','schemas':{'bindingPolicy':'v1','bindingReceipt':'v1','runtimeEvidence':'v1'}},'fixtures':[fx]},open(os.path.join(D,name),'w')); F=lambda l2,imp,hp: {k:v for k,v in {'fixtureId':'a','capabilityId':'coordinate.a','capabilityVersion':'1.0.0','source':'x','scenario':'x','targets':['slot'],'generated':{},'bindingTopology':'x','bindingManifest':'x','selfTest':'[0]','lateBoundSlots':[],'l2v2':l2,'l2v2Hash':hp,'imports':imp}.items() if v is not None}; h=L('a.l2v2.json')['domainSemanticsHash']; bh=L('bad.l2v2.json')['domainSemanticsHash']; b1=[{'capabilityId':'coordinate.b','capabilityVersion':'1.0.0'}]; b2=[{'capabilityId':'coordinate.b','capabilityVersion':'2.0.0'}]; C('cat_ok.json',F('a.l2v2.json',b1,h)); C('cat_drift.json',F('a.l2v2.json',b2,h)); C('cat_missing.json',F('a.l2v2.json',None,h)); C('cat_forged.json',F('a.l2v2.json',b1,'0'*64)); C('cat_malformed.json',F('bad.l2v2.json',b1,bh))" %t.d
+//
+// Matching projection: NO drift/governance error.
+// RUN: %not python3 %scripts/validators/validate_cross_rail_catalog.py --catalog cat_ok.json --repo-root %t.d > %t.ok.out 2>&1
+// RUN: %FileCheck %s --check-prefix=NODRIFT --input-file=%t.ok.out
+// NODRIFT-NOT: drifted from the hash-pinned
+//
+// Drifted projection (import version 1.0.0 -> 2.0.0): REJECTED.
+// RUN: %not python3 %scripts/validators/validate_cross_rail_catalog.py --catalog cat_drift.json --repo-root %t.d > %t.drift.out 2>&1
+// RUN: %FileCheck %s --check-prefix=DRIFT --input-file=%t.drift.out
+// DRIFT: imports projection {{.*}} != governed v2 sidecar imports {{.*}}drifted from the hash-pinned
+//
+// l2v2 present but the projection omitted: REJECTED (a leaf where the artifact
+// has edges).
+// RUN: %not python3 %scripts/validators/validate_cross_rail_catalog.py --catalog cat_missing.json --repo-root %t.d > %t.missing.out 2>&1
+// RUN: %FileCheck %s --check-prefix=MISSING --input-file=%t.missing.out
+// MISSING: must declare its `imports` projection
+//
+// l2v2Hash pin forged (does not match the artifact's recomputed hash): REJECTED.
+// RUN: %not python3 %scripts/validators/validate_cross_rail_catalog.py --catalog cat_forged.json --repo-root %t.d > %t.forged.out 2>&1
+// RUN: %FileCheck %s --check-prefix=FORGED --input-file=%t.forged.out
+// FORGED: l2v2Hash pin {{.*}} != validated sidecar domainSemanticsHash
+//
+// Malformed governed v2 artifact (stale internal hash): REJECTED before trust.
+// RUN: %not python3 %scripts/validators/validate_cross_rail_catalog.py --catalog cat_malformed.json --repo-root %t.d > %t.malformed.out 2>&1
+// RUN: %FileCheck %s --check-prefix=MALFORMED --input-file=%t.malformed.out
+// MALFORMED: governed v2 sidecar {{.*}} is invalid

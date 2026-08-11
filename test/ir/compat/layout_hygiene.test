@@ -1,0 +1,6 @@
+// [53] domain layout hygiene ( anti-regression guard): no top-level examples/*.neu; the retired
+// family-major containers (slot/solidity/postgres/capability/coverage/security) and root scenarios/
+// dir must not reappear; every domain dir carries its canonical source/<domain>.neu. See
+// check_layout_hygiene.py.
+//
+// RUN: python3 %S/check_layout_hygiene.py %examples

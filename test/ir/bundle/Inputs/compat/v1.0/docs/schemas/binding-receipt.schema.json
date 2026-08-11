@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/binding-receipt/v1",
+  "title": "Binding Receipt",
+  "description": "Realization-time authorization: a signed statement that a concrete runtime is bound to a slot, validated against the Binding Policy. Produced by the agents workflow. See docs/binding/TRUST_LATE_BINDING_CONTRACT.md.",
+  "type": "object",
+  "required": [
+    "kind", "bindingId", "status", "agreementHash", "irHash",
+    "capabilityId", "capabilityVersion", "capabilityHash", "slotId",
+    "implementationDigest", "runtimeIdentity", "assuranceTier", "validity", "signer"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "kind": { "const": "neutrino.binding-receipt" },
+    "bindingId": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": ["proposed", "approved", "active", "degraded", "revoked", "superseded", "rejected"],
+      "description": "Lifecycle state of the binding (agents workflow)."
+    },
+    "agreementHash": { "$ref": "#/$defs/hexSha256" },
+    "irHash": { "$ref": "#/$defs/hexSha256" },
+    "capabilityId": { "type": "string", "minLength": 1 },
+    "capabilityVersion": { "type": "string", "minLength": 1 },
+    "capabilityHash": { "$ref": "#/$defs/hexSha256" },
+    "slotId": { "type": "string", "minLength": 1 },
+    "implementationDigest": { "$ref": "#/$defs/hexSha256" },
+    "runtimeIdentity": { "type": "string", "minLength": 1 },
+    "assuranceTier": { "enum": ["A1", "A2", "A3", "A4"] },
+    "endpoint": {
+      "type": "object",
+      "description": "Optional endpoint/certificate metadata for the bound runtime.",
+      "additionalProperties": true
+    },
+    "validity": {
+      "type": "object",
+      "required": ["notBefore", "notAfter"],
+      "additionalProperties": false,
+      "properties": {
+        "notBefore": { "type": "string", "format": "date-time" },
+        "notAfter": { "type": "string", "format": "date-time" }
+      }
+    },
+    "signer": {
+      "type": "object",
+      "required": ["org", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "org": { "type": "string", "minLength": 1, "description": "MUST satisfy the policy's authorizedBinder." },
+        "participant": { "type": "string" },
+        "signatureSuite": { "type": "string" },
+        "signature": { "type": "string", "minLength": 1 }
+      }
+    },
+    "supersedes": { "type": "string", "description": "bindingId of the receipt this replaces (rebinding)." }
+  },
+  "$defs": {
+    "hexSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "scenario": "authored_happy_path",
+  "procedure": "kyc_paid_verification",
+  "inputs": {
+    "case_id": "case-042",
+    "dossier_sha": "d41d8cd98f00b204e9800998ecf8427e0000000000000000000000000000000",
+    "requester_id": "acmebank-ops",
+    "verifier_id": "kycpro-desk",
+    "fee": 150,
+    "currency": "EUR",
+    "verified": 1
+  },
+  "expect": {
+    "status": "reconciled"
+  }
+}

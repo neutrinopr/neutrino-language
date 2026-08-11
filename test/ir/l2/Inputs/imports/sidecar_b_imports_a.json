@@ -1,0 +1,45 @@
+{
+  "concepts": [
+    {
+      "classification": "executable",
+      "kind": "state",
+      "name": "x"
+    }
+  ],
+  "domain": "d",
+  "domainSemanticsHash": "8d502034171bc56424df8d74fe9f857bf7aab7a3f94332b6bfa2511b5e925fd8",
+  "failureModes": [],
+  "implements": "coordinate.b",
+  "imports": [
+    {
+      "capability": "coordinate.a",
+      "version": "1.0.0"
+    }
+  ],
+  "invariants": [],
+  "kind": "neutrino.l2-domain-semantics",
+  "l1Features": [
+    {
+      "kind": "primitive",
+      "name": "effect:debit"
+    }
+  ],
+  "provenance": [
+    {
+      "source": "s",
+      "status": "accepted",
+      "subject": "r"
+    }
+  ],
+  "reductions": [
+    {
+      "from": "x",
+      "id": "r",
+      "lossiness": "lossless",
+      "relation": "expands",
+      "to": "effect:debit"
+    }
+  ],
+  "schemaVersion": 2,
+  "version": "1.0.0"
+}

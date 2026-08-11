@@ -1,0 +1,103 @@
+//===- TargetRegistry.def - the declarative generation-target table ------===//
+//
+// The SINGLE DECLARATIVE SOURCE of the generation targets (T9 R1 ;
+// declarative-source migration M5  D2, ). Each row is one target; the
+// C++ registry (lib/emit/TargetRegistry.cpp) expands these rows via an X-macro to
+// build the built-in dispatch table. --list-targets merges these entries with
+// verified external package descriptors. Adding an in-process target is one row
+// here plus its per-target Gen<Target>.h; external targets never add a row.
+// Built-in dispatch stays type-safe: the Emit column is a real EmitFn symbol,
+// not a string.
+//
+//   NEUTRINO_TARGET(Name, EmitFn, Gated, ScenarioFree)
+//
+// Name        : the CLI --target token (rows are in CLI/usage order).
+// EmitFn      : the target's EmitFn entry point (from its Gen<Target>.h); it
+//               consumes the CoordinationPlan already validated by dispatch.
+// Gated       : value-lowering targets that produce deployable/coordination or
+//               agent-facing implementation artifacts are refused for a
+//               capability with hard security violations (unless overridden);
+//               analysis targets (security/capability/coverage) and the
+//               pre-render capability-spec are never gated.
+// ScenarioFree: renders from source/the canonical machine alone and ignores
+//               --scenario (the CLI selects the procedure from the module
+//               directly and requires no --scenario).
+//
+// A reconciliation gate (self-test [97]) ties this table to the committed
+// examples/target-profiles/*.target-profile.json: a target profile exists iff
+// the target is a scenario-bearing value-lowering backend (Gated && not
+// ScenarioFree) — so a profile can neither orphan nor drift from the registry.
+//
+// The includer defines NEUTRINO_TARGET before #include and #undefs it after.
+//
+//===----------------------------------------------------------------------===//
+
+#ifndef NEUTRINO_TARGET
+#error "define NEUTRINO_TARGET(Name, EmitFn, Gated, ScenarioFree) before including TargetRegistry.def"
+#endif
+
+// A DRIVER-SERIALIZED target (): its artifacts are written directly by the
+// driver (neutrino-gen) with checked `Expected` propagation, so it registers NO
+// emit function and must never be dispatched through `TargetSpec::emit`. An
+// includer that only needs the name/classification and does not distinguish
+// driver-serialized targets may leave this fallback in place (a null emit);
+// TargetRegistry.cpp overrides it to also set the explicit `driverSerialized`
+// flag.
+#ifndef NEUTRINO_TARGET_DRIVER
+#define NEUTRINO_TARGET_DRIVER(Name, Gated, ScenarioFree)                      \
+  NEUTRINO_TARGET(Name, nullptr, Gated, ScenarioFree)
+#endif
+
+#ifndef NEUTRINO_CORE_ONLY
+NEUTRINO_TARGET("postgres", emitPostgresProject, /*gated=*/true, /*scenarioFree=*/false)
+#endif
+// Slot renders from the canonical lifecycle machine, not the scenario (WP3,
+// ) — so, like the spec, it needs no --scenario. Still gated: an agent-facing
+// coordination contract, refused for an insecure capability unless --allow-insecure.
+NEUTRINO_TARGET("slot", emitSlotProject, /*gated=*/true, /*scenarioFree=*/true)
+// The compiled capability-spec is scenario-free (D2) and NON-gated — a
+// deliberate decision ( F2): it is the pre-render semantic contract that is
+// itself the SUBJECT of the security analysis, so gating it would make an
+// insecure capability's spec unobtainable (the analysis-target precedent, not
+// `views`). Consumers MUST consult the security report / admission before
+// treating a capability-spec as ACTIONABLE (docs/spec/CAPABILITY_SPEC.md "Gating").
+NEUTRINO_TARGET("capability-spec", emitCapabilitySpec, /*gated=*/false, /*scenarioFree=*/true)
+// The portable semantic-agreement identity (): the domain-separated
+// agreementHash over the capability-spec's canonical semantic bytes + a versioned
+// agreement envelope. Scenario-free and NON-gated, like the capability-spec it
+// identifies — it is the pre-render identity object, not a deployable artifact.
+NEUTRINO_TARGET("agreement-identity", emitAgreementIdentity, /*gated=*/false, /*scenarioFree=*/true)
+// The normalized coordination plan (): the target-neutral semantic form the
+// backend renderers consume, built from the capability-spec through the one
+// planFromSpec normalization. Like the spec it is scenario-free and NON-gated —
+// it is a derived semantic projection, not a deployable/agent-facing artifact.
+NEUTRINO_TARGET_DRIVER("coordination-plan", /*gated=*/false, /*scenarioFree=*/true)
+// The closed semantic requirement projection derived from the verified
+// CoordinationPlan by coordinationPlanRequirements. Scenario-free and
+// non-gated: this is measurement of the normalized semantic contract.
+NEUTRINO_TARGET("semantic-requirements", emitSemanticRequirements, /*gated=*/false, /*scenarioFree=*/true)
+// The coordination trace (): the deterministic reference evaluator's
+// observable realization of the coordination plan under one transition input — the semantic
+// oracle every backend realization is checked against. Scenario-BEARING (it
+// needs the invocation's inputs) and NON-gated, like coordination-plan: a
+// derived semantic projection, not a deployable/agent-facing artifact.
+NEUTRINO_TARGET("coordination-trace", emitCoordinationTrace, /*gated=*/false, /*scenarioFree=*/false)
+// The test-realization companion (M5 WP2, ): scenario/test cases folded
+// once, OUTSIDE the capability hash. Non-gated and scenario-bearing — the home
+// for the scenario data the capability spec excludes.
+NEUTRINO_TARGET("test-realization", emitTestRealization, /*gated=*/false, /*scenarioFree=*/false)
+NEUTRINO_TARGET_DRIVER("capability", /*gated=*/false, /*scenarioFree=*/false)
+// Coverage is a public-core projection of the frozen capability contract.
+NEUTRINO_TARGET("coverage", emitCoverage, /*gated=*/false, /*scenarioFree=*/false)
+// Security is public-core analysis and remains available when backend packages
+// and production domains are physically absent.
+NEUTRINO_TARGET("security", emitSecurity, /*gated=*/false, /*scenarioFree=*/false)
+// Views project each participant's narrowed slice from the canonical spec (M5
+// ), not from scenario data — so, like the spec/slot, no --scenario. Still
+// gated: a narrowed view is an agent-facing implementation contract.
+NEUTRINO_TARGET("views", emitViews, /*gated=*/true, /*scenarioFree=*/true)
+// NOTE (M5 oracle S4, ): `oracle-observer` is deliberately NOT a registry row.
+// The registry governs view+scenario -> artifact targets (the  routing
+// invariant); the oracle observers render from the FROZEN capability-spec's
+// attestation policy + an observation binding, so `--target=oracle-observer` is a
+// `--from-spec --binding`-only target handled directly in neutrino-gen.

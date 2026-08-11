@@ -1,0 +1,215 @@
+// [ slice 1] The typed accepted(<input>) quorum-acceptance guard predicate.
+// Two independent attest policies, each gating its OWN balanced pair via
+// accepted(<policy>) — real per-policy multi-policy binding at the coordination-plan +
+// reference-evaluator AND Solidity level (the sound / commit-ledger
+// contract; see section 6). A policy's
+// quorum is HOW its input becomes true; the `when` guard is HOW the effect
+// depends on it. An UNaccepted policy SUPPRESSES its legs (a balanced no-op), it
+// does NOT refuse the transition (proven for the unaccepted path in
+// unittests/CoordinationEvalTest.cpp — the scenario here accepts both).
+//
+// (1) It compiles + evaluates: with both quorums accepted, both pairs post and
+// the coordination reconciles.
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/accepted_multi_policy.scn.json %s -o %t.ev
+// RUN: %FileCheck %s --check-prefix=EVAL < %t.ev/coordination-trace.json
+// EVAL-DAG: "outcome": "terminal"
+// EVAL-DAG: "AlphaDebitDebited"
+// EVAL-DAG: "BetaDebitDebited"
+//
+// (2) The capability-spec serializes each accepted() guard, and the from-spec
+// path reconstructs the identical trace (one normalization, both paths agree):
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.spec/capability-spec.json
+// SPEC-DAG: "expr": "accepted(alpha_proof)"
+// SPEC-DAG: "expr": "accepted(beta_proof)"
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%S/accepted_multi_policy.scn.json %t.spec/capability-spec.json -o %t.ev2
+// RUN: diff %t.ev/coordination-trace.json %t.ev2/coordination-trace.json
+//
+// (2b) [] The observable coordination-plan artifact records the per-policy
+// SUPPRESS gate mode + its bound policy — the target-neutral binding every rail
+// legalizes — and reconstructs identically from the capability-spec.
+// RUN: %neutrino-gen --target=coordination-plan %s -o %t.plan
+// RUN: %neutrino-gen --target=coordination-plan --from-spec %t.spec/capability-spec.json -o %t.plan2
+// RUN: diff %t.plan/coordination-plan.json %t.plan2/coordination-plan.json
+// RUN: %FileCheck %s --check-prefix=GMODE < %t.plan/coordination-plan.json
+// GMODE-DAG: "gateMode": "temporal-suppress"
+// GMODE-DAG: "gatePolicy": "alpha_proof"
+// GMODE-DAG: "gatePolicy": "beta_proof"
+//
+// (3) [ slice 2] Per-policy acceptance is SCENARIO-DRIVEN: a scenario that
+// UNaccepts beta_proof (accepted.beta_proof=false) suppresses ONLY the beta pair
+// (a balanced no-op) while the alpha pair still posts — real per-policy
+// granularity, not all-or-nothing. Suppress != refuse: the transition still
+// commits. Both beta legs show a held:false guard observation and emit no
+// movement event; the next state carries only the alpha accounts.
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/accepted_multi_policy_partial.scn.json %s -o %t.pp
+// RUN: %FileCheck %s --check-prefix=PARTIAL < %t.pp/coordination-trace.json
+// PARTIAL: "outcome": "progress"
+// PARTIAL-DAG: "AlphaDebitDebited"
+// PARTIAL-DAG: "AlphaCreditCredited"
+// PARTIAL-NOT: BetaDebitDebited
+// PARTIAL-NOT: BetaCreditCredited
+// PARTIAL-NOT: payer.beta
+// PARTIAL-NOT: payee.beta
+//
+// (4) [ slice 2] An `accepted` key that names no declared attestation policy
+// is REFUSED, not silently treated as "accepted" — a mistyped policy name cannot
+// quietly disable the suppress it intended. Fails closed (EXIT_SCENARIO), no
+// trace written.
+// RUN: %not %neutrino-gen --target=coordination-trace --scenario=%S/accepted_multi_policy_badkey.scn.json %s -o %t.bad 2>&1 | %FileCheck %s --check-prefix=BADKEY
+// RUN: test ! -e %t.bad/coordination-trace.json
+// BADKEY: 'accepted' key 'delta_proof' is not a declared attestation policy input
+//
+// (5) A non-boolean `accepted` value is a schema error at scenario load — the
+// acceptance verdict is a boolean, never a truthy string. Fails closed.
+// RUN: %not %neutrino-gen --target=coordination-trace --scenario=%S/accepted_multi_policy_badbool.scn.json %s -o %t.bb 2>&1 | %FileCheck %s --check-prefix=BADBOOL
+// BADBOOL: accepted.alpha_proof must be a boolean
+//
+// (6) [ activation] The SOLIDITY rail legalizes the per-policy accepted()
+// coordination into the SOUND per-(key,group) commit-ledger contract — off the
+// coordination-plan gate mode, consuming the  execution envelope + guard
+// binding and the  temporal ledger. It imports CoordinationEnvelope and
+// RECOMPUTES the execution claim from its inputs (with the compile-time
+// coordination-identity constant), commits each policy GROUP only when that
+// policy's quorum guard accepted THIS exact claim
+// (acceptedExecutionClaim(_k) == _claim), pins the key's claim only on first
+// commit (no-progress leaves it unset), and reconciles only once every group has
+// committed — no premature terminal, no cross-payload authorization.
+// RUN: %neutrino-gen --target=solidity --scenario=%S/accepted_multi_policy.scn.json %s -o %t.sol
+// The emitted CoordinationEnvelope library is byte-identical to the reviewed reference.
+// RUN: diff %S/../../../examples/oracle-reference/coordination-envelope/src/CoordinationEnvelope.sol %t.sol/src/CoordinationEnvelope.sol
+// RUN: %FileCheck %s --check-prefix=SOL < %t.sol/src/AcceptedMultiPolicy.sol
+// SOL: import "./CoordinationEnvelope.sol";
+// SOL: mapping(bytes32 => bytes32) public keyClaim;
+// SOL: mapping(bytes32 => mapping(uint256 => bool)) public committedGroup;
+// SOL: constructor(address acceptanceGuard_alpha_proof_, address acceptanceGuard_beta_proof_)
+// SOL: require(statusOf[_k] != Status.Reconciled, "replay");
+// SOL: bytes32 _claim = CoordinationEnvelope.claim(
+// SOL: require(keyClaim[_k] == bytes32(0) || keyClaim[_k] == _claim, "claim mismatch");
+// SOL: if ((acceptanceGuard_alpha_proof.acceptedExecutionClaim(_k) == _claim) && !committedGroup[_k][0]) {
+// SOL: if ((acceptanceGuard_beta_proof.acceptedExecutionClaim(_k) == _claim) && !committedGroup[_k][1]) {
+// SOL: if (_progress && keyClaim[_k] == bytes32(0)) {
+// SOL: bool _done = committedGroup[_k][0] && committedGroup[_k][1];
+// SOL: statusOf[_k] = Status.Reconciled;
+// SOL-NOT: function attest(
+//
+// (7) [ activation] The POSTGRESQL rail legalizes the SAME per-policy
+// accepted() coordination into the SOUND per-(key,policy) commit-ledger contract
+// — off the coordination-plan gate mode, parallel to Solidity. The schema emits
+// the  coordination-envelope claim function (neu_execution_claim, byte-for-byte
+// the reference digest reproduced in SQL) plus the per-policy quorum + commit
+// ledger (quorum_acceptance carries policy + execution_claim, committed_group,
+// key_claim). execute_ RECOMPUTES the claim from its inputs with the compile-time
+// coordination identity, refuses a payload whose claim differs from the pinned
+// one, commits each policy GROUP only when that policy's quorum accepted THIS
+// exact claim (execution_claim = v_claim), pins the key claim only on first
+// commit (no-progress leaves it unbound), and reconciles only once every group
+// committed. Non-temporal / single-policy coordinations render byte-identical.
+// RUN: %neutrino-gen --target=postgres --scenario=%S/accepted_multi_policy.scn.json %s -o %t.pg
+// RUN: %FileCheck %s --check-prefix=PGSCHEMA < %t.pg/schema.sql
+// PGSCHEMA: CREATE OR REPLACE FUNCTION neu_execution_claim(p_coord_id text, p_key text, p_names text[], p_cats text[], p_vals text[])
+// PGSCHEMA: CREATE TABLE IF NOT EXISTS quorum_acceptance (
+// PGSCHEMA: policy               text        NOT NULL,
+// PGSCHEMA: execution_claim      text        NOT NULL,
+// PGSCHEMA: PRIMARY KEY (procedure, claim_id, policy)
+// PGSCHEMA: CREATE TABLE IF NOT EXISTS committed_group (
+// PGSCHEMA: CREATE TABLE IF NOT EXISTS key_claim (
+// RUN: %FileCheck %s --check-prefix=PGPROC < %t.pg/procedure.sql
+// PGPROC: CREATE OR REPLACE FUNCTION accept_accepted_multi_policy(p_settlement_id text, p_policy text, p_canonical_claim_hash text, p_execution_claim text, p_observers text[])
+// PGPROC: WHEN 'alpha_proof' THEN v_set := 'alpha_oracles'; v_m := 2;
+// PGPROC: WHEN 'beta_proof' THEN v_set := 'beta_oracles'; v_m := 3;
+// PGPROC: INSERT INTO quorum_acceptance(procedure, claim_id, policy, canonical_claim_hash, execution_claim, observer_count)
+// PGPROC: CREATE OR REPLACE FUNCTION execute_accepted_multi_policy(
+// PGPROC: RAISE EXCEPTION 'replay';
+// PGPROC: v_claim := neu_execution_claim('e7aed915f68c54987214d20244359553b2bf849506de42ed7d00b63af6b7eb7e', p_settlement_id, ARRAY['alpha_proof', 'amount', 'beta_proof', 'currency', 'payee_id', 'payer_id', 'settlement_id']::text[], ARRAY['evidence', 'money', 'evidence', 'currency', 'party', 'party', 'string']::text[], ARRAY[p_alpha_proof, (p_amount)::text, p_beta_proof, p_currency, p_payee_id, p_payer_id, p_settlement_id]::text[]);
+// PGPROC: WHERE procedure = 'accepted_multi_policy' AND idempotency_key = p_settlement_id AND execution_claim <> v_claim) THEN
+// PGPROC: RAISE EXCEPTION 'claim mismatch';
+// PGPROC: AND policy = 'alpha_proof' AND execution_claim = v_claim)) AND NOT EXISTS (SELECT 1 FROM committed_group WHERE procedure = 'accepted_multi_policy' AND idempotency_key = p_settlement_id AND group_ordinal = 0) THEN
+// PGPROC: VALUES ('accepted_multi_policy', p_settlement_id, 0);
+// PGPROC: AND policy = 'beta_proof' AND execution_claim = v_claim)) AND NOT EXISTS (SELECT 1 FROM committed_group WHERE procedure = 'accepted_multi_policy' AND idempotency_key = p_settlement_id AND group_ordinal = 1) THEN
+// PGPROC: VALUES ('accepted_multi_policy', p_settlement_id, 1);
+// PGPROC: IF v_progress AND NOT EXISTS (SELECT 1 FROM key_claim WHERE procedure = 'accepted_multi_policy' AND idempotency_key = p_settlement_id) THEN
+// PGPROC: INSERT INTO key_claim(procedure, idempotency_key, execution_claim)
+// PGPROC: AND group_ordinal = 0) AND EXISTS (SELECT 1 FROM committed_group WHERE procedure = 'accepted_multi_policy' AND idempotency_key = p_settlement_id AND group_ordinal = 1) THEN
+// PGPROC: INSERT INTO coordination_status(procedure, idempotency_key, reconciled) VALUES ('accepted_multi_policy', p_settlement_id, true)
+// PGPROC: REVOKE EXECUTE ON FUNCTION accept_accepted_multi_policy(text, text, text, text, text[]) FROM PUBLIC;
+procedure accepted_multi_policy {
+    trigger settlement_proposed
+    version "1.0.0"
+
+    participant Payer {
+        role = "payer"
+        org  = "payerco"
+    }
+    participant Payee {
+        role = "payee"
+        org  = "payeeco"
+    }
+    allow "payerco" with "payeeco" {
+        "payerco" as "payer"
+        "payeeco" as "payee"
+    }
+
+    input settlement_id : string
+    input payer_id      : party
+    input payee_id      : party
+    input amount        : money
+    input currency      : currency
+    input alpha_proof   : evidence
+    input beta_proof    : evidence
+
+    attest alpha_proof {
+        quorum           = 2
+        observer_set     = "alpha_oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+    attest beta_proof {
+        quorum           = 3
+        observer_set     = "beta_oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+
+    debit alpha_debit {
+        ledger          = "payer.alpha"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(alpha_proof)
+    }
+    debit beta_debit {
+        ledger          = "payer.beta"
+        owner           = "payer"
+        participant     = "Payer"
+        party           = %payer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(beta_proof)
+    }
+    credit alpha_credit {
+        ledger          = "payee.alpha"
+        owner           = "payee"
+        participant     = "Payee"
+        party           = %payee_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(alpha_proof)
+    }
+    credit beta_credit {
+        ledger          = "payee.beta"
+        owner           = "payee"
+        participant     = "Payee"
+        party           = %payee_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %settlement_id
+        when            = accepted(beta_proof)
+    }
+    assert balanced
+}

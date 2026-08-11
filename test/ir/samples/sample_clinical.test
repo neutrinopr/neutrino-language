@@ -1,0 +1,6 @@
+// [68] M3 sample: regulated-evidence L1/L2/L3 (test-only core_regulated_evidence_sample under
+// test/ir/samples/Inputs/) — L2 validates with clinical_data/provenance/signature evidence;
+// concern-profile/bad-evidence/undeclared-param/free-form-invariant + L3 missing-consent/
+// profile-mismatch fail closed; L3 Verifier -> complete. See check_sample_clinical.py.
+//
+// RUN: python3 %S/check_sample_clinical.py %scripts %examples %neutrino-translate %neutrino-gen

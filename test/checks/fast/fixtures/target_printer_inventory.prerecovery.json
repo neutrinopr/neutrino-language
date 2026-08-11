@@ -1,0 +1,126 @@
+{
+  "kind": "neutrino.target-printer-inventory.v1",
+  "scope": "handwritten target-specific per-node printer emission sites",
+  "excludes": [
+    " legalization",
+    "generic target-printer driver helpers",
+    "escaping/framing primitives",
+    "external boundaries",
+    "backend tests"
+  ],
+  "genericFramingHandlers": [
+    {
+      "target": "solidity",
+      "node": "Blank",
+      "note": "bare pass-through (empty line) \u2014 generic layout primitive, carries no target syntax"
+    },
+    {
+      "target": "solidity",
+      "node": "Line",
+      "note": "bare pass-through (${text}) \u2014 verbatim already-legalized line; carries no .td syntax, NOT credited as a migrated typed-syntax node"
+    },
+    {
+      "target": "solidity",
+      "node": "Block",
+      "note": "bare pass-through (${text} \u2026 ${close}) \u2014 generic framing delimiters authored by legalization; NOT credited as a migrated typed-syntax node"
+    }
+  ],
+  "generatedHandlers": [
+    {
+      "target": "solidity",
+      "node": "Require",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Transition",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Emit",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Line",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Blank",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Guarded",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Block",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "LocalDecl",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Assign",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "CompoundAssign",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "DocComment",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "SpdxLicense",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Pragma",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    },
+    {
+      "target": "solidity",
+      "node": "Import",
+      "path": "lib/backends/solidity/SolidityPrinterHandlers.inc"
+    }
+  ],
+  "handwrittenSites": [
+    {
+      "target": "postgres",
+      "node": "Blank",
+      "path": "lib/backends/postgres/SqlEmitter.cpp",
+      "matcher": "case Stmt::Kind::Blank:"
+    },
+    {
+      "target": "postgres",
+      "node": "Line",
+      "path": "lib/backends/postgres/SqlEmitter.cpp",
+      "matcher": "case Stmt::Kind::Line:"
+    },
+    {
+      "target": "postgres",
+      "node": "If",
+      "path": "lib/backends/postgres/SqlEmitter.cpp",
+      "matcher": "case Stmt::Kind::If:"
+    },
+    {
+      "target": "postgres",
+      "node": "FlatIf",
+      "path": "lib/backends/postgres/SqlEmitter.cpp",
+      "matcher": "case Stmt::Kind::FlatIf:"
+    }
+  ]
+}

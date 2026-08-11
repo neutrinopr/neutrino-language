@@ -1,0 +1,74 @@
+// Oracle trust-boundary security surfacing (M5 oracle S6, ) — the FLAGGED sample.
+//
+// An oracle-settled escrow whose delivery attestation names an observer set that is BOTH under-assured
+// (assurance A1 — a single-operator/unattested feed) and non-independent (independence "correlated" —
+// a shared upstream). The security pass surfaces the observation as a trust-boundary crossing (M-of-N
+// quorum + observer-set identity + the declared assurance/independence) AND raises the trustBoundary
+// category to `advisory` with a finding for each weakness. This is DECLARATION/SURFACING, not
+// enforcement (S2's on-chain guard enforces): the report still passes (`ok: true`) — an advisory names
+// a risk, it is not a gate. Non-oracle security categories are unchanged.
+//
+// RUN: %neutrino-gen --target=security --scenario=%S/security_scenario.json %s -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+//
+// Surfacing, not enforcement: an under-assured/correlated observer set is an advisory, not a
+// violation — the report `ok` (near the top of security.json) stays true. Checked first because
+// FileCheck is forward-only and `ok` precedes the categories.
+// CHECK: "ok": true
+// The oracle observation is surfaced as a trust-boundary crossing with its full trust metadata.
+// CHECK: "category": "trustBoundary"
+// CHECK: "status": "advisory"
+// CHECK: oracle attestation on evidence 'delivery_proof': observation crosses a trust boundary, admitted by an M-of-N quorum (M=2) over observer-set 'delivery_oracles' (assurance A1, independence correlated)
+// A1 is below A2 → flagged; correlated → flagged (an M-of-N over one upstream is one failure in N hats).
+// CHECK: observer-set 'delivery_oracles' assurance A1 is below A2
+// CHECK: observer-set 'delivery_oracles' independence is correlated
+// CHECK: single point of failure wearing N hats
+procedure oracle_settled_escrow {
+    trigger delivery_reported
+    version "1.0.0"
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        assurance        = "A1"
+        independence     = "correlated"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

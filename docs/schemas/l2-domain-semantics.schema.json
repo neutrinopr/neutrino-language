@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/l2-domain-semantics/v1",
+  "title": "L2 Domain Semantics (v1 — descriptive; superseded by v2)",
+  "description": "M3 schema-first L2 contract (): industry lifecycle/invariants/evidence-requirements/failure-modes that REFINE an L1 capability and trace back to L1 primitives, obligations, or explicit failure modes. A reviewable sidecar artifact, not source syntax. L2 DECLARES evidence requirements; M4 runtime/admission verifies actual evidence. SUPERSEDED (): the machine-emitted executable reduction graph is now the authoritative domain-semantics contract at schemaVersion 2 (same kind neutrino.l2-domain-semantics; l2-domain-semantics-v2.schema.json). This v1 descriptive form is RETAINED for the existing hand-authored artifacts pending migration; it and v2 are the two explicit versions of one contract identity, not overlapping models. See docs/domains/L2_DOMAIN_SEMANTICS.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "domain", "version", "implements", "l1", "concepts"],
+  "properties": {
+    "kind": { "const": "neutrino.l2-domain-semantics" },
+    "schemaVersion": { "const": 1 },
+    "domain": { "type": "string", "minLength": 1 },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "implements": { "type": "string", "minLength": 1, "description": "The L1 capability or participant role this L2 refines." },
+    "coverage": { "enum": ["full", "partial"], "description": "partial = simulation fixture that does not yet expand every L1 obligation." },
+    "l1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability"],
+      "description": "The L1 anchors this L2 traces back to.",
+      "properties": {
+        "capability": { "type": "string", "minLength": 1 },
+        "primitives": { "type": "array", "items": { "type": "string" } },
+        "obligations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "failureModes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "compensation": { "type": "string", "description": "Reference/description of the compensation pathway (declarative; M4 executes)." }
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Domain concepts L2 introduces. EVERY concept must trace back to an L1 primitive, an L1 obligation, or a declared failure mode.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "traces"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["state", "action", "concept"] },
+          "traces": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["to", "relation"],
+            "properties": {
+              "to": { "type": "string", "minLength": 1, "description": "An l1.primitives / l1.obligations entry or a failureModes[].name." },
+              "relation": { "enum": ["expands", "discharges", "protects", "failure"] }
+            }
+          }
+        }
+      }
+    },
+    "participantBranches": {
+      "type": "array",
+      "description": "Per-participant semantic branches; concepts[] reference concept names declared above.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["participant"],
+        "properties": {
+          "participant": { "type": "string", "minLength": 1 },
+          "concepts": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "parameters": {
+      "type": "array",
+      "description": "Declared parameter INTERFACES only — symbolic requirements/thresholds. No concrete environment values (those belong to L3 / simulation config).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "evidenceRequirements": {
+      "type": "array",
+      "description": "Evidence DECLARED as required. L2 does not verify it — M4 runtime/admission does.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "schemaRef": { "type": "string" },
+          "category": { "type": "string", "minLength": 1, "description": "optional typed proof-intent category (), e.g. channel_verification" },
+          "proofTags": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "enum": ["authority", "event", "liveness"] },
+            "description": "optional proof tags (); concrete transports are an L3/profile concern, never a proof tag"
+          }
+        }
+      }
+    },
+    "guards": { "type": "array", "items": { "$ref": "#/$defs/predicate" } },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/predicate" },
+          { "type": "object", "properties": { "onFailure": { "type": "string", "description": "A failureModes[].name." } } }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "predicate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "description": "Minimum expression model: EXACTLY ONE of `compare` (structured comparison; right must be a symbolic reference, no magic numbers) or `predicateRef` (named evaluator-backed predicate). Free-form string expressions are rejected as ambiguous.",
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "onFailure": { "type": "string" },
+        "compare": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["left", "op", "right"],
+          "properties": {
+            "left": { "type": "string", "minLength": 1 },
+            "op": { "enum": ["<", "<=", "==", "!=", ">=", ">"] },
+            "right": { "type": "string", "minLength": 1 }
+          }
+        },
+        "predicateRef": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "kind": "neutrino.target-profile-validator-agreement/1",
+  "beyondSchemaInvariants": [
+    "descriptor-identity-binding",
+    "feature-array-lexicographic-order",
+    "profile-id-version-binding",
+    "semantic-feature-closed-vocabulary",
+    "supported-unsupported-disjointness"
+  ],
+  "mutations": [
+    {
+      "name": "missing-capability-version",
+      "operation": "erase",
+      "packageAccepted": false,
+      "pointer": "/capabilitySpecVersion",
+      "schemaAccepted": false
+    },
+    {
+      "name": "missing-semantic-profile",
+      "operation": "erase",
+      "packageAccepted": false,
+      "pointer": "/semanticProfile",
+      "schemaAccepted": false
+    },
+    {
+      "name": "noncanonical-supported-features",
+      "operation": "reverse",
+      "packageAccepted": false,
+      "pointer": "/supportedFeatures",
+      "schemaAccepted": true
+    },
+    {
+      "name": "noncanonical-semantic-features",
+      "operation": "reverse",
+      "packageAccepted": false,
+      "pointer": "/semanticProfile/features",
+      "schemaAccepted": true
+    },
+    {
+      "assignments": [
+        {
+          "pointer": "/profileId",
+          "value": "target.alpha.v4294967295"
+        },
+        {
+          "pointer": "/profileVersion",
+          "value": 4294967295
+        }
+      ],
+      "name": "maximum-profile-version",
+      "operation": "assign",
+      "packageAccepted": true,
+      "schemaAccepted": true
+    },
+    {
+      "assignments": [
+        {
+          "pointer": "/profileId",
+          "value": "target.alpha.v4294967296"
+        },
+        {
+          "pointer": "/profileVersion",
+          "value": 4294967296
+        }
+      ],
+      "name": "profile-version-overflow",
+      "operation": "assign",
+      "packageAccepted": false,
+      "schemaAccepted": false
+    },
+    {
+      "assignments": [
+        {
+          "pointer": "/semanticProfile/limits/maxOperationSteps",
+          "value": 9223372036854775807
+        }
+      ],
+      "name": "maximum-semantic-limit",
+      "operation": "assign",
+      "packageAccepted": true,
+      "schemaAccepted": true
+    },
+    {
+      "assignments": [
+        {
+          "pointer": "/semanticProfile/limits/maxOperationSteps",
+          "value": 9223372036854775808
+        }
+      ],
+      "name": "semantic-limit-overflow",
+      "operation": "assign",
+      "packageAccepted": false,
+      "schemaAccepted": false
+    }
+  ],
+  "positive": {
+    "capabilitySpecVersion": "v1",
+    "executionMode": "simulated",
+    "fallbackPolicy": "fail_closed",
+    "kind": "neutrino.target-profile",
+    "profileId": "target.alpha.v1",
+    "profileVersion": 1,
+    "runtimeFamily": "off_chain",
+    "schemaVersion": 1,
+    "semanticProfile": {
+      "features": [
+        "authorization:explicit",
+        "terminal:success"
+      ],
+      "limits": {
+        "maxAttestations": 4,
+        "maxComputes": 4,
+        "maxEffectGroups": 4,
+        "maxEffects": 8,
+        "maxExpressionDepth": 8,
+        "maxOperationSteps": 32
+      },
+      "version": 3
+    },
+    "supportedFeatures": [
+      "effect:credit",
+      "effect:debit"
+    ],
+    "target": "alpha",
+    "unsupportedConstructs": [
+      "value_category:extension"
+    ]
+  }
+}

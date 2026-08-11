@@ -1,0 +1,6 @@
+// [33] generate.views: per-participant narrowed views (no obligation leakage) — each view carries only
+// its own leg + inputs + (for a flexible participant) binding policy; a no-participant source emits none;
+// views is gated like slot (insecure -> exit 5 unless --allow-insecure); requiredInputs resolves compute
+// deps transitively. See check_views.py.
+//
+// RUN: python3 %S/check_views.py %neutrino-gen %examples %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

@@ -1,0 +1,96 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_regulated_evidence_sample",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "d95998903b40c53b9ecfb044ac7864b933379928d7946e8c4e07ae1bab514f0b",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "DataController",
+    "role": "controller",
+    "org": "controllerco",
+    "slotId": "coordinate.core_regulated_evidence_sample#DataController"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [
+    {
+      "name": "evidence_ref",
+      "type": "evidence",
+      "specPath": "inputs[0]",
+      "source": {
+        "line": 56,
+        "column": 1
+      }
+    },
+    {
+      "name": "controller_id",
+      "type": "party",
+      "specPath": "inputs[2]",
+      "source": {
+        "line": 58,
+        "column": 1
+      }
+    },
+    {
+      "name": "fee",
+      "type": "money",
+      "specPath": "inputs[3]",
+      "source": {
+        "line": 59,
+        "column": 1
+      }
+    },
+    {
+      "name": "currency",
+      "type": "currency",
+      "specPath": "inputs[4]",
+      "source": {
+        "line": 60,
+        "column": 1
+      }
+    }
+  ],
+  "permittedCounterparties": [
+    {
+      "org": "consumerco",
+      "role": "consumer"
+    },
+    {
+      "org": "patientorg",
+      "role": "patient"
+    },
+    {
+      "org": "verifierco",
+      "role": "verifier"
+    }
+  ],
+  "evidenceObligations": [
+    {
+      "leg": "controller_evidence_revenue",
+      "kind": "credit",
+      "ledger": "controller.evidence_revenue",
+      "specPath": "effects[1]",
+      "source": {
+        "line": 72,
+        "column": 1
+      }
+    }
+  ],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

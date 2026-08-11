@@ -1,0 +1,5 @@
+--  C2 byte-faithful fixture: the replay/idempotency guard banner.
+-- Pins the exact production line rendered by the zero-operand
+-- IdempotencyGuardComment node. The line shape itself is the byte anchor for
+-- the .td -> generated handler -> golden mutation pair.
+    -- idempotency guard (replay-safe): one row per workflow key

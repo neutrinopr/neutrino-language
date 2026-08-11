@@ -1,0 +1,626 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "escrow_id"
+      },
+      "kind": "debit",
+      "ledger": "buyer.escrow",
+      "name": "buyer_escrow",
+      "owner": "buyer",
+      "participant": "Buyer",
+      "party": {
+        "kind": "ref",
+        "value": "buyer_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "escrow_id"
+      },
+      "kind": "credit",
+      "ledger": "escrow.holding",
+      "name": "escrow_holding",
+      "owner": "agent",
+      "participant": "EscrowAgent",
+      "party": {
+        "kind": "ref",
+        "value": "agent_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "escrow_id"
+      },
+      "kind": "debit",
+      "ledger": "escrow.holding",
+      "name": "escrow_release",
+      "owner": "agent",
+      "participant": "EscrowAgent",
+      "party": {
+        "kind": "ref",
+        "value": "agent_id"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "amount"
+          },
+          "op": ">=",
+          "rhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "agreed_amount"
+          }
+        },
+        "expr": "amount >= agreed_amount"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "escrow_id"
+      },
+      "kind": "credit",
+      "ledger": "seller.proceeds",
+      "name": "seller_settlement",
+      "owner": "seller",
+      "participant": "Seller",
+      "party": {
+        "kind": "ref",
+        "value": "seller_id"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "amount"
+          },
+          "op": ">=",
+          "rhs": {
+            "dtype": "money",
+            "kind": "var",
+            "name": "agreed_amount"
+          }
+        },
+        "expr": "amount >= agreed_amount"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "7f34a4816601e3327d59b3ce112a0f8ac17bc47e0889501b68dd6f16220cdd87",
+    "specHash": "da461fa8543844459a9fff3815daf985e7abd7e7c74479f0d419f283119497a7"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "escrow_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "buyer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "agent_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "seller_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "money",
+      "name": "agreed_amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "escrow_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Buyer",
+      "org": "buyerco",
+      "role": "buyer"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Seller",
+      "org": "sellerco",
+      "role": "seller"
+    },
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "evm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "EscrowAgent",
+      "org": "escrowco",
+      "role": "agent"
+    }
+  ],
+  "procedure": "core_document_escrow",
+  "schemaVersion": 2,
+  "sourceMap": [
+    {
+      "construct": "input escrow_id",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input buyer_id",
+      "source": {
+        "column": 1,
+        "line": 42
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input agent_id",
+      "source": {
+        "column": 1,
+        "line": 43
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input seller_id",
+      "source": {
+        "column": 1,
+        "line": 44
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 45
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input agreed_amount",
+      "source": {
+        "column": 1,
+        "line": 46
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 47
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "debit buyer_escrow",
+      "source": {
+        "column": 1,
+        "line": 49
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit escrow_holding",
+      "source": {
+        "column": 1,
+        "line": 59
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "debit escrow_release",
+      "source": {
+        "column": 1,
+        "line": 75
+      },
+      "specPath": "effects[2]"
+    },
+    {
+      "construct": "credit seller_settlement",
+      "source": {
+        "column": 1,
+        "line": 86
+      },
+      "specPath": "effects[3]"
+    },
+    {
+      "construct": "participant Buyer",
+      "source": {
+        "column": 1,
+        "line": 15
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Seller",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "participant EscrowAgent",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "participants[2]"
+    },
+    {
+      "construct": "allow buyerco with escrowco",
+      "source": {
+        "column": 1,
+        "line": 30
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "allow escrowco with sellerco",
+      "source": {
+        "column": 1,
+        "line": 34
+      },
+      "specPath": "topology.allowedOrgPairs[1]"
+    },
+    {
+      "construct": "allow buyerco with sellerco",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "topology.allowedOrgPairs[2]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 97
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input escrow_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 41
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input buyer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 42
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 45
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 47
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit buyer_escrow",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 49
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit escrow_holding",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 59
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "guard:conditional",
+        "primitive": "when escrow_release",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 75
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 97
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant EscrowAgent",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 23
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Buyer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 15
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow buyerco with escrowco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 30
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "buyerco",
+        "orgB": "escrowco",
+        "roleA": "buyer",
+        "roleB": "agent"
+      },
+      {
+        "orgA": "escrowco",
+        "orgB": "sellerco",
+        "roleA": "agent",
+        "roleB": "seller"
+      },
+      {
+        "orgA": "buyerco",
+        "orgB": "sellerco",
+        "roleA": "",
+        "roleB": ""
+      }
+    ]
+  },
+  "trigger": "escrow_opened"
+}

@@ -1,0 +1,6 @@
+// [55] M2 release (): make_release.sh builds a portable tarball (+ a .deb where dpkg-deb exists);
+// the release-manifest lists the 6 tools + an artifact hash AND embeds the full --version-json surface;
+// SHA256SUMS verifies; and the tarball extracts to a bin dir whose INSTALLED binaries pass the smoke
+// tests. See check_release.py (tools dir derived from the built neutrino-gen path).
+//
+// RUN: python3 %S/check_release.py %scripts/make_release.sh %scripts/smoke_test.sh %neutrino-gen

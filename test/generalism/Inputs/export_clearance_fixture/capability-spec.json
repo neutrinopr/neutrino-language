@@ -1,0 +1,549 @@
+{
+  "attestations": [
+    {
+      "canonicalization": {
+        "mode": "exact",
+        "tolerance": null
+      },
+      "fallback": "abort",
+      "input": "export_proof",
+      "observerSet": {
+        "assurance": "A3",
+        "independence": "independent",
+        "ref": "customs_oracles",
+        "role": null
+      },
+      "quorum": {
+        "threshold": 2
+      },
+      "timeout": "PT48H"
+    }
+  ],
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "clearance_id"
+      },
+      "kind": "debit",
+      "ledger": "customer.wallet",
+      "name": "wallet_debit",
+      "owner": "customer",
+      "participant": "Customer",
+      "party": {
+        "kind": "ref",
+        "value": "customer_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "clearance_id"
+      },
+      "kind": "credit",
+      "ledger": "customer.escrow",
+      "name": "escrow_fund",
+      "owner": "customer",
+      "participant": "Customer",
+      "party": {
+        "kind": "ref",
+        "value": "customer_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "0790af65a35ad868fe7bcb94d99323ed274591f6f11898d34b76f0b1f15643ad",
+    "specHash": "ac2d85e63cdf36b93fee96682c3f506d7db89235bc0a8c9c0f27de22b783cb6c"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "shipment_id",
+      "type": "string"
+    },
+    {
+      "category": "string",
+      "name": "clearance_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "customer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "broker_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    },
+    {
+      "category": "evidence",
+      "name": "export_proof",
+      "type": "evidence"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "clearance_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_PENDING",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_MET",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_TIMEOUT",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "AWAIT_QUORUM",
+        "to": "QUORUM_PENDING"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REACH_QUORUM",
+        "to": "QUORUM_MET"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "TIMEOUT",
+        "to": "QUORUM_TIMEOUT"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "QUORUM_MET",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_TIMEOUT",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "ABORT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Customer",
+      "org": "buyerco",
+      "role": "customer"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Broker",
+      "org": "brokerco",
+      "role": "broker"
+    }
+  ],
+  "procedure": "export_clearance_fixture",
+  "schemaVersion": 3,
+  "sourceMap": [
+    {
+      "construct": "input shipment_id",
+      "source": {
+        "column": 1,
+        "line": 35
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input clearance_id",
+      "source": {
+        "column": 1,
+        "line": 36
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input customer_id",
+      "source": {
+        "column": 1,
+        "line": 37
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input broker_id",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 39
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 40
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input export_proof",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "debit wallet_debit",
+      "source": {
+        "column": 1,
+        "line": 54
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit escrow_fund",
+      "source": {
+        "column": 1,
+        "line": 64
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "participant Customer",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Broker",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "allow buyerco with brokerco",
+      "source": {
+        "column": 1,
+        "line": 27
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 73
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input shipment_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 35
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input customer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 37
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 39
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 40
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:evidence",
+        "primitive": "input export_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 41
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit wallet_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 54
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit escrow_fund",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 64
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 73
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "attestation:quorum",
+        "primitive": "attest export_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 43
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Customer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 19
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow buyerco with brokerco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 27
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "buyerco",
+        "orgB": "brokerco",
+        "roleA": "customer",
+        "roleB": "broker"
+      }
+    ]
+  },
+  "trigger": "export_reported"
+}

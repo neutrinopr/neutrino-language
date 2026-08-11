@@ -1,0 +1,142 @@
+{
+  "kind": "neutrino.domain-pack",
+  "packDigest": "sha256:361ff00370f3b946384c9d97a4c891257e42ba24406957d04cadfc50a0733221",
+  "packId": "dual_bound_offer",
+  "payloads": [
+    {
+      "contract": "capability-spec",
+      "mediaType": "application/json",
+      "path": "generated/capability-spec/capability-spec.json",
+      "role": "capability-spec",
+      "sha256": "sha256:de95335fa1b4ea0f81412836742f2cb2c5d74fdd4021deb8bd82d97472370765"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/procedure.sql",
+      "role": "postgres-procedure",
+      "sha256": "sha256:eddc7d20a08b3bd6237f01fdd60e1ef582263fa2e6fab8cf4711533575848281"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/reconciliation.sql",
+      "role": "postgres-reconciliation",
+      "sha256": "sha256:9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "mediaType": "application/x-sh",
+      "path": "generated/postgres/run_db_test.sh",
+      "role": "postgres-test-helper",
+      "sha256": "sha256:68d3818cb9957f11561d3de165669209d3e134c07ecb09420416d1bca4cd8e4e"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/schema.sql",
+      "role": "postgres-schema",
+      "sha256": "sha256:a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/binding-topology.json",
+      "role": "slot-binding-topology",
+      "sha256": "sha256:4b56c7c045e36cec2e070d1abdcd47521f0a239cdb76be8d07a76c061376ced6"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/capability.json",
+      "role": "slot-capability",
+      "sha256": "sha256:917bbdf1deef93a30c1fc13b7becddcd28b206d5b5b35d47a123f0046aa030fa"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/capability.lock",
+      "role": "slot-capability",
+      "sha256": "sha256:2ce0f661b3d8de810d79a23dc4e3b542cd157d5fb57b1bf10a864dab54358b17"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/compensation.json",
+      "role": "slot-compensation",
+      "sha256": "sha256:a45b82a60f2d14688c6e50a91126a107083f8f861b28a9ebd0db90f6d0478260"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/envelope.schema.json",
+      "role": "slot-envelope",
+      "sha256": "sha256:6c3907e6ad94b8734f5f209284d6b806d5790dd2bdf5831f3e506eec7e8fc221"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/operations.json",
+      "role": "slot-operations",
+      "sha256": "sha256:74cc11774433f81321d439ff5116d917b0b27eb4b283150eeeafb5cd66a6cbf3"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "generated/slot/transcript.json",
+      "role": "slot-transcript",
+      "sha256": "sha256:f8adff3cac9da2a7fc644e159cf4ddaef8f9e918730b375f460d42ec2b437d4b"
+    },
+    {
+      "mediaType": "application/toml",
+      "path": "generated/solidity/foundry.toml",
+      "role": "solidity-config",
+      "sha256": "sha256:d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/src/DualBoundOffer.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:775d132b2102054af0f348d76cdc32ed1e3bf3048ab67520c3943dfce184973e"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/test/DualBoundOffer.t.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:d238db81ad81289ff5ac223202719ec059d0a80d90c31e44a3970002b30b015b"
+    },
+    {
+      "contract": "test-realization",
+      "mediaType": "application/json",
+      "path": "generated/test-realization/test-realization.json",
+      "role": "test-realization",
+      "sha256": "sha256:b47a0a1a70a7441a72fefcb3b8c6a83212ae338915259d38294d67c57678b10d"
+    },
+    {
+      "contract": "participant-view",
+      "mediaType": "application/json",
+      "path": "generated/views/Merchant.json",
+      "role": "participant-view",
+      "sha256": "sha256:11e8f9d86049db88a407d3426a0450be1fe56c710198398b2523f82fe62efcf5"
+    },
+    {
+      "contract": "participant-view",
+      "mediaType": "application/json",
+      "path": "generated/views/Sponsor.json",
+      "role": "participant-view",
+      "sha256": "sha256:58dc32666d66ea9be6756ed651d35e80b74a7d3b9116153e0eb51cadfc21e9f2"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "scenario/dual_bound_offer_happy_path.json",
+      "role": "scenario",
+      "sha256": "sha256:c068f0795ec8db7d5e492df91348bf50719e58a57adf89b8b54bbf79ef465a45"
+    },
+    {
+      "mediaType": "text/x-neutrino",
+      "path": "source/dual_bound_offer.neu",
+      "role": "source",
+      "sha256": "sha256:41bb84035ad16f045f4194e58d828adaf02464577f99613deb6e7c733c0f412a"
+    }
+  ],
+  "requiredContracts": [
+    "capability-spec",
+    "participant-view",
+    "test-realization"
+  ],
+  "schemaVersion": 2,
+  "targetsBundle": {
+    "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.10.0"
+  }
+}

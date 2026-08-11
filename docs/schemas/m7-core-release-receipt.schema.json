@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/m7-core-release-receipt.schema.json",
+  "title": "M7 backend-free core release receipt",
+  "description": "Producer-declared identity of one built, installed backend-free core. Produced at release time, after the final commit is built, which is why it can carry digests that a tracked source file cannot: BuildInfo.h bakes the source commit and platform triple into the installed binaries, so any digest committed alongside the source would be a fixed point. A consumer authenticates an admitted prefix against this receipt. The receipt is only evidence of provenance when it reaches the consumer independently of the prefix it describes, or when its own identity is pinned externally — see docs/process/M7_CORE_RELEASE_RECEIPT.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "sourceCommit",
+    "buildTarget",
+    "installedExportSha256",
+    "runtimeArtifacts",
+    "receiptDigest"
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.m7-core-release-receipt/1"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "sourceCommit": {
+      "description": "Full 40-hex commit the released core was built from. Binds the receipt to a source identity that exists before the receipt does.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "buildTarget": {
+      "description": "Platform triple the artifacts were built for, matching BuildInfo.h kBuildTarget. Artifact digests are platform-specific, so a receipt is only admissible on the target it names.",
+      "type": "string",
+      "minLength": 1
+    },
+    "installedExportSha256": {
+      "description": "Digest of the docs/m7-core-installed-export.json this release realizes. Binds identity to the shape contract it was produced against, so a receipt cannot be paired with a different manifest revision.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "runtimeArtifacts": {
+      "description": "Every installed runtime artifact the shape manifest declares — no more, no fewer. Ordered by path; paths unique.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "mode"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^bin/[^/]+$"
+          },
+          "sha256": {
+            "description": "Digest over the installed bytes, bare lowercase hex to match the per-file convention used by files[] and installedInterface[].",
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "mode": {
+            "description": "Installed file mode, so executability is a declared property rather than a consumer guess.",
+            "type": "string",
+            "pattern": "^0[0-7]{3}$"
+          }
+        }
+      }
+    },
+    "receiptDigest": {
+      "description": "Digest over the canonical form of this receipt with receiptDigest itself removed. This is the value an external pin or signature commits to, and the value a consumer quotes when reporting which receipt it admitted against.",
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

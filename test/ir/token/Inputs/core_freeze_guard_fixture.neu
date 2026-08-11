@@ -1,0 +1,76 @@
+// M5 token S2 (): an ERC-token-shaped account-freeze transfer. A balanced token
+// transfer (debit sender / credit receiver on token.balance) posts ONLY when neither party
+// is frozen — the account-freeze COMPLIANCE control is expressed with the existing
+// conditional-guard machinery (guard-over-existing-model), NOT a new token/freeze primitive.
+// sender_frozen / receiver_frozen are freeze flags a FreezeAuthority governs (the trust
+// surface). Both legs must share ONE guard (the  guarded-balance verifier refuses split
+// guards), so "NEITHER frozen" is the sum of squares == 0: `s*s + r*r` is zero IFF both flags
+// are exactly zero, so ANY non-zero OR invalid flag (a frozen 1, a negative, out-of-range —
+// a plain `s + r` would let s=-1,r=1 cancel to 0 and post while the receiver is frozen) makes
+// the guard false. So a frozen sender OR receiver, or a malformed flag, fails closed on value
+// movement: NEITHER leg posts. The semantics are SUPPRESSION, not abort — a frozen transfer
+// moves no value but the coordination still reconciles as a no-op (there is no abort primitive
+// in guard-over-existing-model; a retry after unfreeze uses a new transfer_id). Renders the
+// same guard to both Solidity and PostgreSQL from this one spec-level rule.
+
+procedure core_freeze_guard_fixture {
+    trigger transfer_requested
+    version "1.0.0"
+
+    participant Sender {
+        role = "sender"
+        org  = "walletco"
+    }
+    participant Receiver {
+        role = "receiver"
+        org  = "merchantco"
+    }
+    participant FreezeAuthority {
+        role = "freeze_authority"
+        org  = "complianceco"
+    }
+    allow "walletco" with "merchantco" {
+        "walletco" as "sender"
+        "merchantco" as "receiver"
+    }
+    allow "walletco" with "complianceco" {
+        "complianceco" as "freeze_authority"
+    }
+    allow "merchantco" with "complianceco" {
+        "complianceco" as "freeze_authority"
+    }
+
+    input transfer_id     : string
+    input sender_id       : party
+    input receiver_id     : party
+    input amount          : money
+    input currency        : currency
+    input sender_frozen   : number
+    input receiver_frozen : number
+
+    // Zero IFF both flags are exactly zero (sum of squares) — so any non-zero or
+    // invalid flag fails the guard closed, unlike a plain sum where s=-1,r=1 cancels.
+    compute freeze_signal = sender_frozen * sender_frozen + receiver_frozen * receiver_frozen
+
+    debit sender_debit {
+        ledger          = "token.balance"
+        owner           = "sender"
+        participant     = "Sender"
+        party           = %sender_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %transfer_id
+        when            = freeze_signal == 0
+    }
+    credit receiver_credit {
+        ledger          = "token.balance"
+        owner           = "receiver"
+        participant     = "Receiver"
+        party           = %receiver_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %transfer_id
+        when            = freeze_signal == 0
+    }
+    assert balanced
+}

@@ -1,0 +1,107 @@
+// RUN: %not %neutrino-gen --target=capability-spec %s -o %t.d 2>&1 | %FileCheck %s
+// RUN: test ! -e %t.d/capability-spec.json
+//
+//  waist test (S5/): the one-sided-guard source (the credit's `when` dropped) is refused
+// by the compiler waist — neutrino-gen exits non-zero and emits NO capability-spec. The first RUN
+// asserts the non-zero exit (%not) + the coded diagnostic (FileCheck); the second asserts the
+// fail-closed artifact behavior — NO capability-spec.json was written (a regression that returned
+// non-zero but still emitted the spec would fail here).
+//
+// CHECK: [kernel.balance.unbalanced]
+// M3 sample (strategy ), second shape: conditional escrow with document verification.
+//
+// L1 carries only the balanced escrow movement — the Buyer funds escrow and the EscrowAgent
+// holds it. The *conditional* release-to-seller / refund-to-buyer outcomes, the document
+// evidence (bill_of_lading / inspection_certificate / quality_report), and the
+// verification/auto-refund timeouts are NOT L1: they are declared at L2 (evidence
+// requirements + concepts/failureModes/invariants) and bound at L3. M4 owns runtime document
+// verification and evidence admission. No pseudo capability/domain_semantics/lifecycle_states
+// source syntax. The EscrowAgent slot is to_be_bound so an L3 Binding Manifest binds it.
+
+procedure core_document_escrow {
+    trigger escrow_opened
+    version "1.0.0"
+
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    participant EscrowAgent {
+        role               = "agent"
+        org                = "escrowco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    allow "buyerco" with "escrowco" {
+        "buyerco" as "buyer"
+        "escrowco" as "agent"
+    }
+    allow "escrowco" with "sellerco" {
+        "escrowco" as "agent"
+        "sellerco" as "seller"
+    }
+    allow "buyerco" with "sellerco" {
+    }
+
+    input escrow_id     : string
+    input buyer_id      : party
+    input agent_id      : party
+    input seller_id     : party
+    input amount        : money
+    input agreed_amount : money
+    input currency      : currency
+
+    debit buyer_escrow {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %escrow_id
+    }
+
+    credit escrow_holding {
+        ledger          = "escrow.holding"
+        owner           = "agent"
+        participant     = "EscrowAgent"
+        party           = %agent_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %escrow_id
+    }
+
+    // Conditional release (M5 WP7, ): the escrow releases to the Seller iff
+    // the deposited amount meets the agreed amount. The condition is a genuinely
+    // NUMERIC L1 predicate (money >= money); the actual document-verification
+    // VERDICT stays L2/L3/M4. If the condition does not hold the funds simply
+    // remain in escrow.holding (resolved above L1). Both legs share the guard so
+    // the release is a balanced pair.
+    debit escrow_release {
+        ledger          = "escrow.holding"
+        owner           = "agent"
+        participant     = "EscrowAgent"
+        party           = %agent_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %escrow_id
+        when            = amount >= agreed_amount
+    }
+
+    credit seller_settlement {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %escrow_id
+            }
+
+    assert balanced
+}

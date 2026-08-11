@@ -1,0 +1,8 @@
+{
+  "fixtures": [
+    {
+      "capabilityId": "coordinate.b",
+      "capabilityVersion": "1.0.0"
+    }
+  ]
+}

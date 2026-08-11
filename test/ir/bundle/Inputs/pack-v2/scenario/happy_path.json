@@ -1,0 +1,6 @@
+{
+  "name": "synthetic_happy_path",
+  "inputs": {
+    "amount": "10.00"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "capabilityHash": "7f34a4816601e3327d59b3ce112a0f8ac17bc47e0889501b68dd6f16220cdd87",
+  "computed": {},
+  "eventChain": [
+    "EscrowOpened",
+    "BuyerEscrowDebited",
+    "EscrowHoldingCredited",
+    "EscrowReleaseDebited",
+    "SellerSettlementCredited",
+    "CoreDocumentEscrowReconciled"
+  ],
+  "inputs": {
+    "agent_id": "agent-001",
+    "agreed_amount": 5000,
+    "amount": 5000,
+    "buyer_id": "buyer-001",
+    "currency": "EUR",
+    "escrow_id": "esc-001",
+    "seller_id": "seller-001"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "buyer.escrow": -5000,
+    "escrow.holding": 0,
+    "seller.proceeds": 5000
+  },
+  "procedure": "core_document_escrow",
+  "scenario": "core_document_escrow_happy_path",
+  "schemaVersion": 1
+}

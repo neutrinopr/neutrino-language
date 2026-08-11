@@ -1,0 +1,16 @@
+// [45] document symbols carry translator-owned SOURCE RANGES (front-end, not regex): neutrino-emit
+// --kind=symbols emits a procedure symbol with participant/input/ledger-leg children whose ranges map
+// to real headers / closing braces in the actual source; and neutrino_lang.py `symbols` renders that
+// outline into the versioned file/ok/diagnostics envelope, failing closed on a non-lowering source or
+// a degenerate emitter response. check_symbols.py proves both layers.
+//
+// DEFINE: %{fbo} = %test/ir/domain/Inputs/core_flexible_binding/source/core_flexible_binding.neu
+// RUN: python3 %S/check_symbols.py %neutrino-emit %scripts/generators/neutrino_lang.py %{fbo} %S/../neg_missing_field.neu
+//
+// check_symbols.py asserts: (raw) schemaVersion 1; a `procedure` symbol whose end line is a `}`;
+// children include `participant` + `input` + a ledger leg (`debit`/`credit`); a participant child's
+// start line is a real `participant ` header and its end line a `}` — the ranges are front-end-derived,
+// not regex-approximated. (wrapper) neutrino_lang.py `symbols` wraps that in a versioned file/ok
+// envelope; a non-lowering source -> ok:false + empty symbols + parse.missing_field; and a degenerate
+// emitter (exit 0 with a bare {"symbols":[]}) FAILS CLOSED rather than reporting a successful empty
+// outline.

@@ -1,0 +1,8 @@
+// Conformance NEGATIVE: `topology { ... }` is NOT accepted source syntax (M3
+// source-level non-goal) — the parser must reject it, not silently ignore it.
+procedure pseudo_topology {
+    trigger t
+    topology {
+        field = "value"
+    }
+}

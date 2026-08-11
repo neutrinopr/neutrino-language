@@ -1,0 +1,113 @@
+// The  reference-evaluator fixture: the `coordination-trace` target runs the
+// ONE deterministic reference evaluator (CoordinationEval) over the normalized
+// CoordinationPlan () for a scenario's transition input, emitting the
+// ordered observation trace + next state. This pins the trace AND proves the
+// three construction paths agree: `.neu` (MLIR) == its `.mlir` == the trace from
+// the plan RECONSTRUCTED from the emitted capability-spec (planFromSpec). The
+// scenario's `amount` (1000) >= `threshold` (500), so the guarded bonus pair
+// fires alongside the unconditional pair — four balanced ledger deltas.
+//
+// RUN: %neutrino-translate %s > %t.mlir
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/coordination_trace.scn.json %s -o %t.neu
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/coordination_trace.scn.json %t.mlir -o %t.ir
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%S/coordination_trace.scn.json %t.spec/capability-spec.json -o %t.fromspec
+// RUN: diff %t.neu/coordination-trace.json %t.ir/coordination-trace.json
+// RUN: diff %t.neu/coordination-trace.json %t.fromspec/coordination-trace.json
+// RUN: %FileCheck %s < %t.neu/coordination-trace.json
+//
+// NON-VACUOUS: the trace is a function of the coordination plan's ledger-delta operands, so
+// changing an effect's `amount` operand in the external spec (the two `%amount`
+// legs re-pointed to `%threshold`) yields DIFFERENT ledger deltas — the trace
+// diff breaks. This proves the trace observes the ledger deltas, not just the
+// procedure shape (a drop/reorder/duplicate/change of a delta is covered
+// exhaustively by the C++ unit tier, CoordinationEvalTest).
+// RUN: sed 's/"value": "amount"/"value": "threshold"/' %t.spec/capability-spec.json > %t.tamper.json
+// RUN: %neutrino-gen --target=coordination-trace --from-spec --scenario=%S/coordination_trace.scn.json %t.tamper.json -o %t.tampered
+// RUN: %not diff %t.neu/coordination-trace.json %t.tampered/coordination-trace.json
+//
+// The next state nets balances per (ledger, party, currency); the committed key
+// is recorded and the coordination advances to its success terminal status.
+// CHECK: "balance": -2001
+// CHECK: "ledger": "a.src"
+// CHECK: "party": "buyer-1"
+// CHECK: "balance": 2001
+// CHECK: "party": "seller-1"
+// CHECK: "F-1"
+// CHECK: "F-1": "CLOSED"
+// The transition committed; the trace opens with the authorization observation.
+// CHECK: "outcome": "terminal"
+// CHECK: "kind": "authorization"
+// The compute is evaluated and folded into the env before the effects.
+// CHECK: "name": "bonus_amount"
+// The guarded bonus legs fire (amount >= threshold).
+// CHECK: "effect": "bonus_out"
+// CHECK: "held": true
+// The four balanced ledger deltas, in effect order — this is what a mutation
+// dropping/reordering/duplicating/changing a delta would perturb. Each carries
+// its resolved (ledger, party, currency) posting identity.
+// CHECK: "delta": -1000
+// CHECK: "effect": "pay_out"
+// CHECK: "party": "buyer-1"
+// CHECK: "delta": 1000
+// CHECK: "effect": "pay_in"
+// CHECK: "party": "seller-1"
+// CHECK: "delta": -1001
+// CHECK: "effect": "bonus_out"
+// CHECK: "delta": 1001
+// CHECK: "effect": "bonus_in"
+// The choreography events follow, then the verified success terminal.
+// CHECK: "name": "PayOutDebited"
+// CHECK: "name": "TraceProbeReconciled"
+// CHECK: "state": "CLOSED"
+
+procedure trace_probe {
+    trigger opened
+    version "1.0.0"
+
+    input flow_id   : string
+    input payer     : party
+    input payee     : party
+    input amount    : money
+    input threshold : money
+    input currency  : currency
+
+    compute bonus_amount = amount + 1
+
+    debit pay_out {
+        ledger          = "a.src"
+        owner           = "buyer"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    credit pay_in {
+        ledger          = "b.dst"
+        owner           = "seller"
+        party           = %payee
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    debit bonus_out {
+        ledger          = "a.src"
+        owner           = "buyer"
+        party           = %payer
+        amount          = %bonus_amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = amount >= threshold
+    }
+    credit bonus_in {
+        ledger          = "b.dst"
+        owner           = "seller"
+        party           = %payee
+        amount          = %bonus_amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = amount >= threshold
+    }
+
+    assert balanced
+}

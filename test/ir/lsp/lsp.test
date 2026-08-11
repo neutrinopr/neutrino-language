@@ -1,0 +1,9 @@
+// [98] M5  T2 (): compiler-backed .neu LSP — the server DELEGATES to the compiler and maps its
+// output (it never re-derives diagnostics or token roles): an invalid fixture -> mapped LSP diagnostics
+// carrying the compiler's stable code + 0-based ranges; a valid fixture -> semantic tokens
+// distinguishing input(parameter) vs compute(variable); a missing compiler binary AND a malformed emit
+// (symbols ok:false) both fail closed with an explicit error; and the stdio server answers initialize +
+// publishes diagnostics over real LSP framing. See check_lsp.py.
+//
+// RUN: python3 %S/check_lsp.py %scripts/generators/neutrino_lsp.py %neutrino-translate %neutrino-emit \
+// RUN:   %S/../../lsp/valid_sample.neu %S/../../lsp/invalid_sample.neu

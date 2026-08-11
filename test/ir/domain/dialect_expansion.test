@@ -1,0 +1,9 @@
+// [39] D2: sponsored-finance dialect expansion (Upper-Layer path; no parser syntax) — expanding the
+// reviewed template yields a byte-stable .neu accepted by the translator + verifier and an expansion
+// manifest that pins dialect+source hashes and traces every construct to a real edge; the declared
+// participants flow through to a D1b binding-topology matching the manifest's predicted grouping; and a
+// tampered dialect, a hash-valid source-injecting dialect, and a non-identifier --trigger are all
+// refused. See check_dialect_expansion.py.
+//
+// RUN: python3 %S/check_dialect_expansion.py %scripts/domain/expand_dialect.py \
+// RUN:   %neutrino-translate %neutrino-opt %neutrino-gen %examples

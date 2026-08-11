@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/test-realization/v1",
+  "title": "Neutrino Test-Realization Artifact",
+  "description": "The test-realization companion artifact (M5 WP2, ): the concrete backend test cases folded ONCE from a capability spec + a scenario, emitted by `neutrino-gen --target=test-realization`. It lives OUTSIDE the capability hash scope — it carries `capabilityHash` as a REFERENCE to the capability it realizes, and is never hashed into it, so changing only a scenario/test never changes the capabilityHash. Every migrated backend renderer (Solidity/Foundry, PostgreSQL) consumes this fold rather than re-deriving from the raw scenario. Deterministic + canonical (sorted keys, no timestamps). Fail-closed (additionalProperties:false). See docs/testing/TEST_REALIZATION.md.",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "capabilityHash", "scenario", "procedure",
+               "inputs", "computed", "eventChain", "ledgerDeltas", "invariants"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "neutrino.test-realization" },
+    "capabilityHash": {
+      "description": "The capability these cases realize — a reference to the spec's identity.capabilityHash, NOT this file's own identity. This file is outside the hash it points at.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scenario": { "type": "string", "description": "the scenario name these cases come from" },
+    "procedure": { "type": "string", "description": "the procedure realized" },
+    "inputs": {
+      "description": "concrete input values, keyed by input name (integer or string per the input's value type)",
+      "type": "object",
+      "additionalProperties": { "type": ["integer", "string"] }
+    },
+    "computed": {
+      "description": "expected value of each compute, keyed by compute name (integer minor units)",
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "eventChain": {
+      "description": "the expected coordination event order (must equal the IR-derived choreography; validated at fold time)",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ledgerDeltas": {
+      "description": "expected net movement per ledger, keyed by ledger name (signed integer minor units)",
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "invariants": {
+      "description": "the invariants the case proves (e.g. \"balanced\")",
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

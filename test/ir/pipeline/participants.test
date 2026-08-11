@@ -1,0 +1,7 @@
+// [21] participants flow source -> IR -> capability; coverage L3 -> full — declared participants reach the
+// IR + slot capability (role, cross-org topology, L8 partial); unknown field + duplicate participant
+// rejected; a to_be_bound binding policy is emitted (off fixed participants) with a bind_min_assurance>A1
+// trustBoundary advisory (ok stays true); malformed binding policies rejected at the frontend AND the IR
+// verifier. See check_participants.py.
+//
+// RUN: python3 %S/check_participants.py %neutrino-gen %neutrino-translate %neutrino-opt %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

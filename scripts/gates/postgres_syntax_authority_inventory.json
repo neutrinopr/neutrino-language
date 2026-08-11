@@ -1,0 +1,9 @@
+{
+  "kind": "neutrino.postgres-syntax-authority.v2",
+  "scope": "Raw PL/pgSQL PgStmt procedure-statement authoring is prohibited ( C3 endpoint). The pgLine/rawLine/RawCap/PgStmt::Impl seam is deleted; the canonical constructor rejects the retired Kind::Line enum value; every production statement is typed.",
+  "note": "Zero-state endpoint contract: deliberate raw seam, factory, raw-kind, ordinal-cast, aggregate, mutation, or constructor-guard reintroduction fails.",
+  "primaryTU": "lib/backends/postgres/PostgresModel.cpp",
+  "baseline": 0,
+  "executable": [],
+  "comments": []
+}

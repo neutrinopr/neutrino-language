@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/m7-core-export-overlays.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "boundary",
+    "overlays"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "boundary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "overlays": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "policyClass"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "policyClass": {
+            "enum": [
+              "boundary",
+              "contributor",
+              "documentation",
+              "license",
+              "schema",
+              "security"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

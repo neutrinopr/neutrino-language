@@ -1,0 +1,8 @@
+// [75b] M5 S0 (): neutrino.domain-observation-set — the deterministic corpus-extraction stdlib
+// validator mirrors the normative domain-observation-set.schema.json (fields/patterns/consts aligned; no
+// AI-trust field declared anywhere); the committed observation set validates and emits diagnostics/report
+// (--out); and bad kind/schemaVersion, missing/unknown field, malformed content-hash binding, unknown
+// dimension + value, duplicate id, inverted span, and an AI-trust field (confidence/reviewStatus/model)
+// all fail closed with stable observation.* codes. See check_observation_set.py.
+//
+// RUN: python3 %S/check_observation_set.py %examples

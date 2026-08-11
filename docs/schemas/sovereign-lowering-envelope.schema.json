@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/sovereign-lowering-envelope/v1",
+  "title": "Sovereign Lowering Envelope",
+  "description": "M5 import contract (): the minimum reviewable, versioned manifest that wraps EXTERNALLY lowered artifacts so a console / network / agents consumer can safely accept them WITHOUT trusting the producing compiler. Carries source hash, language/artifact versions, producer identity, target/backend, capability id, per-artifact hashes, diagnostics, and a self-describing compatibility surface (`translatorVersion`, kind neutrino.translator-version) that the consumer fails closed against via scripts/gates/check_compatibility.py — the same surface official `--version-json` / manifest.json emit, so a console needs no parallel manifest. Compatible with both the official translator and future participant-owned compilers (sovereignty: the envelope is self-describing; the CONSUMER decides acceptability against its own requirements).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "capability", "capabilityVersion", "source", "producer", "target", "artifacts", "translatorVersion"],
+  "properties": {
+    "kind": { "const": "neutrino.sovereign-lowering-envelope" },
+    "schemaVersion": { "const": 1 },
+    "capability": { "type": "string", "minLength": 1 },
+    "capabilityVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "sourceHash", "languageVersion"],
+      "properties": {
+        "language": { "type": "string", "minLength": 1, "description": "e.g. 'neu' (the source DSL)." },
+        "sourceHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "hash of the source the artifacts were lowered from." },
+        "languageVersion": { "type": "string", "minLength": 1, "description": "the source-language level version the producer targeted (required so a missing language version fails closed)." }
+      }
+    },
+    "producer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "official", "toolVersion"],
+      "properties": {
+        "identity": { "type": "string", "minLength": 1, "description": "producer identity, e.g. 'official:neutrino-translator' or 'participant:<org>-<compiler>'." },
+        "official": { "type": "boolean", "description": "true iff produced by the official translator; a consumer MAY require official, but the envelope also supports sovereign participant compilers." },
+        "toolVersion": { "type": "string", "minLength": 1 },
+        "gitSha": { "type": "string" },
+        "buildTarget": { "type": "string" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend"],
+      "properties": {
+        "backend": { "type": "string", "minLength": 1, "description": "generator target, e.g. solidity | postgres | slot." },
+        "runtimeProfile": { "type": "string", "description": "backend profile id, e.g. evm.v1 (see the backend-profile catalog)." }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "every emitted artifact, each with a content hash so the consumer can verify integrity without re-running the compiler.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "role", "hash"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$", "description": "path to the artifact, RELATIVE to the import/artifact root — POSIX ('/...') and Windows ('C:\\\\...') absolute paths and '..' traversal (with '/' or '\\\\' separators) are rejected so the bundle boundary holds." },
+          "role": { "type": "string", "minLength": 1, "description": "e.g. capability-identity | backend-model | binding-topology | operations | compensation | transcript." },
+          "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ok": { "type": "boolean" },
+        "count": { "type": "integer", "minimum": 0 },
+        "ref": { "type": "string", "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$", "description": "path to a diagnostics.json, RELATIVE to the import root (POSIX + Windows absolute and '/' or '\\\\' traversal rejected)." }
+      }
+    },
+    "translatorVersion": {
+      "type": "object",
+      "description": "the producer's self-declared compatibility surface — a neutrino.translator-version envelope (the same shape --version-json / manifest.json carry), so a consumer fails closed against it with the EXISTING scripts/gates/check_compatibility.py (no parallel manifest). For the official translator this equals VersionInfo.h; a sovereign producer declares its own, and the consumer accepts or refuses against its requirements.",
+      "required": ["toolVersion", "mlirDialectVersion", "schemas"],
+      "properties": {
+        "kind": { "type": "string" },
+        "toolVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "mlirDialectVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "schemaBundleVersion": { "type": "string" },
+        "languageLevels": { "type": "object" },
+        "schemas": {
+          "type": "object",
+          "required": ["bindingPolicy", "bindingReceipt", "runtimeEvidence"],
+          "properties": {
+            "bindingPolicy": { "type": "string" },
+            "bindingReceipt": { "type": "string" },
+            "runtimeEvidence": { "type": "string" }
+          }
+        },
+        "conformanceVectorVersion": { "type": "string" },
+        "compatibilityManifestVersion": { "type": "string" }
+      }
+    }
+  }
+}

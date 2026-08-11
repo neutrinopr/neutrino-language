@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neutrino/contracts/agreement-identity/v1",
+  "title": "Neutrino agreement identity",
+  "description": "The portable semantic-agreement identity (). agreementHash = sha256( frame(domain) || frame(semanticLanguageVersion) || frame(canonicalCapabilitySpecBytes) || frame(canonicalAgreementEnvelopeBytes) ), where frame(x) = BE64(byteLength(x)) || x. The capability-spec stays the external semantic contract; the versioned envelope carries the identity-level semantics absent from it (consent/amendment policy, clause semantic IDs). Realization-only data never contributes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "domain", "semanticLanguageVersion", "capabilityHash", "envelope", "identity"],
+  "properties": {
+    "kind": { "const": "neutrino.agreement-identity" },
+    "domain": {
+      "const": "neutrino.agreement.v1",
+      "description": "The domain-separation tag hashed into the preimage; the trailing .vN is the identity-object domain version. An unknown domain fails closed."
+    },
+    "semanticLanguageVersion": {
+      "type": "string",
+      "enum": ["0.1.0"],
+      "description": "The semantic-agreement language version the identity is expressed in; pinned to the known/supported set (VersionInfo.h kSemanticLanguageVersion). An unknown version fails closed on ingest — a consumer must not accept an identity whose language version it cannot interpret."
+    },
+    "capabilityHash": {
+      "$ref": "#/$defs/hexSha256",
+      "description": "sha256 of canonicalCapabilitySpecBytes (the capability-spec's canonical semantic core) — the SAME value the capability-spec's identity.capabilityHash carries. Present for traceability; the agreementHash preimage binds the bytes, not this digest."
+    },
+    "envelope": { "$ref": "#/$defs/envelope" },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agreementHash"],
+      "properties": {
+        "agreementHash": { "$ref": "#/$defs/hexSha256" }
+      }
+    }
+  },
+  "$defs": {
+    "hexSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "envelope": {
+      "type": "object",
+      "description": "The versioned agreement envelope: identity-level semantics carried alongside the capability-spec. Greenfield in S1 — policies default to null, clauseSemanticIds is empty; later slices author them.",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "consentPolicy", "amendmentPolicy", "clauseSemanticIds"],
+      "properties": {
+        "schemaVersion": {
+          "const": 1,
+          "description": "The agreement-envelope schema version; an unknown version fails closed on ingest."
+        },
+        "consentPolicy": {
+          "type": ["object", "null"],
+          "description": "The consent policy (null until authored)."
+        },
+        "amendmentPolicy": {
+          "type": ["object", "null"],
+          "description": "The amendment policy (null until authored)."
+        },
+        "clauseSemanticIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Semantic IDs of the agreement's clauses (empty until authored)."
+        }
+      }
+    }
+  }
+}

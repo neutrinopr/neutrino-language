@@ -1,0 +1,16 @@
+{
+  "fixtures": [
+    {
+      "capabilityId": "coordinate.a",
+      "capabilityVersion": "1.0.0",
+      "l2v2": "test/ir/l2/Inputs/imports/sidecar_a_imports_b.json",
+      "l2v2Hash": "4841b686e9430fc35cd471c0f9c31f8b1044b2a4fb4b5afcec6584461d73b3f0"
+    },
+    {
+      "capabilityId": "coordinate.b",
+      "capabilityVersion": "1.0.0",
+      "l2v2": "test/ir/l2/Inputs/imports/sidecar_b_imports_a.json",
+      "l2v2Hash": "8d502034171bc56424df8d74fe9f857bf7aab7a3f94332b6bfa2511b5e925fd8"
+    }
+  ]
+}

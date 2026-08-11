@@ -1,0 +1,6 @@
+// [72] published compatibility manifest (): COMPATIBILITY.json pins the M4 compatibility surface to
+// VersionInfo.h + committed schemas + language levels; a drifted toolVersion, an unsupported schema
+// version, a per-contract schema bump, L2-advertised-as-supported, a nested unknown field, a malformed
+// featureFlags value, and a non-object consumers section each fail closed. See check_compat_manifest.py.
+//
+// RUN: python3 %S/check_compat_manifest.py %scripts/validators/validate_compatibility_manifest.py %examples

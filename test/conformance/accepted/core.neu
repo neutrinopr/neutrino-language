@@ -1,0 +1,27 @@
+// Conformance: core accepted constructs — procedure, trigger, typed inputs
+// (money/currency/party/string), debit/credit with all required fields, and
+// `assert balanced`. Both `//` and `#` comments are supported.
+procedure conformance_core {
+    trigger event_occurred
+    input amount : money
+    input cur    : currency   # currency-typed input
+    input who    : party
+    input k      : string
+    debit d {
+        ledger          = "ledger.a"
+        owner           = "org"
+        party           = %who
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %k
+    }
+    credit c {
+        ledger          = "ledger.b"
+        owner           = "org"
+        party           = %who
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %k
+    }
+    assert balanced
+}

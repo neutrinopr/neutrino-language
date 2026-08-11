@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino.dev/schemas/semantic-convergence-report.schema.json",
+  "title": "Neutrino semantic-convergence sub-gate report",
+  "description": "Deterministic non-terminal report combining semantic-authority zero, the source-neutral governed-backend witness, and a representative intake/convergence/security suite. This is necessary anti-reinference evidence and does not claim terminal M7 entry.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schemaVersion",
+    "reportSchema",
+    "scopeVerdict",
+    "governedBackends",
+    "semanticAuthority",
+    "sourceNeutralWitness",
+    "representativeSuite"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "scopeVerdict": {
+            "const": "pass"
+          }
+        },
+        "required": [
+          "scopeVerdict"
+        ]
+      },
+      "then": {
+        "properties": {
+          "governedBackends": {
+            "minItems": 1
+          },
+          "semanticAuthority": {
+            "type": "object"
+          },
+          "sourceNeutralWitness": {
+            "type": "object"
+          },
+          "representativeSuite": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "pass"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "neutrino.semantic-convergence-report"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "reportSchema": {
+      "const": "docs/schemas/semantic-convergence-report.schema.json"
+    },
+    "scopeVerdict": {
+      "enum": [
+        "pass",
+        "fail"
+      ]
+    },
+    "governedBackends": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "semanticAuthority": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "sourceNeutralWitness": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "representativeSuite": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

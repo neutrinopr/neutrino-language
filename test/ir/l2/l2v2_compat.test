@@ -1,0 +1,15 @@
+// schemaVersion-2 BACK-COMPATIBILITY ():  shipped the v2 domain-
+// semantics contract on main with NO `imports` field. This PR adds `imports` as
+// an OPTIONAL field, so a pre- v2 artifact (no imports field) must still
+// validate under BOTH validators and keep its original domainSemanticsHash (an
+// absent imports field is not part of the hash preimage), and — declaring no
+// imports — must re-ingest and reduce with no registry.
+//
+// Inputs/l2v2_pre621_no_imports.json is a committed pre- v2 sidecar: no
+// `imports` key, hash computed over the original (imports-free) preimage.
+//
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v2.py --artifact %S/Inputs/l2v2_pre621_no_imports.json
+// RUN: python3 %scripts/domain/validate_l2_domain_semantics_v2.py --canonicalize %S/Inputs/l2v2_pre621_no_imports.json | diff %S/Inputs/l2v2_pre621_no_imports.json -
+// RUN: %neutrino-emit --kind=domain-reduction %S/Inputs/l2v2_pre621_no_imports.json --reduce-against %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json | %FileCheck %s
+
+// CHECK: "feature": "effect:debit"

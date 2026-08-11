@@ -1,0 +1,11 @@
+{
+  "scenario": "deep_probe_run",
+  "procedure": "deep_probe",
+  "inputs": {
+    "flow_id": "F-1",
+    "payer": "buyer-1",
+    "amount": 100,
+    "currency": "EUR"
+  },
+  "expect": {}
+}

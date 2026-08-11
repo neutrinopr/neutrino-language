@@ -1,0 +1,705 @@
+{
+  "attestations": [
+    {
+      "canonicalization": {
+        "mode": "exact",
+        "tolerance": null
+      },
+      "fallback": "abort",
+      "input": "alpha_proof",
+      "observerSet": {
+        "ref": "alpha_oracles",
+        "role": null
+      },
+      "quorum": {
+        "threshold": 2
+      },
+      "timeout": null
+    },
+    {
+      "canonicalization": {
+        "mode": "exact",
+        "tolerance": null
+      },
+      "fallback": "abort",
+      "input": "beta_proof",
+      "observerSet": {
+        "ref": "beta_oracles",
+        "role": null
+      },
+      "quorum": {
+        "threshold": 3
+      },
+      "timeout": null
+    }
+  ],
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "debit",
+      "ledger": "payer.alpha",
+      "name": "alpha_debit",
+      "owner": "payer",
+      "participant": "Payer",
+      "party": {
+        "kind": "ref",
+        "value": "payer_id"
+      },
+      "when": {
+        "ast": {
+          "args": [
+            {
+              "dtype": "evidence",
+              "kind": "var",
+              "name": "alpha_proof"
+            }
+          ],
+          "dtype": "extension",
+          "kind": "call",
+          "name": "accepted"
+        },
+        "expr": "accepted(alpha_proof)"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "credit",
+      "ledger": "payee.alpha",
+      "name": "alpha_credit",
+      "owner": "payee",
+      "participant": "Payee",
+      "party": {
+        "kind": "ref",
+        "value": "payee_id"
+      },
+      "when": {
+        "ast": {
+          "args": [
+            {
+              "dtype": "evidence",
+              "kind": "var",
+              "name": "alpha_proof"
+            }
+          ],
+          "dtype": "extension",
+          "kind": "call",
+          "name": "accepted"
+        },
+        "expr": "accepted(alpha_proof)"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "debit",
+      "ledger": "payer.beta",
+      "name": "beta_debit",
+      "owner": "payer",
+      "participant": "Payer",
+      "party": {
+        "kind": "ref",
+        "value": "payer_id"
+      },
+      "when": {
+        "ast": {
+          "args": [
+            {
+              "dtype": "evidence",
+              "kind": "var",
+              "name": "beta_proof"
+            }
+          ],
+          "dtype": "extension",
+          "kind": "call",
+          "name": "accepted"
+        },
+        "expr": "accepted(beta_proof)"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "settlement_id"
+      },
+      "kind": "credit",
+      "ledger": "payee.beta",
+      "name": "beta_credit",
+      "owner": "payee",
+      "participant": "Payee",
+      "party": {
+        "kind": "ref",
+        "value": "payee_id"
+      },
+      "when": {
+        "ast": {
+          "args": [
+            {
+              "dtype": "evidence",
+              "kind": "var",
+              "name": "beta_proof"
+            }
+          ],
+          "dtype": "extension",
+          "kind": "call",
+          "name": "accepted"
+        },
+        "expr": "accepted(beta_proof)"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "b756036e3ce932ccdcb9c34649b07bea12e8da0af671ed97f57f492fc5c76a25",
+    "specHash": "191f427e7fbdf51af4ee0cf5be948e5367abc67ac6a078c0ed153589af4100ca"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "settlement_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "payer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "payee_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    },
+    {
+      "category": "evidence",
+      "name": "alpha_proof",
+      "type": "evidence"
+    },
+    {
+      "category": "evidence",
+      "name": "beta_proof",
+      "type": "evidence"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "settlement_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_PENDING",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_MET",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_TIMEOUT",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "AWAIT_QUORUM",
+        "to": "QUORUM_PENDING"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REACH_QUORUM",
+        "to": "QUORUM_MET"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "TIMEOUT",
+        "to": "QUORUM_TIMEOUT"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "QUORUM_MET",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_TIMEOUT",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "ABORT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Payer",
+      "org": "payerco",
+      "role": "payer"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Payee",
+      "org": "payeeco",
+      "role": "payee"
+    }
+  ],
+  "procedure": "accepted_multi_policy",
+  "schemaVersion": 3,
+  "sourceMap": [
+    {
+      "construct": "input settlement_id",
+      "source": {
+        "column": 1,
+        "line": 153
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input payer_id",
+      "source": {
+        "column": 1,
+        "line": 154
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input payee_id",
+      "source": {
+        "column": 1,
+        "line": 155
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 156
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 157
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input alpha_proof",
+      "source": {
+        "column": 1,
+        "line": 158
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input beta_proof",
+      "source": {
+        "column": 1,
+        "line": 159
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "debit alpha_debit",
+      "source": {
+        "column": 1,
+        "line": 174
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit alpha_credit",
+      "source": {
+        "column": 1,
+        "line": 184
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "debit beta_debit",
+      "source": {
+        "column": 1,
+        "line": 194
+      },
+      "specPath": "effects[2]"
+    },
+    {
+      "construct": "credit beta_credit",
+      "source": {
+        "column": 1,
+        "line": 204
+      },
+      "specPath": "effects[3]"
+    },
+    {
+      "construct": "participant Payer",
+      "source": {
+        "column": 1,
+        "line": 140
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Payee",
+      "source": {
+        "column": 1,
+        "line": 144
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "allow payerco with payeeco",
+      "source": {
+        "column": 1,
+        "line": 148
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 214
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input settlement_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 153
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input payer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 154
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 156
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 157
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:evidence",
+        "primitive": "input alpha_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 158
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit alpha_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 174
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit alpha_credit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 184
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "guard:conditional",
+        "primitive": "when alpha_debit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 174
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 214
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "attestation:quorum",
+        "primitive": "attest alpha_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 161
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "attestation:quorum",
+        "primitive": "attest beta_proof",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 167
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Payer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 140
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow payerco with payeeco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 148
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "payerco",
+        "orgB": "payeeco",
+        "roleA": "payer",
+        "roleB": "payee"
+      }
+    ]
+  },
+  "trigger": "settlement_proposed"
+}

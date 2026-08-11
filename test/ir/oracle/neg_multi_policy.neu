@@ -1,0 +1,97 @@
+// Oracle NEGATIVE (M5 ,  review): a spec with MORE THAN ONE attestation policy fails CLOSED on
+// BOTH rails. The frontend allows several `attest` blocks (distinct evidence inputs, each with its own
+// observer set + threshold), and each is a VALID S1 policy — but the quorum lowering (Solidity ,
+// PostgreSQL ) gates ONE guard per procedure, keyed by the workflow key, so lowering only the first
+// would leave the others UNGATED (fail-open relative to the frozen spec). Both renderers refuse rather
+// than under-gate; real per-policy binding is the remaining  scope. This pins the fail-close on BOTH
+// rails so a future change can't silently re-introduce the fail-open path on either.
+//
+// RUN: rm -rf %t.d %t.pg %t.sol
+// Both policies are VALID at S1 — the capability-spec carries both attestations (schemaVersion 3).
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.d
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.d/capability-spec.json
+// SPEC: "input": "delivery_proof"
+// SPEC: "input": "audit_proof"
+// SPEC: "schemaVersion": 3
+//
+// The PostgreSQL render refuses fail-closed, writing no procedure.
+// RUN: %not %neutrino-gen --target=postgres --scenario=%S/neg_multi_policy_scenario.json %s -o %t.pg 2>&1 | %FileCheck %s --check-prefix=PGMP
+// RUN: test ! -e %t.pg/procedure.sql
+// The refusal surface is the NORMATIVE coded diagnostic ( B1): `6d4acee3`
+// converged both backends on the finalized projection sequence, which reports
+// `diag:FinalizedProjectionSequence:<code>` rather than rail-specific prose. The
+// meaning this row asserts is unchanged — the PostgreSQL quorum lowering ()
+// requires exactly one projected policy — but the contract it matches on is the code.
+// PGMP: diag:FinalizedProjectionSequence:execution-rail
+//
+// The Solidity render refuses fail-closed too ( parity), writing no contract.
+// RUN: %not %neutrino-gen --target=solidity --scenario=%S/neg_multi_policy_scenario.json %s -o %t.sol 2>&1 | %FileCheck %s --check-prefix=SOLMP
+// RUN: test ! -e %t.sol/src/OracleMultiAttest.sol
+// RUN: test ! -e %t.sol/src/ThresholdQuorumAcceptance.sol
+// Same normative code as the PostgreSQL rail above: after `6d4acee3` both rails
+// refuse through the shared finalized-projection sequence, so this row no longer
+// discriminates the Solidity-specific reason (previously "unsupported projected
+// Solidity quorum/application shape"). What it still proves — and what the
+// parity claim rests on — is that BOTH rails refuse fail-closed and write no
+// artifact, which the `test ! -e` rows above assert directly.
+// SOLMP: diag:FinalizedProjectionSequence:execution-rail
+procedure oracle_multi_attest {
+    trigger delivery_reported
+    version "1.0.0"
+
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+    input audit_proof    : evidence
+
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+    attest audit_proof {
+        quorum           = 3
+        observer_set     = "auditor_oracles"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

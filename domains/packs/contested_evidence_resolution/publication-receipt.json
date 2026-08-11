@@ -1,0 +1,60 @@
+{
+  "contentDigest": "sha256:1c615c9a079b3480b740024a9e4987d9117d2021b82ae8c1c69efacfe62c417b",
+  "coreContractBundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+  "declaredPackDigest": "sha256:fe91a701e8af29fbe7114fe51eba871bc90a149a74fc6d1ca95f367c04f9ab51",
+  "kind": "neutrino.public-pack-receipt/1",
+  "members": [
+    {
+      "bytes": 2174,
+      "mode": "100644",
+      "path": "pack.json",
+      "sha256": "c2e9fdc180bafdc106b61caf6a738c979a153ad644b3e7625c7ef084cc474fb1"
+    },
+    {
+      "bytes": 6113,
+      "mode": "100644",
+      "path": "generated/capability-spec/capability-spec.json",
+      "sha256": "c0243758bb28c893c049d251e32fa2df32b918ce61efd64817505c3f70c85b68"
+    },
+    {
+      "bytes": 160,
+      "mode": "100644",
+      "path": "generated/solidity/foundry.toml",
+      "sha256": "d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "bytes": 1841,
+      "mode": "100644",
+      "path": "generated/solidity/src/ContestedEvidenceResolution.sol",
+      "sha256": "9f9036b45a9aa7d16532482e1fc61ff0217857b23e7b26426045e9b7f5eae313"
+    },
+    {
+      "bytes": 11853,
+      "mode": "100644",
+      "path": "generated/solidity/src/ThresholdQuorumAcceptance.sol",
+      "sha256": "32ea1c5219a56f185f037296a898df7430c52752ea40423075ec0d23b987682a"
+    },
+    {
+      "bytes": 3379,
+      "mode": "100644",
+      "path": "generated/solidity/test/ContestedEvidenceResolution.t.sol",
+      "sha256": "b0986f11cd3f22ea867f3c836d34f1efaa0cc84d54128be114ca07b8538eafdb"
+    },
+    {
+      "bytes": 1774,
+      "mode": "100644",
+      "path": "scenario/contested_evidence_resolution_quorum_accepted.json",
+      "sha256": "207e4b00c8226ce9e83be796a4277d736e70f5f5a392b8b59e507ca6790c7549"
+    },
+    {
+      "bytes": 953,
+      "mode": "100644",
+      "path": "source/contested_evidence_resolution.neu",
+      "sha256": "5ca28f11407a862dec666fdab6840d8f443f435c1a43603e9dd62f03e2cadf93"
+    }
+  ],
+  "packId": "contested_evidence_resolution",
+  "packPath": "domains/packs/contested_evidence_resolution/pack",
+  "receiptIdentity": "sha256:e6f757541e69cdfd6ec583da9dee0b54fd85721a07cb12907857590329aedd0d",
+  "schemaVersion": 1
+}

@@ -1,0 +1,77 @@
+// Oracle trust-boundary security surfacing (M5 oracle S6, ) — the UNDECLARED-metadata sample.
+//
+// The oracle-settled escrow declares an attestation policy but omits the (optional) assurance and
+// independence metadata. Existing specs that predate S6 look exactly like this — additive, so their
+// capabilityHash is unchanged. The security pass still surfaces the crossing, and treats "undeclared"
+// as its own advisory: an unstated assurance/independence cannot be assumed strong or diverse, so it
+// is flagged (fail-safe reading) rather than silently accepted.
+//
+// RUN: %neutrino-gen --target=security --scenario=%S/security_scenario.json %s -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+//
+// `ok` precedes the categories and FileCheck is forward-only, so check it first.
+// CHECK: "ok": true
+// CHECK: "category": "trustBoundary"
+// CHECK: "status": "advisory"
+// CHECK: oracle attestation on evidence 'delivery_proof': observation crosses a trust boundary, admitted by an M-of-N quorum (M=2) over observer-set 'delivery_oracles' (assurance undeclared, independence undeclared)
+// CHECK: observer-set 'delivery_oracles' assurance undeclared is below A2
+// CHECK: observer-set 'delivery_oracles' independence is undeclared
+//
+// HASH-STABILITY REGRESSION: the SECURITY render synthesizes "undeclared", but the
+// capability-spec (the capabilityHash preimage) must keep the EXACT pre-S6 {ref, role} observerSet —
+// assurance/independence are OMITTED, not null, so an existing attestation's capabilityHash is
+// byte-identical. SPEC-NEXT pins the block to exactly ref then role then close: a stray
+// assurance/independence key (or a null one) would break the adjacency and fail this test.
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.cs
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.cs/capability-spec.json
+// SPEC:      "observerSet": {
+// SPEC-NEXT:   "ref": "delivery_oracles",
+// SPEC-NEXT:   "role": null
+// SPEC-NEXT: }
+procedure oracle_settled_escrow {
+    trigger delivery_reported
+    version "1.0.0"
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

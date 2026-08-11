@@ -1,0 +1,10 @@
+// M3 language-boundary negative (): escrow-like state containers with release/refund
+// transitions need L2 state semantics first — they are FUTURE source syntax, not core
+// grammar. The frontend must reject `escrow` / `release` with "unexpected statement".
+// See docs/language/LANGUAGE_BOUNDARY.md §3. Pinned by self-test [56].
+procedure escrow_offer {
+    input amount : money
+
+    escrow funds until release
+    release funds to beneficiary on settle
+}

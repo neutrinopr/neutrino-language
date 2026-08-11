@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino-lang.dev/schemas/generalism-result.schema.json",
+  "title": "Neutrino M6 generalism result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "runId",
+    "capability",
+    "semanticProfile",
+    "executionProfile",
+    "provenance",
+    "adapters",
+    "cases",
+    "summary",
+    "evidence"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "neutrino.generalism-result" },
+    "runId": { "$ref": "#/$defs/nonEmptyString" },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "sourceHash", "specHash", "scenarioHash", "artifactHashes"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "version": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceHash": { "$ref": "#/$defs/sha256" },
+        "specHash": { "$ref": "#/$defs/sha256" },
+        "scenarioHash": { "$ref": "#/$defs/sha256" },
+        "artifactHashes": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "semanticProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "version": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "executionProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "requiredAdapters", "optionalAdapters", "requiredCaseFloor"],
+      "properties": {
+        "name": { "enum": ["PR_FAST", "PR_FULL", "NIGHTLY_RELEASE"] },
+        "requiredAdapters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "optionalAdapters": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "requiredCaseFloor": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["translator", "backends", "tools", "runtimes", "commands", "configurationHash"],
+      "properties": {
+        "translator": { "$ref": "#/$defs/componentIdentity" },
+        "backends": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentIdentity" },
+          "minItems": 1
+        },
+        "tools": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentIdentity" }
+        },
+        "runtimes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/componentIdentity" }
+        },
+        "commands": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "argv"],
+            "properties": {
+              "name": { "$ref": "#/$defs/nonEmptyString" },
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "$ref": "#/$defs/nonEmptyString" }
+              }
+            }
+          }
+        },
+        "configurationHash": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "adapters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["adapterId", "rail", "kind", "required", "status", "proofScope"],
+        "properties": {
+          "adapterId": { "$ref": "#/$defs/nonEmptyString" },
+          "rail": { "enum": ["translator", "build-tools", "external-solc"] },
+          "kind": { "enum": ["semantic", "live-runtime", "external-compiler-compat"] },
+          "required": { "type": "boolean" },
+          "status": { "enum": ["RAN", "SKIPPED"] },
+          "skipReason": { "$ref": "#/$defs/cause" },
+          "proofScope": { "enum": ["neu-semantic-correctness", "live-runtime-behavior", "downstream-compiler-compatibility"] }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "caseId",
+          "adapterId",
+          "required",
+          "verdict",
+          "cause",
+          "semanticObservations",
+          "environmentMetrics"
+        ],
+        "properties": {
+          "caseId": { "$ref": "#/$defs/nonEmptyString" },
+          "adapterId": { "$ref": "#/$defs/nonEmptyString" },
+          "required": { "type": "boolean" },
+          "verdict": { "$ref": "#/$defs/verdict" },
+          "cause": { "$ref": "#/$defs/causeOrNull" },
+          "semanticObservations": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "environmentMetrics": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "profileStatus", "requiredCasesRun", "counts"],
+      "properties": {
+        "verdict": { "$ref": "#/$defs/verdict" },
+        "profileStatus": { "enum": ["PASS", "FAIL"] },
+        "requiredCasesRun": { "type": "integer", "minimum": 0 },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["FAITHFUL", "REFUSED", "SILENT", "BROKEN"],
+          "properties": {
+            "FAITHFUL": { "type": "integer", "minimum": 0 },
+            "REFUSED": { "type": "integer", "minimum": 0 },
+            "SILENT": { "type": "integer", "minimum": 0 },
+            "BROKEN": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bindingReceiptKind",
+        "bindingReceiptSchemaVersion",
+        "bindingReceiptArtifactRef",
+        "bindingReceiptRef",
+        "bindingReceiptDigest",
+        "evidencePackageKind",
+        "evidencePackageSchemaVersion",
+        "evidencePackageRef",
+        "evidencePackageDigest",
+        "evidencePackageTraceSha256",
+        "evidencePackageSigner",
+        "verificationReportRef",
+        "verificationReportDigest",
+        "verificationReportAttestation"
+      ],
+      "properties": {
+        "bindingReceiptKind": { "const": "neutrino.m4-binding-receipt" },
+        "bindingReceiptSchemaVersion": { "const": 1 },
+        "bindingReceiptArtifactRef": { "$ref": "#/$defs/repoRelativePath" },
+        "bindingReceiptRef": { "$ref": "#/$defs/m4BindingId" },
+        "bindingReceiptDigest": { "$ref": "#/$defs/sha256Digest" },
+        "evidencePackageKind": { "const": "neutrino.m4-evidence-package" },
+        "evidencePackageSchemaVersion": { "const": 1 },
+        "evidencePackageRef": { "$ref": "#/$defs/nonEmptyString" },
+        "evidencePackageDigest": { "$ref": "#/$defs/sha256Digest" },
+        "evidencePackageTraceSha256": { "$ref": "#/$defs/sha256" },
+        "evidencePackageSigner": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "signatureAlg", "publicKey"],
+          "properties": {
+            "id": { "$ref": "#/$defs/nonEmptyString" },
+            "signatureAlg": { "const": "ed25519" },
+            "publicKey": { "$ref": "#/$defs/hex64" }
+          }
+        },
+        "verificationReportRef": { "$ref": "#/$defs/repoRelativePath" },
+        "verificationReportDigest": { "$ref": "#/$defs/sha256Digest" },
+        "verificationReportAttestation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["signerId", "signatureAlg", "publicKey", "payloadDigest", "signature"],
+          "properties": {
+            "signerId": { "const": "m4-dev-signer" },
+            "signatureAlg": { "const": "ed25519" },
+            "publicKey": { "const": "9f100c82052396780e2a4043633c139dccb18a2853950484171ceecf4f627612" },
+            "payloadDigest": { "$ref": "#/$defs/sha256Digest" },
+            "signature": { "type": "string", "pattern": "^[0-9a-f]{128}$" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "repoRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "^(?:/|.*(?:^|/)\\.\\.(?:/|$))" }
+    },
+    "hex64": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "sha256Digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "m4BindingId": { "type": "string", "pattern": "^bind-[0-9a-f]{64}$" },
+    "verdict": { "enum": ["FAITHFUL", "REFUSED", "SILENT", "BROKEN"] },
+    "cause": {
+      "enum": [
+        "success",
+        "governed_refusal",
+        "semantic_mismatch",
+        "compile_failure",
+        "runtime_timeout",
+        "missing_optional_tool",
+        "missing_required_tool",
+        "governed_protocol_limit",
+        "substrate_protocol_limit",
+        "resource_limit",
+        "internal_error"
+      ]
+    },
+    "causeOrNull": {
+      "anyOf": [
+        { "$ref": "#/$defs/cause" },
+        { "type": "null" }
+      ]
+    },
+    "componentIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "revision"],
+      "properties": {
+        "name": { "$ref": "#/$defs/nonEmptyString" },
+        "version": { "$ref": "#/$defs/nonEmptyString" },
+        "revision": { "$ref": "#/$defs/nonEmptyString" },
+        "imageDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    }
+  }
+}

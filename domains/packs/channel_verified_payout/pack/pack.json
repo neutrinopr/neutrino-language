@@ -1,0 +1,100 @@
+{
+  "kind": "neutrino.domain-pack",
+  "packDigest": "sha256:bba74010871eba6dea5e83b7ec0953edb3106452d8163a3d7e611842c06c92c3",
+  "packId": "channel_verified_payout",
+  "payloads": [
+    {
+      "contract": "capability-spec",
+      "mediaType": "application/json",
+      "path": "generated/capability-spec/capability-spec.json",
+      "role": "capability-spec",
+      "sha256": "sha256:4167c1c2c13bf8436971a9365d9a941e10b807d0b2c49e175a9bb99e3ca9c6b0"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/procedure.sql",
+      "role": "postgres-procedure",
+      "sha256": "sha256:2fd84c8b585eb025976b2a38749179fff9787d5533fdbfc2a138f0fbf1963f26"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/reconciliation.sql",
+      "role": "postgres-reconciliation",
+      "sha256": "sha256:9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "mediaType": "application/x-sh",
+      "path": "generated/postgres/run_db_test.sh",
+      "role": "postgres-test-helper",
+      "sha256": "sha256:12038f43c6a686c7bf6dc59d6ca7d2c9dff3d5e079a4b22c755b0f92259568fc"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/schema.sql",
+      "role": "postgres-schema",
+      "sha256": "sha256:a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "mediaType": "application/toml",
+      "path": "generated/solidity/foundry.toml",
+      "role": "solidity-config",
+      "sha256": "sha256:d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/src/ChannelVerifiedPayout.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:6580786ef112c3b2f23422173c29f35f7674fde350ce35543aaedc595b60213f"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/test/ChannelVerifiedPayout.t.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:54e84a3d67d6fec12463fea08bd2727219e13a0902310e61bf37573b93f15ca1"
+    },
+    {
+      "contract": "test-realization",
+      "mediaType": "application/json",
+      "path": "generated/test-realization/test-realization.json",
+      "role": "test-realization",
+      "sha256": "sha256:b70a49c50ba1db00a74a911c5e5d03d85c084218e851d300e11ff22bc6560b56"
+    },
+    {
+      "contract": "participant-view",
+      "mediaType": "application/json",
+      "path": "generated/views/Payer.json",
+      "role": "participant-view",
+      "sha256": "sha256:8b6154555247ab0f6802af59ca2dd3e0314bcffdc47f90ee1972b7aa96b1e61a"
+    },
+    {
+      "contract": "participant-view",
+      "mediaType": "application/json",
+      "path": "generated/views/Recipient.json",
+      "role": "participant-view",
+      "sha256": "sha256:96f8c4a86b1f6df1a4f0c54c2dfa1dbafe0651d47ca18cfdcdacb749f13fb62b"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "scenario/channel_verified_payout_happy_path.json",
+      "role": "scenario",
+      "sha256": "sha256:adf81ef951496f032573ed7e592657552512fdd6eb64cdee9d70b6bd191bd6cc"
+    },
+    {
+      "mediaType": "text/x-neutrino",
+      "path": "source/channel_verified_payout.neu",
+      "role": "source",
+      "sha256": "sha256:804ecc11cd180f498a16e82dd6aa9986875bbe47b0cdd816d0f3fd2c7071e439"
+    }
+  ],
+  "requiredContracts": [
+    "capability-spec",
+    "participant-view",
+    "test-realization"
+  ],
+  "schemaVersion": 2,
+  "targetsBundle": {
+    "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.10.0"
+  }
+}

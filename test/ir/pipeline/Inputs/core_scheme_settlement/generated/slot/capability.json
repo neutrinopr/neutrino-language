@@ -1,0 +1,75 @@
+{
+  "kind": "neutrino.slot-capability",
+  "capability": "coordinate.core_scheme_settlement",
+  "capabilityVersion": "1.0.0",
+  "procedure": "core_scheme_settlement",
+  "trigger": "scheme_position_finalized",
+  "parties": ["scheme_id", "bank_id", "treasury_id"],
+  "declaredParticipants": [
+    { "name": "Scheme", "role": "scheme", "org": "scheme-net", "capabilities": [] },
+    { "name": "SettlementBank", "role": "settlement_bank", "org": "bankco", "capabilities": [], "binding": { "mode": "to_be_bound", "runtimes": ["swift", "jvm"], "minAssurance": "A2", "authorizedBinder": "bankco" } },
+    { "name": "Treasury", "role": "treasury", "org": "treasuryco", "capabilities": [] }
+  ],
+  "topology": { "organizations": ["scheme-net", "bankco", "treasuryco"], "crossOrganization": true },
+  "ledgerOwners": ["scheme", "settlement_bank", "treasury"],
+  "operations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "computed": ["fee", "net"],
+  "ledgers": ["scheme.net_payable", "bank.settlement_account", "scheme.fee_payable", "treasury.fee_income"],
+  "evidenceInputs": [],
+  "partyTypedInputs": ["scheme_id", "bank_id", "treasury_id"],
+  "typedInputs": [
+    { "name": "settlement_id", "type": "string" },
+    { "name": "scheme_id", "type": "party" },
+    { "name": "bank_id", "type": "party" },
+    { "name": "treasury_id", "type": "party" },
+    { "name": "gross_position", "type": "money" },
+    { "name": "fee_bps", "type": "decimal" },
+    { "name": "currency", "type": "currency" }
+  ],
+  "entries": [
+    {
+      "name": "scheme_principal",
+      "kind": "debit",
+      "ledger": "scheme.net_payable",
+      "owner": "scheme",
+      "participant": "Scheme",
+      "party": { "input": "scheme_id" },
+      "amount": { "input": "net" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "settlement_id" }
+    },
+    {
+      "name": "bank_principal",
+      "kind": "credit",
+      "ledger": "bank.settlement_account",
+      "owner": "settlement_bank",
+      "participant": "SettlementBank",
+      "party": { "input": "bank_id" },
+      "amount": { "input": "net" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "settlement_id" }
+    },
+    {
+      "name": "scheme_fee",
+      "kind": "debit",
+      "ledger": "scheme.fee_payable",
+      "owner": "scheme",
+      "participant": "Scheme",
+      "party": { "input": "scheme_id" },
+      "amount": { "input": "fee" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "settlement_id" }
+    },
+    {
+      "name": "treasury_fee",
+      "kind": "credit",
+      "ledger": "treasury.fee_income",
+      "owner": "treasury",
+      "participant": "Treasury",
+      "party": { "input": "treasury_id" },
+      "amount": { "input": "fee" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "settlement_id" }
+    }
+  ]
+}

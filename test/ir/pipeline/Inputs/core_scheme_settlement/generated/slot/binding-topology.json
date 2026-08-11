@@ -1,0 +1,65 @@
+{
+  "kind": "neutrino.slot-binding-topology",
+  "schemaVersion": 1,
+  "capability": "coordinate.core_scheme_settlement",
+  "capabilityVersion": "1.0.0",
+  "procedure": "core_scheme_settlement",
+  "organizations": [
+    {
+      "organizationId": "scheme-net",
+      "participants": [
+        {
+          "participantId": "Scheme",
+          "role": "scheme",
+          "slots": [
+            {
+              "slotId": "coordinate.core_scheme_settlement#Scheme",
+              "lateBindingMode": "fixed",
+              "allowedRuntimes": [],
+              "minAssurance": "A1",
+              "evidenceProfile": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organizationId": "bankco",
+      "participants": [
+        {
+          "participantId": "SettlementBank",
+          "role": "settlement_bank",
+          "slots": [
+            {
+              "slotId": "coordinate.core_scheme_settlement#SettlementBank",
+              "lateBindingMode": "to_be_bound",
+              "allowedRuntimes": ["swift", "jvm"],
+              "minAssurance": "A2",
+              "evidenceProfile": null,
+              "authorizedBinder": "bankco"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organizationId": "treasuryco",
+      "participants": [
+        {
+          "participantId": "Treasury",
+          "role": "treasury",
+          "slots": [
+            {
+              "slotId": "coordinate.core_scheme_settlement#Treasury",
+              "lateBindingMode": "fixed",
+              "allowedRuntimes": [],
+              "minAssurance": "A1",
+              "evidenceProfile": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "crossOrganization": true
+}

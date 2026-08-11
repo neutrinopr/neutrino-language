@@ -1,0 +1,8 @@
+// [75] M5 (): neutrino-solidity-samples classification.json — the translator-owned stdlib validator
+// mirrors the normative solidity-classification.schema.json (fields/pattern/const aligned); the committed
+// classification validates and emits diagnostics/report (--out); and unknown/missing top+sample field,
+// schemaVersion, missing/unknown dimension, bad+duplicate profileId, profileVersion mismatch, duplicate
+// contract, unknown scalar+characteristic value, source/contract mismatch, and a malformed file all fail
+// closed with stable classification.* codes. See check_solidity_classification.py.
+//
+// RUN: python3 %S/check_solidity_classification.py %examples

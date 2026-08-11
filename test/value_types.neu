@@ -1,0 +1,32 @@
+// Phase 10 value-model fixture: typed inputs (money / decimal / party /
+// currency / timestamp / evidence) exercised by type-aware scenario validation.
+procedure value_types {
+    input amount      : money
+    input rate        : decimal
+    input payer       : party
+    input ccy         : currency
+    input occurred_at : timestamp
+    input doc         : evidence
+
+    compute fee = round(amount * rate / 100, 2)
+
+    debit out {
+        ledger          = "a.x"
+        owner           = "a"
+        party           = %payer
+        amount          = %fee
+        currency        = %ccy
+        idempotency_key = %doc
+    }
+
+    credit inc {
+        ledger          = "b.y"
+        owner           = "b"
+        party           = %payer
+        amount          = %fee
+        currency        = %ccy
+        idempotency_key = %doc
+    }
+
+    assert balanced
+}

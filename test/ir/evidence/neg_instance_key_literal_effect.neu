@@ -1,0 +1,35 @@
+// An explicit instance key requires every effect to key on it (a ref). An
+// effect keyed on a LITERAL is ambiguous identity — it fails before dispatch,
+// rather than being silently rewritten to the declared key.
+// RUN: %not %neutrino-gen --target=capability-spec %s -o %t 2>&1 | %FileCheck %s
+// CHECK: ambiguous instance key
+// CHECK-SAME: literal
+// It fails BEFORE dispatch — no capability-spec artifact is emitted.
+// RUN: test ! -e %t/capability-spec.json
+procedure explicit_literal_key {
+    input id     : string
+    input amount : money
+    input cur    : currency
+    input payer  : party
+    input payee  : party
+
+    instance_key id
+
+    debit d {
+        ledger = "a.src"
+        owner = "a"
+        party = %payer
+        amount = %amount
+        currency = %cur
+        idempotency_key = "literal-key"
+    }
+    credit c {
+        ledger = "b.dst"
+        owner = "b"
+        party = %payee
+        amount = %amount
+        currency = %cur
+        idempotency_key = "literal-key"
+    }
+    assert balanced
+}

@@ -1,0 +1,6 @@
+// [35] D1: neutrino.domain-dialect validates + hash-pins and fails closed on schema/provenance/ref/hash
+// — the reviewed sponsored_finance dialect validates with a pinned, canonicalization-stable
+// domainDialectHash; eight negatives each fail closed with their specific code; and a `version` bump
+// must be re-pinned (stale-hash bump caught, re-pinned bump validates). See check_domain_dialect.py.
+//
+// RUN: python3 %S/check_domain_dialect.py %scripts/domain/validate_domain_dialect.py %examples/domain-dialects

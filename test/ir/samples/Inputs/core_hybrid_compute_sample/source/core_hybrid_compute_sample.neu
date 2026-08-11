@@ -1,0 +1,111 @@
+// M3 sample (strategy ): pay-for-compute hybrid — a deterministic EVM core slot coordinates
+// async CONVENTIONAL adapters for storage, compute, and neutral oracle verification, settling a
+// Demand + Supply + neutral Verification triad.
+//
+// The triad is first-class and bound: Requester = demand (funds the bounty), Processor = supply
+// (the compute provider slot), Verifier = neutral verification (the oracle slot). The EVM core
+// slot is deterministic ORCHESTRATION state, not the universal source of truth. The conventional
+// adapters (storage/compute) and the supply/verification slots realize on a CONVENTIONAL runtime
+// (`jvm`), distinct from the EVM core (`evm`); the L3 manifest binds the EVM core concrete under
+// backendProfile evm.v1 and DEFERS the conventional slots (their concrete runtime/profile is
+// chosen later), so the hybrid never pretends the adapters are EVM realizations.
+//
+// L1 carries only the balanced bounty escrow (Requester funds requester.bounty, the EVM core
+// holds core.escrow). Mutex/lock, async storage/compute/oracle observations as evidence-bearing
+// transitions, verification proof/earmark + verifier fee/share, completion, and fail-closed
+// settlement are declared at L2 and bound at L3. M4 owns runtime observation/execution/evidence
+// admission. No pseudo capability/domain_semantics/lifecycle/mlir_modeling source syntax.
+
+procedure core_hybrid_compute_sample {
+    trigger compute_job_requested
+    version "1.0.0"
+
+    participant Requester {
+        role = "requester"
+        org  = "requesterorg"
+    }
+    participant EvmCore {
+        role               = "orchestrator"
+        org                = "hybridinfra"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    participant Processor {
+        role               = "processor"
+        org                = "supplyorg"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant Verifier {
+        role               = "verifier"
+        org                = "verifierorg"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant SourceStorage {
+        role               = "storage"
+        org                = "hybridinfra"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant DestStorage {
+        role               = "sink"
+        org                = "hybridinfra"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["jvm"]
+        bind_min_assurance = "A2"
+    }
+    participant ComputeWorker {
+        role               = "compute"
+        org                = "hybridinfra"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["jvm"]
+        bind_min_assurance = "A2"
+    }
+    allow "requesterorg" with "hybridinfra" {
+        "requesterorg" as "requester"
+        "hybridinfra" as "orchestrator"
+    }
+    allow "requesterorg" with "supplyorg" {
+    }
+    allow "requesterorg" with "verifierorg" {
+    }
+    allow "hybridinfra" with "supplyorg" {
+    }
+    allow "hybridinfra" with "verifierorg" {
+    }
+    allow "supplyorg" with "verifierorg" {
+    }
+
+    input job_id       : string
+    input requester_id : party
+    input core_id      : party
+    input bounty       : money
+    input currency     : currency
+
+    debit requester_bounty {
+        ledger          = "requester.bounty"
+        owner           = "requester"
+        participant     = "Requester"
+        party           = %requester_id
+        amount          = %bounty
+        currency        = %currency
+        idempotency_key = %job_id
+    }
+
+    credit core_escrow {
+        ledger          = "core.escrow"
+        owner           = "core"
+        participant     = "EvmCore"
+        party           = %core_id
+        amount          = %bounty
+        currency        = %currency
+        idempotency_key = %job_id
+    }
+
+    assert balanced
+}

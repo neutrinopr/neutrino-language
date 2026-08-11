@@ -1,0 +1,23 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "token_burn",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "bcf3856936ea1dfc4523d41b197109ee0b87448c1b640bf9843ed4890164dd44", "specVersion": "1.0.0" },
+  "participant": { "name": "Holder", "role": "holder", "org": "walletco", "slotId": "coordinate.token_burn#Holder" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "burn_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 37, "column": 1 } },
+    { "name": "holder_id", "type": "party", "specPath": "inputs[2]", "source": { "line": 39, "column": 1 } },
+    { "name": "amount", "type": "money", "specPath": "inputs[3]", "source": { "line": 40, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[4]", "source": { "line": 41, "column": 1 } },
+    { "name": "supply_approved", "type": "number", "specPath": "inputs[5]", "source": { "line": 42, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "issuerco", "role": "supply_authority" }
+  ],
+  "evidenceObligations": [
+    { "leg": "holder_debit", "kind": "debit", "ledger": "token.balance", "specPath": "effects[0]", "source": { "line": 45, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 2 } }
+}

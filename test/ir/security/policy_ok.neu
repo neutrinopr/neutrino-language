@@ -1,0 +1,61 @@
+// [25] org-pair policy: an 'allow'-permitted org pair -> topology pass, ok:true.
+// RUN: %neutrino-gen --target=security --scenario=%S/scenario.json %s -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+// CHECK: "ok": true
+// CHECK: "category": "topology"
+// CHECK-NEXT: "status": "pass"
+
+// Sample domain input for the Neutrino Translator tooling PoC.
+//
+// Domain: financial procedure (merchant-sponsored installment subsidy).
+// NOTE: finance is only the FIRST sample domain. The point of this file is to
+// exercise the deterministic translator pipeline:
+//     source DSL  ->  textual IR (.nir)  ->  verifier  ->  emitted artifacts
+//
+// Syntax notes:
+//   "..."   string literal
+//   %name   reference to a declared input or computed value
+
+procedure core_sample_installment {
+    trigger purchase_financed
+    participant P1 {
+        role = "r1"
+        org = "acme"
+    }
+    participant P2 {
+        role = "r2"
+        org = "bankco"
+    }
+    allow "acme" with "bankco"
+
+    input transaction_id : string
+    input merchant_id    : string
+    input issuer_id      : string
+    input principal      : money
+    input currency       : string
+    input subsidy_pct    : decimal
+
+    compute subsidy = round(principal * subsidy_pct / 100, 2)
+
+    debit merchant_subsidy {
+        ledger          = "acquirer.merchant_balance"
+        owner           = "acquirer"
+        participant     = "P1"
+        party           = %merchant_id
+        amount          = %subsidy
+        currency        = %currency
+        idempotency_key = %transaction_id
+    }
+
+    credit issuer_receivable {
+        ledger          = "issuer.promotional_receivable"
+        owner           = "issuer"
+        participant     = "P2"
+        party           = %issuer_id
+        amount          = %subsidy
+        currency        = %currency
+        idempotency_key = %transaction_id
+    }
+
+    assert balanced
+}

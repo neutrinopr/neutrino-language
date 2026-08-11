@@ -1,0 +1,10 @@
+// [52] M2 tool version/compatibility surface (): every shipped tool answers --version-json with the
+// same stable versioned envelope (toolVersion/gitSha/mlirDialectVersion — no per-binary drift); human
+// --version names the tool; the toolVersion pin holds; --capabilities matches; and a generated
+// manifest.json pins the same surface. See check_version_surface.py.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: python3 %S/check_version_surface.py %neutrino-translate %neutrino-opt %neutrino-emit \
+// RUN:   %neutrino-gen %neutrino-bundle %neutrino-equiv \
+// RUN:   %{msi}/source/core_sample_installment.neu \
+// RUN:   %{msi}/scenario/core_sample_installment_happy_path.json

@@ -1,0 +1,98 @@
+// Oracle quorum lifecycle (M5 oracle S3, ) — the ABORT fallback.
+//
+// When the spec carries an attestation policy, the canonical coordination machine gains explicit
+// quorum states (quorum-pending → quorum-met / quorum-timeout) instead of hiding the M-of-N check
+// inside a boolean. The guarded post (COMMIT) departs ONLY from QUORUM_MET, reachable ONLY via
+// REACH_QUORUM from QUORUM_PENDING — there is no PROPOSED/QUORUM_PENDING → COMMITTED edge, so a leg
+// can never fire on < M. On timeout the DECLARED fallback fires: here `abort` → the aborted terminal
+// (REJECTED); the guarded leg still never posts. A non-oracle spec keeps the OPEN..CLOSE machine.
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.d
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.d/capability-spec.json
+//
+// capability-spec.json is sorted-key: within `lifecycle`, states → terminalStates → transitions.
+// The three quorum states are exposed on the machine (in machine order).
+// SPEC: "name": "QUORUM_PENDING"
+// SPEC: "name": "QUORUM_MET"
+// SPEC: "name": "QUORUM_TIMEOUT"
+// The `abort` fallback ⇒ no contested terminal (the aborted terminal is REJECTED).
+// SPEC:      "terminalStates": {
+// SPEC-NEXT:   "aborted": "REJECTED",
+// SPEC-NEXT:   "contested": null,
+// SPEC-NEXT:   "success": "CLOSED"
+// The post (COMMIT) is gated: the transition whose from is QUORUM_MET is COMMIT → COMMITTED. There is
+// no PROPOSED/QUORUM_PENDING → COMMITTED edge, so a leg cannot fire on < M (SPEC-NEXT pins one block).
+// SPEC:      "from": "QUORUM_MET",
+// SPEC-NEXT:   "guards": [],
+// SPEC-NEXT:   "idempotency": "reject",
+// SPEC-NEXT:   "name": "COMMIT",
+// SPEC-NEXT:   "to": "COMMITTED"
+// Quorum-timeout takes the declared `abort` fallback into the aborted terminal.
+// SPEC:      "from": "QUORUM_TIMEOUT",
+// SPEC-NEXT:   "guards": [],
+// SPEC-NEXT:   "idempotency": "reject",
+// SPEC-NEXT:   "name": "ABORT",
+// SPEC-NEXT:   "to": "REJECTED"
+//
+// FAIL-CLOSED, machine-sourced (the slot PROJECTS the same machine, ): the post op advertises
+// requiresPrior REACH_QUORUM, so COMMIT cannot run before the quorum is reached — a derived proof
+// that < M signatures cannot skip into the committed/success path.
+// RUN: %neutrino-gen --target=slot %s -o %t.slot
+// RUN: %FileCheck %s --check-prefix=SLOT < %t.slot/operations.json
+// SLOT: "operation": "COMMIT", "requiresPrior": "REACH_QUORUM",
+//
+// WIRE CONTRACT: the envelope's operation enum is PROJECTED from the machine (), not hardcoded —
+// so it carries the quorum ops AND the declared `abort` fallback (ABORT), in machine order, and NOT
+// the escalate op. A regression that left the enum on the old OPEN..CLOSE vocabulary, or dropped the
+// fallback op, would produce a wrong wire contract and fail here.
+// RUN: %FileCheck %s --check-prefix=ENV < %t.slot/envelope.schema.json
+// ENV: "operation": {"type": "string", "enum": ["OPEN", "NEGOTIATE", "PROPOSE", "REJECT", "AWAIT_QUORUM", "REACH_QUORUM", "TIMEOUT", "COMMIT", "ABORT", "COMPENSATE", "CLOSE"]}
+// ENV-NOT: ESCALATE
+procedure oracle_quorum_abort {
+    trigger delivery_reported
+    version "1.0.0"
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

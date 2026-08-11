@@ -1,0 +1,90 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_multi_pair_role",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "6bb49b59150451a18306909d87f5cddac9df775ac4de1cb0c292d3ad412d424b",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "MerchantA",
+    "role": "merchant",
+    "org": "acme",
+    "slotId": "coordinate.core_multi_pair_role#MerchantA"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [
+    {
+      "name": "workflow_key",
+      "type": "string",
+      "specPath": "inputs[0]",
+      "source": {
+        "line": 44,
+        "column": 1
+      }
+    },
+    {
+      "name": "merchant_id",
+      "type": "party",
+      "specPath": "inputs[1]",
+      "source": {
+        "line": 45,
+        "column": 1
+      }
+    },
+    {
+      "name": "amount",
+      "type": "money",
+      "specPath": "inputs[5]",
+      "source": {
+        "line": 49,
+        "column": 1
+      }
+    },
+    {
+      "name": "currency",
+      "type": "currency",
+      "specPath": "inputs[6]",
+      "source": {
+        "line": 50,
+        "column": 1
+      }
+    }
+  ],
+  "permittedCounterparties": [
+    {
+      "org": "bankco"
+    },
+    {
+      "org": "auditorco"
+    }
+  ],
+  "evidenceObligations": [
+    {
+      "leg": "settle_out",
+      "kind": "debit",
+      "ledger": "acme.settlement_out",
+      "specPath": "effects[0]",
+      "source": {
+        "line": 52,
+        "column": 1
+      }
+    }
+  ],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

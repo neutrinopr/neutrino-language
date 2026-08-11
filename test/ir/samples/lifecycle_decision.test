@@ -1,0 +1,6 @@
+// [65] M3 L2 lifecycle modeling decision (): lifecycle_states / on_success / on_failure are unknown
+// L2 fields, each rejected fail-closed with exactly L2-1001 — the decision that lifecycle maps onto the
+// current concepts/actions + guards/invariants/failureModes model is enforced, not just documented. See
+// check_lifecycle_decision.py.
+//
+// RUN: python3 %S/check_lifecycle_decision.py %scripts/domain/validate_l2_domain_semantics.py %examples

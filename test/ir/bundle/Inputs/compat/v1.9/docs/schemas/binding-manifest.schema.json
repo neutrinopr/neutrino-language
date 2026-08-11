@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/binding-manifest/v2",
+  "title": "Neutrino Binding Manifest",
+  "description": "T0/T2: the realized-translation input that binds a capability's late-bound (to_be_bound) slots to concrete runtimes at realization time — distinct from the Binding Policy (declared in the capability) and the agent-side Binding Receipt. schemaVersion 1 is the L1 core (org/participant/slot/runtime/assurance/binder). schemaVersion 2 adds the optional L3 surface (): an l2Ref to the L2 interface, a backendProfile, and per-binding parameterBindings/derivedConcepts/evidenceRefs/compensation/observability/retryTimeout/deferred. The L3 fields are additive, so a v1 manifest is unchanged and existing consumers are unaffected. validate_binding_manifest.py is the fail-closed gate: it rejects an unknown triple, a fixed (non-bindable) slot, a runtime outside allowedRuntimes, an assurance below minAssurance, a wrong binder, an incomplete binding set, and (for v2) a parameter not declared by L2, a missing required L2 parameter, a type mismatch, an unsupported backend-profile field, or an untraceable derived concept — and emits a machine-readable status (complete | simulation-only | deferred | invalid). It also enforces that v1 manifests carry no L3 fields.",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "capability", "bindings"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {"const": "neutrino.binding-manifest"},
+    "schemaVersion": {"enum": [1, 2]},
+    "capability": {"type": "string", "minLength": 1, "description": "Must match the binding-topology's capability."},
+    "l2Ref": {
+      "type": "object",
+      "description": "L3 (): link to the L2 domain-semantics interface whose declared parameters/concepts the bindings must trace to. Required when schemaVersion is 2; capability must equal the manifest capability.",
+      "required": ["capability", "artifact"],
+      "additionalProperties": false,
+      "properties": {
+        "capability": {"type": "string", "minLength": 1},
+        "artifact": {"type": "string", "minLength": 1, "description": "Repo-relative path to the L2 interface artifact."}
+      }
+    },
+    "backendProfile": {"type": "string", "minLength": 1, "description": "L3 (): id of a profile in the backend-profile catalog; constrains which optional hook fields a binding may use."},
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["organizationId", "participantId", "slotId", "runtime", "assurance", "binder"],
+        "additionalProperties": false,
+        "properties": {
+          "organizationId": {"type": ["string", "null"], "minLength": 1, "description": "Must equal the slot's organization in the binding-topology (null for an unscoped org)."},
+          "participantId": {"type": "string", "minLength": 1},
+          "slotId": {"type": "string", "minLength": 1, "description": "The to_be_bound slotId from the binding-topology."},
+          "runtime": {"type": "string", "minLength": 1, "description": "Realized runtime family; must be in the slot's allowedRuntimes."},
+          "assurance": {"enum": ["A1", "A2", "A3", "A4"], "description": "Realized assurance tier; must be >= the slot's minAssurance."},
+          "binder": {"type": "string", "minLength": 1, "description": "Org binding the slot; must equal the slot's authorizedBinder."},
+          "parameterBindings": {
+            "type": "object",
+            "description": "L3 (): L2-parameter-name -> {type, value}. Each key must be an L2-declared parameter and its type must match the L2 declaration.",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["type"],
+              "properties": {
+                "type": {"type": "string", "minLength": 1},
+                "value": {}
+              }
+            }
+          },
+          "derivedConcepts": {"type": "array", "items": {"type": "string"}, "description": "L3 (): L2 concepts/parameters this binding derives from; each must trace to the L2 interface."},
+          "evidenceRefs": {"type": "array", "items": {"type": "string"}, "description": "L3 (): evidence requirement DECLARATIONS (not runtime verification — M4 verifies actual evidence)."},
+          "compensation": {"type": "object", "description": "L3 (): optional compensation hook; allowed only if the backend profile supports it."},
+          "observability": {"type": "object", "description": "L3 (): optional observability hook; profile-gated."},
+          "retryTimeout": {"type": "object", "description": "L3 (): optional retry/timeout policy; profile-gated."},
+          "deferred": {"type": "boolean", "description": "L3 (): the binding is intentionally not yet realized (drives status: deferred)."}
+        }
+      }
+    }
+  },
+  "if": {"properties": {"schemaVersion": {"const": 2}}},
+  "then": {"required": ["kind", "schemaVersion", "capability", "bindings", "l2Ref"]}
+}

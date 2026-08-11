@@ -1,0 +1,6 @@
+// [49] T1/T2 multi-slot late binding: core_dual_offer generates a byte-stable slot with exactly two
+// to_be_bound slots (Merchant + Sponsor), each fully policied (allowedRuntimes + minAssurance A2 +
+// authorizedBinder); its binding manifest binds both slots with completeness; a manifest binding only
+// one is rejected. See check_multi_slot_binding.py.
+//
+// RUN: python3 %S/check_multi_slot_binding.py %neutrino-gen %scripts/validators/validate_binding_manifest.py %examples

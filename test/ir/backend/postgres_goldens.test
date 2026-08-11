@@ -1,0 +1,24 @@
+// [81] the PostgreSQL procedure.sql AND run_db_test.sh render BYTE-IDENTICALLY from the canonical spec
+// for every committed UN-ATTESTED domain (the ProcedureView->spec migration is transparent), including
+// the  coordination lifecycle (attest/replay/attestation) and the  negative-money guard.
+// ATTESTED domains () render the quorum acceptance guard INSTEAD of the self-attest lifecycle
+// asserted below (/), so they are skipped here and covered by cross_border_goldens.test [99].
+// Source-only procedure goldens have no scenario/harness and are covered by the curated-corpus gate.
+//
+// RUN: n=0; for d in %curated-pack-root/*/; do \
+// RUN:   src=$(ls "$d"source/*.neu 2>/dev/null | head -1); [ -n "$src" ] || continue; \
+// RUN:   committed="$d/generated/postgres/procedure.sql"; [ -f "$committed" ] || continue; \
+// RUN:   grep -q '"attestations"' "$d/generated/capability-spec/capability-spec.json" 2>/dev/null && continue; \
+// RUN:   scen=$(ls "$d"scenario/*happy*.json 2>/dev/null | head -1); [ -n "$scen" ] || scen=$(ls "$d"scenario/*.json 2>/dev/null | head -1); \
+// RUN:   [ -n "$scen" ] || continue; \
+// RUN:   rm -rf %t.pg && %neutrino-gen --target=postgres --scenario="$scen" "$src" -o %t.pg || exit 1; \
+// RUN:   diff "%t.pg/procedure.sql" "$committed" || exit 1; \
+// RUN:   diff "%t.pg/run_db_test.sh" "$d/generated/postgres/run_db_test.sh" || exit 1; \
+// RUN:   for pat in "CREATE OR REPLACE FUNCTION attest_" "RAISE EXCEPTION 'replay'" "RAISE EXCEPTION 'missing attestation'" "coordination_status" "RAISE EXCEPTION 'negative money"; do \
+// RUN:     grep -qF "$pat" "$committed" || { echo "missing lifecycle/money-guard: $pat"; exit 1; }; \
+// RUN:   done; \
+// RUN:   n=$((n+1)); \
+// RUN: done; [ "$n" -ge 4 ]
+// Ratchet floor pinned to the committed count (-style, per review): the loop skips domains with no
+// committed procedure.sql, so a floor of 1 would let a DELETED golden silently shrink coverage. Adding
+// a postgres domain golden raises this (still passes >=); removing one requires a conscious bump.

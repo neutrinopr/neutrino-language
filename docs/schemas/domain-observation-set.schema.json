@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-observation-set/v1",
+  "title": "Neutrino Domain Observation Set",
+  "description": "The DETERMINISTIC middle stage of domain-dataset extraction: source-agnostic FACTS a corpus extractor (Solidity, SWIFT/Prowide, future FHIR) reads out of a governed corpus, sitting between neutrino.domain-corpus-manifest (governed input) and neutrino.domain-vocabulary-proposal (AI-assisted candidates). Every observation is a fact bound to a corpus construct via required provenance and drawn from a controlled per-dimension vocabulary; the set is bound to the exact corpus content via corpusRef.contentHash. Because observations are deterministic facts, this stage MUST NOT carry AI-trust metadata — no confidence, reviewStatus, model, prompt, temperature, or citations (that metadata belongs to the later neutrino.domain-vocabulary-proposal stage). extractor is a deterministic tool+version identity, not a model identity. Fail-closed (additionalProperties:false everywhere). Validated by scripts/corpus/validate_domain_observation_set.py, which mirrors this schema AND enforces the cross-references JSON Schema cannot express (observation dimension is declared, observation value is in that dimension's vocabulary, observation id uniqueness, corpus content-hash binding, span ordering) and rejects AI-trust fields with a trust-boundary-specific diagnostic. See docs/domains/DOMAIN_DATASET_EXTRACTION.md.",
+  "type": "object",
+  "required": ["kind", "schemaVersion", "corpusRef", "extractor", "dimensions", "observations"],
+  "additionalProperties": false,
+  "$defs": {
+    "contentHash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "sha256:<64 hex> — the same content-hash shape used by neutrino.domain-corpus-manifest sources."
+    },
+    "vocabulary": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Where in the corpus this fact was observed. REQUIRED on every observation — an observation with no source construct is not a fact and is rejected.",
+      "required": ["source", "construct"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A corpus source id or path, as declared in the domain-corpus-manifest (e.g. a .sol file)."
+        },
+        "construct": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The named construct the fact was read from (e.g. a contract, function, or type name)."
+        },
+        "constructKind": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional kind of the construct (e.g. contract, function, modifier) — source-agnostic, so a free string, not an enum."
+        },
+        "span": {
+          "type": "object",
+          "description": "Optional 1-based source span for traceability. startLine must be <= endLine (enforced by the validator).",
+          "required": ["startLine", "endLine"],
+          "additionalProperties": false,
+          "properties": {
+            "startLine": { "type": "integer", "minimum": 1 },
+            "endLine": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "description": "One deterministic fact: a corpus construct exhibits value V along controlled dimension D. No AI-trust fields (confidence/reviewStatus/model/prompt/citations) — those belong to the later vocabulary-proposal stage.",
+      "required": ["id", "dimension", "value", "provenance"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "description": "Stable within-set observation id; unique across observations (uniqueness enforced by the validator)."
+        },
+        "dimension": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The dimension this fact is about; MUST be a declared key of the top-level `dimensions` block (enforced by the validator)."
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The observed value; MUST be a member of `dimensions[dimension]`'s controlled vocabulary (enforced by the validator)."
+        },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional human-readable note on the fact. NOT a confidence signal — this stage carries no AI-trust metadata."
+        }
+      }
+    }
+  },
+  "properties": {
+    "kind": { "const": "neutrino.domain-observation-set" },
+    "schemaVersion": { "const": 1 },
+    "corpusRef": {
+      "type": "object",
+      "description": "Binds this observation set to the EXACT corpus content it was extracted from. corpusId identifies the domain-corpus-manifest; contentHash pins the content so a re-extraction over changed corpus content produces a set that no longer matches the recorded binding.",
+      "required": ["corpusId", "contentHash"],
+      "additionalProperties": false,
+      "properties": {
+        "corpusId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "corpusId of the neutrino.domain-corpus-manifest the facts were drawn from."
+        },
+        "contentHash": { "$ref": "#/$defs/contentHash" }
+      }
+    },
+    "extractor": {
+      "type": "object",
+      "description": "Deterministic tool identity that produced this set. Tool + version ONLY — NOT a model/prompt identity. A given (tool, version) over the same pinned corpus content must produce the same observations.",
+      "required": ["tool", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Deterministic extractor tool id (e.g. solidity-corpus-extractor)."
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Extractor tool version (deterministic identity — e.g. a semver or pinned build id)."
+        }
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "The controlled vocabulary per dimension, generalizing the fixed `dimensions` block of neutrino-solidity-samples/classification.json to a source-agnostic open map: each key is a dimension name, each value the allowed vocabulary for that dimension. Every observation's (dimension, value) is checked against this block by the validator.",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z][a-zA-Z0-9]*$" },
+      "additionalProperties": { "$ref": "#/$defs/vocabulary" }
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/observation" }
+    }
+  }
+}

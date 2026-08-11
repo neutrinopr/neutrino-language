@@ -1,0 +1,39 @@
+// Deadline-guarded transfer — a balanced value movement that may execute only
+// when the caller-provided current time has reached the caller-provided deadline.
+//
+// Both temporal values are ordinary typed inputs. The compiler derives
+// `time:explicit_input` from them; the source carries no manual feature marker.
+procedure deadline_guarded_transfer {
+    trigger transfer_released
+    version "0.1.0"
+
+    input transfer_id : string
+    input payer       : party
+    input payee       : party
+    input amount      : money
+    input currency    : currency
+    input now         : timestamp
+    input deadline    : timestamp
+
+    instance_key transfer_id
+
+    debit payer_out {
+        ledger          = "payer.wallet"
+        owner           = "payer"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %transfer_id
+        when            = now >= deadline
+    }
+    credit payee_in {
+        ledger          = "payee.wallet"
+        owner           = "payee"
+        party           = %payee
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %transfer_id
+        when            = now >= deadline
+    }
+    assert balanced
+}

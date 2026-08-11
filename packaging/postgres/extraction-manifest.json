@@ -1,0 +1,459 @@
+{
+  "kind": "neutrino.backend-extraction-manifest/1",
+  "documentId": "urn:neutrino:document:postgres-package-extraction-v1",
+  "parent": 844,
+  "status": "prerequisites-landed; clean-clone execution is a separate PR; publication gated on 845",
+  "unit": "NeutrinoBackendPostgres",
+  "unitRoot": "lib/backends/postgres",
+  "sourceOfTruth": "lib/backends/postgres/EXTRACTION.md",
+  "description": "Exact, machine-readable extraction inventory for the standalone PostgreSQL backend package candidate (M7 open-core S3b). Derived from EXTRACTION.md and reconciled against the live CMake/link graph.  and the SHARED  schema/startup/discovery prerequisites LANDED ( itself remains open; the PostgreSQL package moves \u2014 PgDdl.h to package-internal and the recipe-runtime relocation \u2014 are pending work for the second  clean-clone PR). Publication and license ratification remain gated on . The clean-clone execution itself is a separate PR, not this manifest.",
+  "disjointFrom": {
+    "1002": "build-time .inc generation policy (stop committing generated .inc). This manifest only CLASSIFIES the generated .inc as build products; it does not move them out of the tree or rewire the gates.",
+    "1005": "backend-free core discovery/invocation seam. This manifest RECORDS the  public-core contract; it does not implement the core seam or remove backend link edges.",
+    "846": "core-only build + core export-manifest. This manifest owns only the PostgreSQL backend surface; the public-core file identities are 's."
+  },
+  "gatedOnSeams": [
+    "846 SATISFIED (CLOSED): backend-free core installed export is pinned and machine-derived \u2014 cppAbiPolicy forbidden, zero public C++ targets/headers/CMake exports, so the clone consumes bytes over the versioned protocol rather than a C++ ABI",
+    "1005 seams LANDED via : neutrino.backend-source-runtime/1 and neutrino.backend-startup/1 are the real contracts this package builds and starts against",
+    "845 PENDING-RATIFICATION (publication/license gate only): it does NOT stop reversible clean-clone engineering. No package is published and neither backend is declared licensed until  records its zero-unresolved-rights decision."
+  ],
+  "compiledSources": {
+    "note": "The .cpp files the NeutrinoBackendPostgres add_mlir_library() compiles, in CMake source order. Reconciled against EXTRACTION.md `## Sources owned` (.cpp subset) and the CMake add_mlir_library sources by scripts/gates/check_extraction_manifests.py.",
+    "libraryTarget": "NeutrinoBackendPostgres",
+    "files": [
+      "GenPostgresSpec.cpp",
+      "provider/PostgresSpecModel.cpp",
+      "model/PostgresModel.cpp",
+      "provider/PostgresRecipeProvider.cpp",
+      "leaf/PgSqlText.cpp",
+      "leaf/PgSqlSyntax.cpp",
+      "harness/PostgresDbTest.cpp"
+    ],
+    "roles": {
+      "GenPostgresSpec.cpp": "public spec entry (the Gen*Spec.cpp that makes this a discovered extraction unit; forwards to the split render TUs, )",
+      "provider/PostgresRecipeProvider.cpp": "recipe-provider-plumbing role (NEUTRINO_SEMANTIC_AUTHORITY_ROLE); OBJECT_DEPENDS the build-time postgres_recipes.inc",
+      "harness/PostgresDbTest.cpp": "scenario-harness role (NEUTRINO_SEMANTIC_AUTHORITY_ROLE)"
+    }
+  },
+  "tablegenInputs": {
+    "note": "TableGen sources of truth (.td). NONE are compiled or linked \u2014 they are inputs to the generators that emit the build products below, over the pinned llvm-tblgen. The backend stays MLIR-free and leaf-only.",
+    "unitOwned": [
+      {
+        "file": "model/PostgresTargetNodes.td",
+        "producesVia": [
+          "gen_target_node_registry.py",
+          "backend_recipe_gen.py --profile postgres-recipe-builders"
+        ],
+        "schema": "lib/backends/TargetPrinter.td"
+      },
+      {
+        "file": "model/PostgresDdlCarrier.td",
+        "producesVia": [
+          "backend_recipe_gen.py --profile postgres-ddl-builders"
+        ]
+      },
+      {
+        "file": "recipes/PostgresIdiomRecipes.td",
+        "role": "root recipe .td (includes the four rail files)",
+        "producesVia": [
+          "gen_backend_idiom_recipes.py --symbol postgres",
+          "backend_recipe_gen.py --profile postgres-recipe-adapter"
+        ]
+      },
+      {
+        "file": "recipes/PostgresEvidenceIdiomRecipes.td",
+        "role": "rail"
+      },
+      {
+        "file": "recipes/PostgresTemporalIdiomRecipes.td",
+        "role": "rail"
+      },
+      {
+        "file": "recipes/PostgresSchemaIdiomRecipes.td",
+        "role": "rail"
+      },
+      {
+        "file": "recipes/PostgresEffectfulIdiomRecipes.td",
+        "role": "rail"
+      },
+      {
+        "file": "recipes/PostgresProjectionSchema.td",
+        "producesVia": [
+          "backend_recipe_gen.py --profile postgres-projection"
+        ]
+      }
+    ],
+    "sharedCoreSchemas": {
+      "note": "Out-of-unit TableGen schemas the generators include (public-core / shared, NOT owned by this package).",
+      "files": [
+        "lib/backends/TargetPrinter.td",
+        "lib/backends/BackendIdiom.td"
+      ]
+    }
+  },
+  "generatedBuildProducts": {
+    "note": "CLASSIFICATION (): every file here is a BUILD PRODUCT regenerated from a `.td` by a generator over the pinned llvm-tblgen \u2014 NEVER a copied source. A standalone clean clone regenerates these at build time from the TableGen inputs; it does not vendor the committed bytes as authored source. (They are committed in-tree today only as a byte-check convenience;  removes even that. Their generator commands are reproduced verbatim in the CMake skeleton.)",
+    "committed": [
+      {
+        "file": "generated/PostgresTargetNodes.inc",
+        "generator": "scripts/generators/gen_target_node_registry.py",
+        "from": "model/PostgresTargetNodes.td",
+        "schema": "lib/backends/TargetPrinter.td",
+        "byteCheck": "reconciled by scripts/gates/check_target_node_registry.py (no CMake compare_files in this unit)"
+      },
+      {
+        "file": "generated/PostgresTargetEnums.inc",
+        "generator": "scripts/generators/gen_target_node_registry.py",
+        "from": "model/PostgresTargetNodes.td",
+        "schema": "lib/backends/TargetPrinter.td",
+        "byteCheck": "reconciled by check_target_node_registry.py"
+      },
+      {
+        "file": "generated/PostgresPrinterHandlers.inc",
+        "generator": "scripts/generators/gen_target_node_registry.py",
+        "from": "model/PostgresTargetNodes.td",
+        "schema": "lib/backends/TargetPrinter.td",
+        "byteCheck": "reconciled by check_target_node_registry.py; the .td-mutation render harnesses target this file"
+      },
+      {
+        "file": "generated/PostgresRecipeAdapter.inc",
+        "generator": "scripts/generators/backend_recipe_gen.py --profile postgres-recipe-adapter",
+        "from": "recipes/PostgresIdiomRecipes.td",
+        "byteCheck": "CMake postgres-recipe-adapter-check (compare_files)"
+      },
+      {
+        "file": "generated/PostgresProjection.inc",
+        "generator": "scripts/generators/backend_recipe_gen.py --profile postgres-projection",
+        "from": "recipes/PostgresProjectionSchema.td",
+        "byteCheck": "CMake postgres-projection-check (compare_files)"
+      },
+      {
+        "file": "generated/PgDdlBuilders.inc",
+        "generator": "scripts/generators/backend_recipe_gen.py --profile postgres-ddl-builders",
+        "from": "model/PostgresDdlCarrier.td",
+        "byteCheck": "CMake postgres-ddl-builders-check (compare_files); #included by leaf/PgSqlText.cpp"
+      },
+      {
+        "file": "generated/PostgresRecipeBuilders.inc",
+        "generator": "scripts/generators/backend_recipe_gen.py --profile postgres-recipe-builders --def-out",
+        "from": "model/PostgresTargetNodes.td",
+        "byteCheck": "Makefile target regen-postgres-recipe-builders (no CMake compare_files in this unit)"
+      },
+      {
+        "file": "generated/PostgresRecipeBuilders.decl.inc",
+        "generator": "scripts/generators/backend_recipe_gen.py --profile postgres-recipe-builders --decl-out",
+        "from": "model/PostgresTargetNodes.td",
+        "byteCheck": "Makefile target regen-postgres-recipe-builders"
+      }
+    ],
+    "buildTimeOnly": [
+      {
+        "file": "postgres_recipes.inc",
+        "generator": "scripts/generators/gen_backend_idiom_recipes.py --symbol postgres",
+        "from": "recipes/PostgresIdiomRecipes.td (+ the four rails + lib/backends/BackendIdiom.td)",
+        "location": "build binary dir (NOT committed)",
+        "consumedBy": "provider/PostgresRecipePackage.inc"
+      },
+      {
+        "file": "postgres_package_recipes.inc",
+        "generator": "scripts/generators/gen_backend_idiom_recipes.py --symbol postgresPackage",
+        "from": "recipes/PostgresIdiomRecipes.td",
+        "location": "build binary dir (NOT committed)",
+        "consumedBy": "test/postgres_recipe_resolution_test.cpp"
+      }
+    ]
+  },
+  "committedIncluders": {
+    "note": "Hand-authored .inc that are NOT generator products \u2014 a build clone treats these as authored source (copied), not regenerated.",
+    "files": [
+      {
+        "file": "provider/PostgresRecipePackage.inc",
+        "role": "3-line include-order shim (#include postgres_recipes.inc + PostgresRecipeAdapter.inc)"
+      }
+    ]
+  },
+  "reviewedCarveoutIncludes": {
+    "note": "Reviewed, hand-written carve-out bodies \u2014 NOT generated, NOT copied source in the  sense. Per  \u00a76.5 the  exact-body carve-outs stay committed INSIDE the owning backend package, pinned by the package-descriptor closure sha256.",
+    "files": [
+      {
+        "file": "CoordinationEnvelope.sql.inc",
+        "role": "the reviewed  coordination-envelope SQL (neu_frame + neu_execution_claim), byte-identical to lib/spec-contract/CoordinationEnvelope.cpp; the schema golden pins these bytes"
+      }
+    ]
+  },
+  "publicHeaders": {
+    "note": "Headers this package EXPOSES under include/Neutrino/. Machine-checked by check_extraction_manifests.py `## Public headers` (each must resolve at include/<entry>).",
+    "declared": [
+      "Neutrino/GenPostgresSpec.h"
+    ],
+    "dispositions": [
+      {
+        "header": "Neutrino/PgDdl.h",
+        "resolved": "PACKAGE-INTERNAL. Not installed. Its only non-unit includer was the in-process registry entry (lib/targets/PostgresTarget.cpp), which the clean clone does not use: invocation goes through descriptor discovery and the versioned subprocess protocol."
+      }
+    ]
+  },
+  "internalHeaders": {
+    "note": "Unit-local (non-public) headers. Never exposed; a package clone keeps them under the unit, never under include/Neutrino/.",
+    "files": [
+      {
+        "file": "model/PostgresModel.h",
+        "role": "typed procedure+schema legalization model () behind the public entry"
+      },
+      {
+        "file": "provider/PostgresRecipeProvider.h",
+        "role": "roled from-spec seam the public ABI dispatches to ( R4d)"
+      },
+      {
+        "file": "provider/PostgresEvidenceInputs.h",
+        "role": "evidence finalized-value inputs (); unit-local"
+      },
+      {
+        "file": "leaf/PgSqlText.h",
+        "role": "below-waist raw PL/pgSQL text authority (); sole sql::Stmt::line friend + Seam capability"
+      },
+      {
+        "file": "leaf/PgSqlSyntax.h",
+        "role": "below-waist SQL-syntax leaf (StringRef-only escaper/quoter)"
+      },
+      {
+        "file": "leaf/PostgresSpecInternal.h",
+        "role": "decode/db-test seam"
+      }
+    ]
+  },
+  "sharedLeafLinkDeps": {
+    "note": "The CURRENT in-tree link surface: the module's `LINK_LIBS PUBLIC`, machine-checked by check_extraction_manifests.py `## Shared leaf dependencies`. Under the  boundary these become the public-core dependency contract in `publicCoreContract` (the C++/LLVM recipe runtime moves package-internal; only the serialized artifact + protocol cross).",
+    "libs": [
+      "NeutrinoSpecContract",
+      "NeutrinoCodeText",
+      "NeutrinoRecipe"
+    ],
+    "consumedPublicCoreHeaders": {
+      "NeutrinoSpecContract": [
+        "Neutrino/Expr.h",
+        "Neutrino/ValueModel.h",
+        "Neutrino/JsonUtil.h",
+        "Neutrino/Attestation.h",
+        "Neutrino/CoordinationPlan.h",
+        "Neutrino/BackendProjection.h",
+        "Neutrino/BackendProjectionDriver.h",
+        "Neutrino/CoordinationEnvelope.h"
+      ],
+      "NeutrinoCodeText": [
+        "Neutrino/CodeText.h",
+        "Neutrino/TargetPrinter.h"
+      ],
+      "NeutrinoRecipe": [
+        "Neutrino/RecipeModule.h",
+        "Neutrino/RecipeProviderRegistry.h",
+        "Neutrino/RecipeRuntime.h",
+        "Neutrino/RecipeSessionStore.h"
+      ],
+      "sharedTestCompanion": [
+        "Neutrino/TestRealization.h"
+      ]
+    }
+  },
+  "publicCoreContract": {
+    "note": "The  core<->external-backend boundary this package targets, recorded per the SIGNED ADR docs/process/M7_BACKEND_PACKAGE_BOUNDARY_ADR.md (merged via , squash 541171cf). Implementation is ; this is the dependency contract the package is built against.",
+    "adr": "docs/process/M7_BACKEND_PACKAGE_BOUNDARY_ADR.md",
+    "model": "versioned subprocess protocol (bytes, not LLVM/C++ types)",
+    "canonicalArtifact": {
+      "identity": "neutrino.finalized-projection/1",
+      "content": "lossless serialization of BackendProjectionGraph (include/Neutrino/BackendProjection.h; kProjectionSchemaVersion = 5)",
+      "encoding": "canonical JSON (UTF-8, sorted keys, no insignificant whitespace, integers only)",
+      "schema": "docs/schemas/finalized-projection-v1.schema.json (GENERATED from the BackendProjection.h struct set; delivered by the  seams via )",
+      "reconstruction": "the package decodes the graph, then re-runs consumeFinalizedProjectionSequence(graph) to rebuild the derived view \u2014 the view is never the wire object"
+    },
+    "protocol": {
+      "identity": "neutrino.backend-protocol/1",
+      "transport": "length-framed request/result/error over stdio; Emit->ProjectionBytes(11), ArtifactChunk->ArtifactBytes(5); payloadLen <= 64 MiB; version negotiation + capability discovery"
+    },
+    "packageDescriptor": {
+      "identity": "neutrino.backend-package/1",
+      "fields": [
+        "targetIdentity",
+        "protocolMajor",
+        "protocolMinor",
+        "apiVersion",
+        "targetProfileIdentity",
+        "entry",
+        "closure[{path,sha256,byteLen}]",
+        "compatibilityBounds{coreProtocol[min,max],projectionSchema[min,max]}",
+        "capabilities/profileSummary",
+        "licenseIdentity",
+        "manifestDigest"
+      ],
+      "targetProfile": "examples/target-profiles/<t>.target-profile.json (schema docs/schemas/target-profile.schema.json)"
+    },
+    "packageInternalNotExported": {
+      "note": "Per ADR \u00a75 (normative), the C++/LLVM TargetRecipeProvider interface NEVER crosses the boundary \u2014 it and the recipe runtime move INSIDE the package. So NeutrinoRecipe + these headers are package-internal (BUNDLED as a package-owned build input), NOT a public-core dependency and NOT a Neutrino::Recipe link edge from the installed core. The standalone skeleton compiles the sources below as an OBJECT library whose objects are FOLDED into the backend archive ($<TARGET_OBJECTS:>) \u2014 it is NOT a linked or exported target, so the installed targets surface exposes no recipe-runtime name (a private implementation detail, not public package topology). Asserted by check_standalone_configure.sh over the emitted NeutrinoBackendPostgresTargets.cmake.",
+      "headers": [
+        "Neutrino/RecipeRuntime.h (TargetRecipeProvider, RecipeRuntime.h:227-320)",
+        "Neutrino/RecipeProviderRegistry.h",
+        "Neutrino/RecipeModule.h",
+        "Neutrino/RecipeSessionStore.h"
+      ],
+      "bundledRuntimeLib": "NeutrinoRecipe",
+      "bundledRuntimeSources": {
+        "note": "The recipe-runtime sources the package BUNDLES (built package-private, never linked from the public core). Vendored from lib/recipe/ today: NBP_RECIPE_DIR still resolves into the translator tree. Relocation under the package is PENDING work for the SECOND  clean-clone PR, not something  landed.",
+        "origin": "lib/recipe",
+        "files": [
+          "RecipeRuntime.cpp",
+          "RecipeModule.cpp",
+          "RecipeInterpreter.cpp",
+          "RecipeExecutor.cpp",
+          "RecipeProviderRegistry.cpp"
+        ],
+        "linkDep": "MLIRSupport (bottom of the shared graph; the recipe runtime is target-blind and links no backend)"
+      }
+    },
+    "installedCoreLinkSurface": {
+      "note": "Under NBP_STANDALONE_CORE the ONLY public-core C++ link edges are the two genuinely-public leaves the finalized-projection artifact + codetext depend on. NeutrinoRecipe is BUNDLED (above), never linked from the core. Under the full  model even these are replaced by the serialized artifact/protocol; the C++ edges apply only to a statically-composed internal dev build.",
+      "libs": [
+        "NeutrinoSpecContract",
+        "NeutrinoCodeText"
+      ]
+    },
+    "ownership": {
+      "coreOwns": [
+        "target selection (descriptor discovery)",
+        "version negotiation",
+        "production of the verified finalized projection (the canonical artifact)",
+        "the request/result/error protocol",
+        "discovery",
+        "artifact writing",
+        "the machine-readable receipt"
+      ],
+      "packageOwns": [
+        "target-specific project assembly",
+        "backend-specific harness artifacts (PostgreSQL schema.sql / procedure.sql / reconciliation.sql / run_db_test.sh)",
+        "realization of its target profile",
+        "its six  leaf hooks",
+        "the  exact-body carve-out bodies (CoordinationEnvelope.sql.inc), pinned by the closure sha256"
+      ]
+    }
+  },
+  "toolchain": {
+    "note": "Build prerequisites the standalone package requires.",
+    "llvmTblgen": "${LLVM_TOOLS_BINARY_DIR}/llvm-tblgen (pinned; drives every generator)",
+    "llvmNm": "NEUTRINO_LLVM_NM (find_program; FATAL_ERROR if absent) \u2014 the  channel-2 authority symbol-ownership gates require it",
+    "python3": "required for every generator + gate",
+    "cmake": ">= the repo minimum",
+    "llvmMlir": "the recipe/codetext/spec-contract leaves build against MLIRSupport; a standalone package consumes them as installed artifacts, not source"
+  },
+  "conformanceSlice": {
+    "note": "The tests + fixtures that prove the package renders byte-faithful SQL and preserves real PostgreSQL behavior.",
+    "tests": [
+      "backend-postgres-smoke (leaf-only link-smoke)",
+      "postgres-model-test (typed-legalization model unit)",
+      "postgres-recipe-resolution-test (links NeutrinoRecipe only; consumes build-time postgres_package_recipes.inc)",
+      "postgres-projection-referee-test (hermetic synthetic render witness)",
+      "per-node .td->generated->golden render + -td-mutation pairs (progressflag, postingidempotency, keyclaiminsert, committedgroupinsert, quorumacceptinsert, temporalacceptinsert, idempotentreturn, evidenceclaimcomment, policycaseselect, effectledgercomment, idempotencyguardcomment, balancedinvariantcomment)",
+      "real-path-mutation witnesses (effectledgercomment, callablesig, callablebody, if, flatif, callableclose, declaresection[+temporal,+evidence-exclusion], idempotencyguardcomment, balancedinvariantcomment)",
+      "compile-negative seal families (postgres-raw-seam-sealed.*, pg-sql-text-sealed.*, pg-section-carrier-sealed.*, pg-guard-carrier-sealed.*, pg-rawsql-sealed.*) [being RETIRED by the  channel-2 authority teardown; the extracted package does NOT carry them]",
+      "channel-2 authority gates (pg-channel2-below-waist-boundary / -source-leakage / -authority-symbol-ownership / -link-boundary / -authority-symbol-ownership-repro) [RETIRED by : slice A  merged pre-registered the retirement authority;  flips it CLOSED, removing all 15 channel-2 registrations (10 gate + 5 boundary CTests). The standalone package does NOT vendor these \u2014 they seal the below-waist authorLine/procedureLine surface that  deletes.]"
+    ],
+    "goldens": [
+      "progress_flag_golden.sql",
+      "posting_idempotency_golden.sql",
+      "key_claim_golden.sql",
+      "committed_group_golden.sql",
+      "quorum_accept_golden.sql",
+      "temporal_accept_golden.sql",
+      "idempotent_return_golden.sql",
+      "evidence_claim_comment_golden.sql",
+      "policy_case_golden.sql",
+      "effect_ledger_comment_golden.sql",
+      "idempotency_guard_comment_golden.sql",
+      "balanced_invariant_comment_golden.sql"
+    ],
+    "fixtures": [
+      "test/temporal_multi_policy_spec.json"
+    ],
+    "externalTestInfra": {
+      "note": "Out-of-unit helpers the conformance slice reaches; a clean clone must VENDOR or reference these (they are not under the unit dir today).",
+      "cmakeHelpers": [
+        "test/cmake/gen_mutated_pg_stmt_shell_inc.cmake",
+        "test/cmake/gen_mutated_postgres_model_tu.cmake",
+        "test/cmake/run_pg_stmt_shell_render_pair.cmake",
+        "test/cmake/run_pg_real_path_mutation_pair.cmake",
+        "test/cmake/compile_should_fail.cmake"
+      ],
+      "sealProbes": [
+        "test/cmake/pg_raw_seam_sealed.cpp",
+        "test/cmake/pg_sql_text_sealed.cpp",
+        "test/cmake/pg_section_carrier_sealed.cpp",
+        "test/cmake/pg_guard_carrier_sealed.cpp",
+        "test/cmake/pg_rawsql_sealed.cpp"
+      ],
+      "sealProbesNote": "These seal the below-waist channel-2 raw-text authority (authorLine/procedureLine/Seam). They are RETIRED by the  teardown (slice A  merged;  closes) and are NOT part of the extracted package's conformance slice.",
+      "gates": [
+        "scripts/gates/check_pg_channel2_authority.py [RETIRED by /]",
+        "scripts/gates/check_target_node_registry.py"
+      ],
+      "curatedPackFixtures": [
+        "curated pack members 3/5/6 (sponsored/contested/deadline) via neutrino_curated_pack_member",
+        "test/ir/backend/Inputs/r5b_effect_memo_witness/*"
+      ],
+      "litSlices": [
+        "test/ir/backend/postgres_goldens.test",
+        "test/ir/backend/postgres_from_spec.test",
+        "test/ir/legality/postgres_legality.test",
+        "test/ir/oracle/oracle_delivery.neu (+ test/backend-guard/oracle_delivery/)"
+      ]
+    }
+  },
+  "provenance": {
+    "note": "License/provenance data the extracted package must carry. The license IDENTITY is 's topology/license decision (not decided here, per  non-goals); this records the requirement + the version-pin surface.",
+    "license": {
+      "status": "pending-ratification-845",
+      "current": "No public license is asserted or invented here. The package descriptor carries a licenseIdentity field ( \u00a76.3) that  fills; until then it is explicitly PENDING, never defaulted.",
+      "publication": "fail-closed: no publication and no licensed declaration before 's zero-unresolved-rights decision"
+    },
+    "versionSurface": {
+      "singleSourceOfTruth": "include/Neutrino/VersionInfo.h ()",
+      "publishedContract": "COMPATIBILITY.json (kind neutrino.translator-compatibility-manifest; translator.toolVersion 0.2.0; mlirDialectVersion 0.1.0; schemaBundleVersion v1); validated by scripts/validators/validate_compatibility_manifest.py",
+      "requirement": "the package pins the core protocol/projection-schema compatibility bounds ( descriptor compatibilityBounds) against this surface; mismatch fails closed (the neutrino-domains pack precedent)"
+    }
+  },
+  "nonOwnership": {
+    "note": "Explicitly NOT part of the package (from EXTRACTION.md `## Non-ownership`, updated for ).",
+    "items": [
+      "lib/targets/PostgresTarget.cpp \u2014 the registry ENTRY; stays in NeutrinoEmit today. Under / it is replaced by descriptor-driven discovery (the core names no backend); the PostgresModel.h seam leak (PostgresTarget.cpp:19 + lib/CMakeLists.txt private-dir exposure) is eliminated by construction.",
+      "include/Neutrino/ directory \u2014 the package EXPOSES only its own public headers; the shared contract/runtime headers belong to the public core / are package-internal per publicCoreContract.",
+      "examples/domains/*/generated/ \u2014 the shared conformance corpus (neutrino-domains).",
+      "scripts/check_* cross-cutting gates + the root CMake + the lit non-vacuous manifest."
+    ]
+  },
+  "sharedRuntimeSources": {
+    "note": "The versioned shared recipe runtime the package BUNDLES as an OBJECT library (nbp_recipe_runtime) whose objects are folded into the backend archive. They are compiled into the package, so they are owned files for census, receipt-digest and reach-back purposes even though they live under lib/recipe today. Not a public-core link edge and not exported ( \u00a75).",
+    "objectLibrary": "nbp_recipe_runtime",
+    "root": "lib/recipe",
+    "files": [
+      "lib/recipe/RecipeExecutor.cpp",
+      "lib/recipe/RecipeInterpreter.cpp",
+      "lib/recipe/RecipeModule.cpp",
+      "lib/recipe/RecipeProviderRegistry.cpp",
+      "lib/recipe/RecipeRuntime.cpp"
+    ],
+    "headers": [
+      "Neutrino/RecipeModule.h",
+      "Neutrino/RecipeProviderRegistry.h",
+      "Neutrino/RecipeRuntime.h",
+      "Neutrino/RecipeSessionStore.h"
+    ],
+    "contract": "neutrino.backend-source-runtime/1 ()"
+  },
+  "packageInternalHeaders": {
+    "note": "Headers that are PACKAGE-INTERNAL under the  boundary but still live outside the unit root in the monorepo. Paths are REPO-RELATIVE. They are owned for census/receipt/reach-back purposes; physically relocating them under the package is part of materializing the clean clone.",
+    "files": [
+      {
+        "file": "include/Neutrino/PgDdl.h",
+        "role": "raw-DDL carrier (). Package-internal: pgddl::RawSql never crosses the serialized boundary, so it is not installed and is not public.",
+        "pendingRelocation": "packaging/postgres/include/PgDdl.h"
+      }
+    ]
+  }
+}

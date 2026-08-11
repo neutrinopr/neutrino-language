@@ -1,0 +1,10 @@
+// M3 language-boundary negative (): external observation / evidence verification is a
+// runtime concern owned by neutrino-network/neutrino-build-tools — it is NOT core translator
+// source syntax ( non-goal). The frontend must reject `observe` / `verify` with
+// "unexpected statement". See docs/language/LANGUAGE_BOUNDARY.md §3. Pinned by self-test [56].
+procedure shipment_observation {
+    input amount : money
+
+    observe shipment from oracle
+    verify evidence shipment
+}

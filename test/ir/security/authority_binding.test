@@ -1,0 +1,20 @@
+// [100]  slice 4 (PR  review P1): the Capability Security Pass surfaces the AUTHORITY binding of
+// each value-moving leg machine-readably — which participant+role is the authorization actor for which
+// effect+ledger — and that surfacing TRACKS the actual binding, so a leg silently rebound to the WRONG
+// declared participant is DETECTED (surfaced), not hidden behind the generic "N participants declared"
+// count. This is what makes the fields_security_cbi.cmake `Insurer -> reserve_debit` pin a real
+// regression guard against a producer+golden co-drift, not a hardcoded string.
+//
+// POSITIVE: the committed insurance leg names the Insurer authority for the reserve debit.
+// RUN: %neutrino-gen --target=security --scenario=%S/Inputs/core_reserve_authority/scenario/core_reserve_authority_happy_path.json %S/Inputs/core_reserve_authority/source/core_reserve_authority.neu -o %t.ok
+// RUN: %FileCheck %s --check-prefix=AUTH < %t.ok/security.json
+// AUTH: leg 'reserve_debit' (debit insurance.reserve) authorized by participant 'Insurer' (role 'insurer')
+//
+// NEGATIVE (tamper): rebind reserve_debit to a DIFFERENT declared participant (Customer). The surfacing
+// must now name Customer and NOT Insurer for that leg — proving it is binding-faithful, so the wrong
+// binding is inspectable and the field pin would fail on such a regression.
+// RUN: sed 's/participant     = "Insurer"/participant     = "Customer"/' %S/Inputs/core_reserve_authority/source/core_reserve_authority.neu > %t.mut.neu
+// RUN: %neutrino-gen --target=security --scenario=%S/Inputs/core_reserve_authority/scenario/core_reserve_authority_happy_path.json %t.mut.neu -o %t.mut
+// RUN: %FileCheck %s --check-prefix=MUT < %t.mut/security.json
+// MUT: leg 'reserve_debit' (debit insurance.reserve) authorized by participant 'Customer' (role 'customer')
+// MUT-NOT: authorized by participant 'Insurer'

@@ -1,0 +1,81 @@
+//  explicit-time semantics: a declared temporal input (`now`/`deadline` of
+// type `timestamp`) makes this coordination TIME-DEPENDENT, so it derives the
+// closed `time:explicit_input` requirement — an otherwise-identical numeric
+// coordination would not. The reference evaluator, PostgreSQL, and Solidity
+// all realize the caller-supplied temporal values explicitly. Solidity lowers
+// them to uint256 inputs; it never substitutes block.timestamp.
+//
+// NOTE ON LAYERING: a `timestamp` input remains `Extension` in the governed
+// value model (ADR D5), while the  spec contract distinguishes its narrow
+// `value_extension:temporal` requirement from arbitrary extensions. The
+// independent `time:explicit_input` semantic requirement remains in the
+// coordination-plan gate.
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.spec
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.spec/capability-spec.json
+// SPEC: "feature": "value_extension:temporal"
+// SPEC-NOT: "feature": "value_category:extension"
+//
+// (1) Reference evaluator ACCEPTS the time-dependent coordination:
+// RUN: %neutrino-gen --target=coordination-trace --scenario=%S/time_dependent.scn.json %s -o %t.ev
+// RUN: %FileCheck %s --check-prefix=EVAL < %t.ev/coordination-trace.json
+// EVAL: "outcome": "terminal"
+//
+// (2) Solidity realizes the explicit values through both ordinary paths. The
+// source/scenario path and --from-spec contract are byte-identical, and the
+// typed parameters + comparison guard are visible in the generated source.
+// RUN: %neutrino-gen --target=solidity --scenario=%S/time_dependent.scn.json %s -o %t.sol-source
+// RUN: %neutrino-gen --target=solidity --from-spec %t.spec/capability-spec.json -o %t.sol-spec
+// RUN: %neutrino-gen --target=solidity --from-spec %t.spec/capability-spec.json -o %t.sol-profile
+// RUN: diff %t.sol-source/src/TimeProbe.sol %t.sol-spec/src/TimeProbe.sol
+// RUN: diff %t.sol-spec/src/TimeProbe.sol %t.sol-profile/src/TimeProbe.sol
+// RUN: ! grep -q 'block.timestamp' %t.sol-spec/src/TimeProbe.sol
+// RUN: %FileCheck %s --check-prefix=SOL < %t.sol-spec/src/TimeProbe.sol
+// SOL: function execute(string calldata u_flow_id, string calldata u_payer, uint256 u_amount, string calldata u_currency, uint256 u_now, uint256 u_deadline) external {
+// SOL: if (u_now >= u_deadline) {
+
+// (2b) A profile that claims the narrow temporal extension but not
+// time:explicit_input still refuses before rendering. This bites specifically
+// at semantic legality validation, not the capability-spec gate.
+// Solidity is an EXTERNAL target: a caller-supplied profile is refused outright, so this
+// negative control now asserts the refusal boundary rather than a profile-gated legality
+// verdict (M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9, 2026-07-31).
+// RUN: %not %neutrino-gen --target=solidity --from-spec --profile %S/no_explicit_time_solidity.target-profile.json %t.spec/capability-spec.json -o %t.sol-neg 2>&1 | %FileCheck %s --check-prefix=NEG
+// RUN: test ! -e %t.sol-neg/src
+// NEG: bound to its verified package profile
+
+//
+// (3) PostgreSQL (no --profile -> built-in default) ACCEPTS the SAME coordination
+// (it realizes explicit temporal inputs):
+// RUN: %neutrino-gen --target=postgres --from-spec %t.spec/capability-spec.json -o %t.pg
+// RUN: %neutrino-gen --target=postgres --from-spec %t.spec/capability-spec.json --profile=%examples/target-profiles/postgres.target-profile.json -o %t.pg-profile
+
+procedure time_probe {
+    trigger opened
+    input flow_id  : string
+    input payer    : party
+    input amount   : money
+    input currency : currency
+    input now      : timestamp
+    input deadline : timestamp
+
+    debit pay_out {
+        ledger          = "a.src"
+        owner           = "o"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = now >= deadline
+    }
+    credit pay_in {
+        ledger          = "b.dst"
+        owner           = "o"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = now >= deadline
+    }
+    assert balanced
+}

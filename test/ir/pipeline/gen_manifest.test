@@ -1,0 +1,5 @@
+// [5] neutrino-gen writes manifest.json (target + sha256) + diagnostics.json (ok:true) for a valid
+// solidity scenario. See check_gen_manifest.py.
+//
+// RUN: python3 %S/check_gen_manifest.py %neutrino-gen %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu \
+// RUN:   %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

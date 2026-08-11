@@ -1,0 +1,44 @@
+{
+  "packId": "contested_evidence_resolution",
+  "requiredContracts": [
+    "capability-spec"
+  ],
+  "payloads": [
+    {
+      "role": "capability-spec",
+      "path": "generated/capability-spec/capability-spec.json",
+      "mediaType": "application/json",
+      "contract": "capability-spec"
+    },
+    {
+      "role": "solidity-config",
+      "path": "generated/solidity/foundry.toml",
+      "mediaType": "application/toml"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/src/ContestedEvidenceResolution.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/src/ThresholdQuorumAcceptance.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/test/ContestedEvidenceResolution.t.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "scenario",
+      "path": "scenario/contested_evidence_resolution_quorum_accepted.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "source",
+      "path": "source/contested_evidence_resolution.neu",
+      "mediaType": "text/x-neutrino"
+    }
+  ]
+}

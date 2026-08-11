@@ -1,0 +1,29 @@
+{
+  "packId": "deadline_guarded_transfer",
+  "requiredContracts": [
+    "capability-spec"
+  ],
+  "payloads": [
+    {
+      "role": "capability-spec",
+      "path": "generated/capability-spec/capability-spec.json",
+      "mediaType": "application/json",
+      "contract": "capability-spec"
+    },
+    {
+      "role": "postgres-procedure",
+      "path": "generated/postgres/procedure.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/src/DeadlineGuardedTransfer.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "source",
+      "path": "source/deadline_guarded_transfer.neu",
+      "mediaType": "text/x-neutrino"
+    }
+  ]
+}

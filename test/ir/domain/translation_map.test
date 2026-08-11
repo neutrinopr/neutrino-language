@@ -1,0 +1,8 @@
+// [41] D4: lower-layer translation map (explicit reviewed artifact; lossy mappings visible + test-gated)
+// — the reviewed map validates + is hash-pinned; lower (capability -> pacs.009) and lift (pacs.002 ->
+// evidence) are byte-stable round-trip fixtures; lossy mappings are visible; and an unknown status code,
+// a tampered map, an unpinned map, a non-array section, a missing-lossiness mapping, and proposed
+// provenance all fail closed. See check_translation_map.py.
+//
+// RUN: python3 %S/check_translation_map.py %scripts/rails/validate_translation_map.py \
+// RUN:   %scripts/rails/translate_rail.py %examples

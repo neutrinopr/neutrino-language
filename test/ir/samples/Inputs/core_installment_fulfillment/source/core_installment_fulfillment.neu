@@ -1,0 +1,58 @@
+// M3 sample (strategy ) — first implementable slice: the issuer/settlement branch
+// of `core_installment_fulfillment`, expressed in the REAL procedure-oriented
+// L1 language (no pseudo `capability`/`domain_semantics`/`lifecycle_states` syntax).
+//
+// L1 carries only the settlement legs: the issuer funds the installment principal and the
+// merchant is settled, balanced and replay-safe. The *fulfillment* gate (proof_of_delivery)
+// is NOT L1 — it is declared at L2 as an evidence requirement; M4 owns runtime evidence
+// admission. The Issuer slot is `to_be_bound` so an L3 Binding Manifest binds it at
+// realization (single-branch; the two-branch boundary linking is out of scope here).
+
+procedure core_installment_fulfillment {
+    trigger installment_purchase_financed
+    version "1.0.0"
+
+    participant Issuer {
+        role               = "issuer"
+        org                = "bankco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    participant Merchant {
+        role = "merchant"
+        org  = "acme"
+    }
+    allow "bankco" with "acme" {
+        "bankco" as "issuer"
+        "acme" as "merchant"
+    }
+
+    input installment_id : string
+    input issuer_id      : party
+    input merchant_id    : party
+    input principal      : money
+    input currency       : currency
+
+    debit issuer_funding {
+        ledger          = "issuer.funding"
+        owner           = "issuer"
+        participant     = "Issuer"
+        party           = %issuer_id
+        amount          = %principal
+        currency        = %currency
+        idempotency_key = %installment_id
+    }
+
+    credit merchant_settlement {
+        ledger          = "merchant.settlement"
+        owner           = "merchant"
+        participant     = "Merchant"
+        party           = %merchant_id
+        amount          = %principal
+        currency        = %currency
+        idempotency_key = %installment_id
+    }
+
+    assert balanced
+}

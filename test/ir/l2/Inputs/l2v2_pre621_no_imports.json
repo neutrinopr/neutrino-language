@@ -1,0 +1,56 @@
+{
+  "concepts": [
+    {
+      "classification": "descriptive",
+      "kind": "concept",
+      "name": "settlement_balanced"
+    },
+    {
+      "classification": "executable",
+      "kind": "state",
+      "name": "escrow_funded"
+    }
+  ],
+  "coverage": "partial",
+  "domain": "coordinate.core_document_escrow",
+  "domainSemanticsHash": "118bb204684e248f29888708a46566d09b4a55d301a9f81e1b6dcb8460b5c013",
+  "failureModes": [],
+  "implements": "coordinate.core_document_escrow",
+  "invariants": [],
+  "kind": "neutrino.l2-domain-semantics",
+  "l1Features": [
+    {
+      "kind": "obligation",
+      "name": "invariant:balanced"
+    },
+    {
+      "kind": "primitive",
+      "name": "effect:debit"
+    }
+  ],
+  "provenance": [
+    {
+      "source": "UCC-9",
+      "status": "accepted",
+      "subject": "r_funded"
+    }
+  ],
+  "reductions": [
+    {
+      "from": "escrow_funded",
+      "id": "r_funded",
+      "lossiness": "lossless",
+      "relation": "expands",
+      "to": "effect:debit"
+    },
+    {
+      "from": "settlement_balanced",
+      "id": "r_balanced",
+      "lossiness": "lossless",
+      "relation": "protects",
+      "to": "invariant:balanced"
+    }
+  ],
+  "schemaVersion": 2,
+  "version": "1.0.0"
+}

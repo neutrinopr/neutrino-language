@@ -1,0 +1,250 @@
+{
+  "description": "The 16 hand-run backend-generalism cells from , committed as regression fixtures (the  guard-blindness +  money non-negativity findings). They are realized for a WITNESS-CLASS sanity check only (ledger->exit 0, refusal->exit 3/4/6, render->no crash) and CREDIT NO coverage: coverage rests exclusively on the single-feature CONTROLLED-EXPERIMENT cells the generator builds (cell vs control), so a fixture can never credit a feature from an unrelated refusal. Scenarios are synthesized from each cell's inputs + the `adversarial` override. NO expected values.",
+  "source": "urn:neutrino:fixture:generalism-seeds-v1",
+  "cells": [
+    {
+      "id": "cell01_single_balanced",
+      "note": "single balanced debit/credit (baseline FAITHFUL)",
+      "covers": [
+        [
+          "effect_kind",
+          "debit"
+        ],
+        [
+          "effect_kind",
+          "credit"
+        ],
+        [
+          "invariant",
+          "balanced"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "neu": "procedure cell01_single_balanced {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell02_multi_party_fee_split",
+      "note": "4-leg 3-party fee split (multi-party FAITHFUL)",
+      "covers": [
+        [
+          "participant_scoping",
+          "multi"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "neu": "procedure multi_party_fee_split {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    participant Fee {\n        role = \"fee\"\n        org  = \"c\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input fee      : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input fid      : party\n    input key      : string\n    debit d1 {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c1 {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    debit d2 {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c2 {\n        ledger          = \"l.fee\"\n        owner           = \"fee\"\n        participant     = \"Fee\"\n        party           = %fid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell03_compute_fee",
+      "note": "compute (2% fee, non-negative) FAITHFUL",
+      "covers": [
+        [
+          "compute",
+          "present"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "neu": "procedure cell03_compute_fee {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input rate : decimal\n    compute fee = amount * rate\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell04_guard_true",
+      "note": "when guard, guard-TRUE branch FAITHFUL",
+      "covers": [
+        [
+          "when_guard",
+          "present"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "render",
+      "neu": "procedure cell04_guard_true {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell05_guard_false",
+      "note": "when guard, guard-FALSE branch \u2014 Solidity event-oracle SILENT ()",
+      "covers": [
+        [
+          "when_guard",
+          "guard_false"
+        ]
+      ],
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "neu": "procedure cell05_guard_false {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell06_one_sided_guard",
+      "note": "one-sided guard (debit guarded, credit not) \u2014 balancer guard-blind ( C1)",
+      "covers": [
+        [
+          "invariant",
+          "balanced"
+        ],
+        [
+          "degenerate",
+          "missing_leg"
+        ]
+      ],
+      "adversarialKind": "guard_false",
+      "witness": "refusal",
+      "neu": "procedure cell06_one_sided_guard {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell07_mutually_exclusive",
+      "note": "mutually-exclusive branches (release OR refund) \u2014 same guard bug SILENT ()",
+      "covers": [
+        [
+          "when_guard",
+          "present"
+        ]
+      ],
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "neu": "procedure cell07_mutually_exclusive {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input release : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= release\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= release\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell08_mofn_numeric_guard",
+      "note": "M-of-N as a numeric guard \u2014 quorum flattened to a number ( semantic loss)",
+      "covers": [
+        [
+          "expr_op",
+          ">="
+        ]
+      ],
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "neu": "procedure cell08_mofn_numeric_guard {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input signatures : money\n    input quorum : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = signatures >= quorum\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = signatures >= quorum\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell09_temporal_now",
+      "note": "temporal `now` \u2014 REFUSED (undeclared symbol, exit 4)",
+      "covers": [
+        [
+          "degenerate",
+          "boundary"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "neu": "procedure cell09_temporal_now {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = now >= amount\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = now >= amount\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell10_unbalanced_missing_leg",
+      "note": "structurally unbalanced (missing credit leg) \u2014 REFUSED (kernel.balance, exit 4)",
+      "covers": [
+        [
+          "degenerate",
+          "missing_leg"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "neu": "procedure cell10_unbalanced_missing_leg {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell11_compound_guard",
+      "note": "compound guard `a>=b && c>=d` \u2014 REFUSED (grammar)",
+      "covers": [
+        [
+          "degenerate",
+          "boundary"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "neu": "procedure cell11_compound_guard {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input b : money\n    input c2 : money\n    input d2 : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= b && c2 >= d2\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= b && c2 >= d2\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell12_all_guards_off",
+      "note": "empty / all-guards-off settlement (guard-false, no movement)",
+      "covers": [
+        [
+          "degenerate",
+          "empty_effects"
+        ],
+        [
+          "when_guard",
+          "guard_false"
+        ]
+      ],
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "neu": "procedure cell12_all_guards_off {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    assert balanced\n}\n"
+    },
+    {
+      "id": "cell13_cross_currency",
+      "note": "cross-currency imbalance (100 USD vs 100 EUR) \u2014 REFUSED (currency-aware, exit 4)",
+      "covers": [
+        [
+          "currency_dimension",
+          "cross"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "neu": "procedure cell13_cross_currency {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input currency2 : currency\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency2\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n",
+      "adversarial": {
+        "currency2": "USD"
+      }
+    },
+    {
+      "id": "cell14_subtraction_underflow",
+      "note": "subtraction-settlement underflow (paid-price legs) \u2014 REFUSED (balance algebra)",
+      "covers": [
+        [
+          "expr_op",
+          "-"
+        ]
+      ],
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "neu": "procedure cell14_subtraction_underflow {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input price : money\n    compute net = amount - price\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n",
+      "adversarial": {
+        "price": 130
+      }
+    },
+    {
+      "id": "cellNC_negative_compute",
+      "note": "negative compute (net=principal-rebate, matched pair driven <0) \u2014 Solidity BROKEN / Postgres SILENT ()",
+      "covers": [
+        [
+          "expr_op",
+          "-"
+        ],
+        [
+          "degenerate",
+          "negative_amount"
+        ]
+      ],
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "neu": "procedure cellNC_negative_compute {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input rebate : money\n    compute net = amount - rebate\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %net\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %net\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n",
+      "adversarial": {
+        "rebate": 130
+      }
+    },
+    {
+      "id": "cellNI_negative_input",
+      "note": "negative input amount (-500) \u2014 Solidity type-REFUSED / Postgres SILENT ( P1)",
+      "covers": [
+        [
+          "degenerate",
+          "negative_amount"
+        ],
+        [
+          "value_category",
+          "money"
+        ]
+      ],
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "neu": "procedure cellNI_negative_input {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n",
+      "adversarial": {
+        "amount": -500
+      }
+    }
+  ]
+}

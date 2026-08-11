@@ -1,0 +1,53 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_regulated_evidence_sample",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "d95998903b40c53b9ecfb044ac7864b933379928d7946e8c4e07ae1bab514f0b",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "Verifier",
+    "role": "verifier",
+    "org": "verifierco",
+    "slotId": "coordinate.core_regulated_evidence_sample#Verifier"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [],
+  "permittedCounterparties": [
+    {
+      "org": "controllerco"
+    },
+    {
+      "org": "patientorg"
+    },
+    {
+      "org": "consumerco"
+    }
+  ],
+  "binding": {
+    "mode": "to_be_bound",
+    "runtimes": [
+      "evm"
+    ],
+    "minAssurance": "A2",
+    "authorizedBinder": "verifierco"
+  },
+  "evidenceObligations": [],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

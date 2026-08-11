@@ -1,0 +1,39 @@
+// Negative (WP1a, ): a governed non-numeric input must not be laundered into the
+// numeric `amount` slot through a compute. `raw` is `string`; `amt = raw * 1` carries that
+// non-numeric dependency, so the typed-value verifier resolves the amount operand
+// transitively and rejects it with the machine-readable code + source location — the
+// backends would otherwise emit `uint256`/`bigint` for the compute.
+procedure neg_value_type_launder {
+    trigger t
+    input raw : string
+    input cur : currency
+    input k   : string
+    compute amt = raw * 1
+    debit d {
+        ledger          = "a"
+        owner           = "o"
+        party           = %k
+        amount          = %amt
+        currency        = %cur
+        idempotency_key = %k
+    }
+    credit c {
+        ledger          = "b"
+        owner           = "o"
+        party           = %k
+        amount          = %amt
+        currency        = %cur
+        idempotency_key = %k
+    }
+    assert balanced
+}
+
+// Frontend parser/verifier NEGATIVE (S5/): neutrino-translate must REJECT this
+// malformed source. %not asserts the non-zero exit; FileCheck matches the diagnostic.
+// (RUN/CHECK are appended so the code's line numbers stay stable for the language-
+// intelligence tests that also consume this fixture.)
+// The launder is caught at its SOURCE — the compute's structured expression is
+// typed at IR-verify (), so `raw * 1` (string in arithmetic) is rejected as
+// expr.type on the compute, before the debit's value_type.mismatch would fire.
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: [expr.type] arithmetic operand must be a numeric

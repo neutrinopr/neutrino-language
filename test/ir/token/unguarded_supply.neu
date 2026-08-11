@@ -1,0 +1,60 @@
+// Regression fixture: a mint-shaped spec posting to the reserved `token.supply`
+// ledger but with NO authority guard on the supply leg. The security pass MUST NOT claim this
+// supply movement is authority-gated / fail-closed — an unguarded mint has no authority, so the
+// trustBoundary must raise an ADVISORY ("NOT gated by any authority"), never the fail-closed claim
+// reserved for a `when`-guarded supply leg. Not a committed sample domain — this is the negative
+// case that pins the guard-conditional wording.
+procedure unguarded_supply {
+    trigger mint_requested
+    version "1.0.0"
+
+    participant SupplyAuthority {
+        role = "supply_authority"
+        org  = "issuerco"
+    }
+    participant Holder {
+        role = "holder"
+        org  = "walletco"
+    }
+    allow "issuerco" with "walletco" {
+        "issuerco" as "supply_authority"
+        "walletco" as "holder"
+    }
+
+    input mint_id   : string
+    input supply_id : party
+    input holder_id : party
+    input amount    : money
+    input currency  : currency
+
+    debit supply_debit {
+        ledger          = "token.supply"
+        owner           = "supply"
+        participant     = "SupplyAuthority"
+        party           = %supply_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %mint_id
+    }
+    credit holder_credit {
+        ledger          = "token.balance"
+        owner           = "holder"
+        participant     = "Holder"
+        party           = %holder_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %mint_id
+    }
+    assert balanced
+}
+
+// RUN/CHECK appended so the code above keeps stable line numbers. The security pass must NOT claim
+// this UNGUARDED supply movement is authority-gated / fail-closed — it has no `when` authority guard,
+// so the trustBoundary is an ADVISORY ("NOT gated by any authority"), never the fail-closed claim
+// reserved for a guarded supply leg.
+// RUN: %neutrino-gen --target=security --scenario=%S/unguarded_supply.json %s -o %t.ug
+// RUN: %FileCheck %s --check-prefix=UNGUARDED < %t.ug/security.json
+// UNGUARDED: "category": "trustBoundary"
+// UNGUARDED: "status": "advisory"
+// UNGUARDED: NOT gated by any authority
+// UNGUARDED-NOT: suppressed fail-closed

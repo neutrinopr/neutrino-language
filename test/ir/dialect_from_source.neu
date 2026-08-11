@@ -1,0 +1,42 @@
+// RUN: %neutrino-translate %s | %FileCheck %s
+//
+// IR regression () — parser/dialect verification.
+// The front-end lowers core .neu statements to the `neutrino` MLIR dialect. These
+// CHECK lines pin the dialect surface (op names + the attributes the generators
+// consume), so a change to the parser or dialect is explained at the IR level —
+// not just observed downstream as golden-artifact drift. See test/ir/README.md.
+//
+// CHECK: "neutrino.procedure"
+// CHECK: "neutrino.input"() {sym_name = "amount", ty = "money"}
+// CHECK: "neutrino.input"() {sym_name = "cur", ty = "currency"}
+// CHECK: "neutrino.input"() {sym_name = "payer", ty = "party"}
+// CHECK: "neutrino.debit"({{.*}}) {ledger = "a.src", owner = "a", sym_name = "src"}
+// CHECK: "neutrino.credit"({{.*}}) {ledger = "b.dst", owner = "b", sym_name = "dst"}
+// CHECK: "neutrino.assert_balanced"()
+// CHECK: sym_name = "ir_dialect_probe", trigger = "probe_triggered"
+procedure ir_dialect_probe {
+    trigger probe_triggered
+    version "1.0.0"
+    input amount : money
+    input cur    : currency
+    input payer  : party
+    input payee  : party
+    input key    : string
+    debit src {
+        ledger          = "a.src"
+        owner           = "a"
+        party           = %payer
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %key
+    }
+    credit dst {
+        ledger          = "b.dst"
+        owner           = "b"
+        party           = %payee
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %key
+    }
+    assert balanced
+}

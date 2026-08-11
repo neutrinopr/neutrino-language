@@ -1,0 +1,7 @@
+// [94] M5 release-review (): negative money compute REFUSES before rendering on the EVALUATED value —
+// core_scheme_settlement's negative-net fixture fails closed (exit 3 + scenario.invalid naming the
+// evaluated compute) on Solidity + Postgres with no artifact; a lying / omitted expect + a negative money
+// input are all refused; the valid scenario still renders (signed ledger deltas untouched). See
+// check_money_refuse.py.
+//
+// RUN: python3 %S/check_money_refuse.py %neutrino-gen %examples

@@ -1,0 +1,9 @@
+// M3 language-boundary negative (): protocol-native payment terms (ISO 20022 / SWIFT
+// pacs.*) are handled as a reviewed lower-layer translation-map (docs/domains/LOWER_LAYER.md),
+// NOT as `.neu` source keywords. Writing one as a procedure statement must be rejected
+// with "unexpected statement". See docs/language/LANGUAGE_BOUNDARY.md §2. Pinned by self-test [56].
+procedure interbank_settlement {
+    input amount : money
+
+    pacs.008 FIToFICustomerCreditTransfer
+}

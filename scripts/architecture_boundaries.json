@@ -1,0 +1,164 @@
+{
+  "_note": "Architecture boundary allowlists ( /  S3). Reviewed config for check_architecture_boundaries.py. The scanner keeps backend- and domain-specific names out of the backend-agnostic, domain-agnostic compiler CORE (the .neu frontend + neutrino IR/dialect + kernel). Comments are stripped before scanning, so this governs CODE coupling (string literals / identifiers), not prose that merely documents a lowering. Prefer editing these small lists over embedding magic strings in the scanner.",
+  "scan_roots": [
+    "include",
+    "lib",
+    "tools"
+  ],
+  "scan_extensions": [
+    ".h",
+    ".hpp",
+    ".hh",
+    ".c",
+    ".cc",
+    ".cpp",
+    ".td"
+  ],
+  "min_files_scanned": 40,
+  "backend": {
+    "_doc": "Controlled backend identifiers. In CODE they may appear ONLY in files matching allowed_path_globs (the backend renderers, the target registry/profiles, the shared expression-lowering AST, the artifact manifest, and the CLI tools). Anywhere else in the C++ surface is a core-coupling violation.",
+    "tokens": [
+      "solidity",
+      "postgres"
+    ],
+    "allowed_path_globs": [
+      "include/Neutrino/Gen*.h",
+      "lib/Gen*.h",
+      "lib/targets/*Target.cpp",
+      "include/Neutrino/Target*.h",
+      "lib/emit/Target*.cpp",
+      "include/Neutrino/Expr.h",
+      "include/Neutrino/Manifest.h",
+      "lib/Manifest.cpp",
+      "include/Neutrino/SpecLegality.h",
+      "lib/SpecLegality.cpp",
+      "include/Neutrino/PlanLegality.h",
+      "lib/PlanLegality.cpp",
+      "include/Neutrino/Emit.h",
+      "lib/backends/*/*.cpp",
+      "lib/backends/*/*.td",
+      "lib/backends/*/test/*.cpp",
+      "lib/slots/Gen*.cpp",
+      "lib/policy/*/Gen*.cpp",
+      "lib/policy/*/test/*.cpp",
+      "lib/spec-contract/Expr.cpp",
+      "tools/**"
+    ]
+  },
+  "domain": {
+    "_doc": "Sample/domain names are the union of live examples/domains/<name>/ directories and the persistent externalized-domain registry. In CODE they may appear nowhere in the C++ surface \u2014 the core compiler is domain-agnostic, so there is no allowlist. Externalized identities remain governed after their live directories are deleted. `min_domain_vocab` fails the scan closed if discovery plus the registry yields fewer than this many domains.",
+    "domains_dir": "examples/domains",
+    "externalized_registry": "docs/externalized-domain-registry.json",
+    "min_domain_vocab": 10,
+    "allowed_path_globs": []
+  },
+  "root_scripts": {
+    "_doc": "Consumes the  tooling boundary AND the  (B3) role layout: domain/corpus/rail/sample tooling lives in scripts/{domain,corpus,rails,samples}/, and the base-compiler scripts are organized by ROLE under scripts/{gates,validators,generators}/ \u2014 so each scanned dir below must hold only the files in its `allowed` list, or a marked transitional wrapper (any file containing `wrapper_marker`). A NEW *.py in a scanned dir that is neither is a boundary violation \u2014 either it belongs in a different role/domain subtree, or it is a new script that must be consciously added to that dir's `allowed`. Per-dir `min_files` fails closed on a mis-rooted/empty scan. The flat scripts/ ROOT now holds only build/release/quality-infra scripts + the transitional wrappers + data files.",
+    "wrapper_marker": "TRANSITIONAL wrapper (",
+    "dirs": [
+      {
+        "path": "scripts",
+        "min_files": 2,
+        "allowed": [
+          "mutation_test.py",
+          "property_test.py"
+        ]
+      },
+      {
+        "path": "scripts/gates",
+        "min_files": 10,
+        "allowed": [
+          "check_anti_inference.py",
+          "check_architecture_boundaries.py",
+          "check_artifact_pins.py",
+          "check_backend_convergence.py",
+          "check_backend_idiom_composition.py",
+          "check_backend_projection_bijection.py",
+          "check_backend_projection_family_reconciliation.py",
+          "check_canonical_reduction_domain_blindness.py",
+          "check_capability_claims.py",
+          "check_catalog_registry.py",
+          "check_compatibility.py",
+          "check_conformance_domain_exclusion.py",
+          "check_coordination_guard_parity.py",
+          "check_core_contract_bundle.py",
+          "check_core_feature_example_matrix.py",
+          "check_cpp_policy.py",
+          "check_ctest_labels.py",
+          "check_ctest_source_tree_lock.py",
+          "check_ctest_source_tree_lock.py",
+          "check_decision_path_lock.py",
+          "check_domains_registry_pins.py",
+          "check_extraction_boundaries.py",
+          "check_extraction_manifests.py",
+          "check_generalism_cell_coverage.py",
+          "check_generalism_pr_fast.py",
+          "check_idiom_table_capability.py",
+          "check_link_direction.py",
+          "check_m6_curated_example_corpus.py",
+          "check_m6_release_gate.py",
+          "check_m7_intake_bijection.py",
+          "check_m7_reduction_conformance.py",
+          "check_no_orphan_scripts.py",
+          "check_obligation_reference.py",
+          "check_observer_guard_parity.py",
+          "check_parser_keyword_metadata.py",
+          "check_pg_channel2_authority.py",
+          "check_postgres_syntax_authority.py",
+          "check_pressure_loop_mutation_protocol.py",
+          "check_renderer_includes.py",
+          "check_security_primitive_carveout.py",
+          "check_semantic_authority.py",
+          "check_semantic_convergence.py",
+          "check_solidity_harness_printer.py",
+          "check_solidity_syntax_authority.py",
+          "check_spec_legality.py",
+          "check_target_node_registry.py",
+          "classify_m7_intake.py",
+          "native_build_gate.py",
+          "resolve_ci_ratchet_base.py",
+          "setup_build_tools_verifier.py"
+        ]
+      },
+      {
+        "path": "scripts/validators",
+        "min_files": 8,
+        "allowed": [
+          "validate_backends.py",
+          "validate_agreement_identity.py",
+          "validate_binding_manifest.py",
+          "validate_binding_topology.py",
+          "validate_capability_spec.py",
+          "validate_compatibility_manifest.py",
+          "validate_cross_rail_catalog.py",
+          "validate_generalism_result.py",
+          "validate_observation_binding.py",
+          "validate_participant_view.py",
+          "validate_pressure_loop_register.py",
+          "validate_sovereign_envelope.py",
+          "validate_target_profile.py",
+          "validate_test_realization.py",
+          "verify_domain_pack.py"
+        ]
+      },
+      {
+        "path": "scripts/generators",
+        "min_files": 5,
+        "allowed": [
+          "fork_capability.py",
+          "gen_generalism_cells.py",
+          "run_generalism_matrix.py",
+          "run_pressure_loop_forcing.py",
+          "gen_target_node_registry.py",
+          "generate_linguist_assets.py",
+          "generate_tmgrammar.py",
+          "make_core_contract_bundle.py",
+          "make_domain_pack.py",
+          "make_release_manifest.py",
+          "neutrino_lang.py",
+          "neutrino_lsp.py"
+        ]
+      }
+    ]
+  }
+}

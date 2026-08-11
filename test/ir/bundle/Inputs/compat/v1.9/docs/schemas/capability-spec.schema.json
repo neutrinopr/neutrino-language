@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/capability-spec/v1",
+  "title": "Neutrino Canonical Executable Capability Spec",
+  "description": "The canonical executable capability-spec (M5 WP1d, ): the ONLY frozen external contract of the M5 architecture (ADR D1). Emitted from source alone by `neutrino-gen --target=capability-spec` (no scenario, D2) after semantic lowering; every renderer consumes THIS, not ProcedureView. Fail-closed (additionalProperties:false everywhere). Validated by scripts/validators/validate_capability_spec.py, which mirrors this schema AND enforces the beyond-schema invariants it cannot express (hash recomputation, value-category vocabulary from ValueModel/, transition endpoints resolve to declared states, compute deps resolve). Deterministic + canonical (sorted keys, no timestamps) so the capability-spec is byte-reproducible and hash-stable. See docs/spec/CAPABILITY_SPEC.md and docs/process/M5_DECISIONS_ADR.md (D1/D2/D6/D11).",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "specVersion", "procedure", "trigger", "identity",
+               "inputs", "computes", "effects", "invariants", "participants",
+               "topology", "lifecycle", "targetRequirements", "sourceMap"],
+  "additionalProperties": false,
+  "$defs": {
+    "valueCategory": {
+      "description": "A  ValueModel category name (governed set) or 'extension'.",
+      "enum": ["money", "decimal", "party", "currency", "evidence", "string", "extension"]
+    },
+    "sourceSpan": {
+      "type": "object",
+      "description": "A 1-based DSL source location (column is 1 — the lexer is line-oriented).",
+      "required": ["line", "column"],
+      "additionalProperties": false,
+      "properties": {
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "targetRequirement": {
+      "type": "object",
+      "description": "One semantic requirement the spec places on a rendering target (WP4/), with the originating primitive + source span so a legality diagnostic can name the exact line. Matching is set-intersection over `feature`. Today all are `required` with no `fallback` (both forward space, AD3).",
+      "required": ["feature", "primitive", "source", "requirement", "fallback"],
+      "additionalProperties": false,
+      "properties": {
+        "feature": { "type": "string", "minLength": 1 },
+        "primitive": { "type": "string", "minLength": 1 },
+        "source": { "oneOf": [ { "type": "null" }, { "$ref": "#/$defs/sourceSpan" } ] },
+        "requirement": { "enum": ["required", "optional"] },
+        "fallback": { "type": ["string", "null"] }
+      }
+    },
+    "operand": {
+      "type": "object",
+      "description": "A debit/credit operand: a %reference to a declared input/compute, or a constant literal.",
+      "required": ["kind", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["ref", "literal"] },
+        "value": { "type": "string", "minLength": 1 }
+      }
+    },
+    "exprNode": {
+      "type": "object",
+      "description": "A typed compute-expression AST node ( Expr). Recursive: Bin carries lhs/rhs, Call carries args. A Cmp is a guard comparison predicate (), valid only inside an effect's `when`.",
+      "required": ["kind", "dtype"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["num", "var", "bin", "call", "cmp"] },
+        "num": { "type": "integer" },
+        "name": { "type": "string", "minLength": 1 },
+        "op": { "type": "string", "enum": ["+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!="] },
+        "dtype": { "$ref": "#/$defs/valueCategory" },
+        "lhs": { "$ref": "#/$defs/exprNode" },
+        "rhs": { "$ref": "#/$defs/exprNode" },
+        "args": { "type": "array", "items": { "$ref": "#/$defs/exprNode" } }
+      }
+    },
+    "state": {
+      "type": "object",
+      "required": ["name", "terminal"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "terminal": { "type": "boolean" },
+        "terminalKind": {
+          "description": "For terminal states: which terminal kind (amendment). success | aborted | contested.",
+          "enum": ["success", "aborted", "contested"]
+        }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "required": ["name", "from", "to", "effects", "guards", "idempotency"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "effects": {
+          "description": "Effect kinds fired on this transition. Today: post (debit/credit legs) and its inverse compensate. reserve/consume/release are reserved forward space (amendment) — not emitted until a gate sample demands them (ADR D5/AD2).",
+          "type": "array",
+          "items": { "enum": ["post", "compensate", "reserve", "consume", "release"] }
+        },
+        "guards": {
+          "description": "Guards fenced on this transition. participant/deadline/sequence are the promoted guard kinds; quorum stays reserved (AD2).",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "enum": ["participant", "deadline", "sequence"] },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "idempotency": { "enum": ["reject", "noop_on_identical"] },
+        "evidence": {
+          "description": "Per-transition chained evidence obligation (amendment), or null. style: single_hash | batched_root.",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "required": ["style", "chained"],
+              "additionalProperties": false,
+              "properties": {
+                "style": { "enum": ["single_hash", "batched_root"] },
+                "chained": { "type": "boolean" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "attestationPolicy": {
+      "type": "object",
+      "description": "An M-of-N oracle-consensus attestation policy on an evidence input (oracle S1, ). Only the threshold M and the observer-set REFERENCE are portable spec; the concrete N and the observer members are binding-level () and MUST NOT appear here.",
+      "required": ["input", "quorum", "observerSet", "canonicalization", "timeout", "fallback"],
+      "additionalProperties": false,
+      "properties": {
+        "input": { "type": "string", "minLength": 1, "description": "the evidence input this policy governs" },
+        "quorum": {
+          "type": "object",
+          "required": ["threshold"],
+          "additionalProperties": false,
+          "properties": { "threshold": { "type": "integer", "minimum": 1, "description": "M — the acceptance threshold; N is binding-level" } }
+        },
+        "observerSet": {
+          "type": "object",
+          "required": ["ref", "role"],
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "type": "string", "minLength": 1, "description": "observer-set identity/role reference; members are binding-level" },
+            "role": { "type": ["string", "null"] },
+            "assurance": { "enum": ["A1", "A2", "A3", "A4"], "description": "declared assurance tier of the observer set (oracle S6, ); OPTIONAL — the key is present only when declared, so a pre-S6 attestation keeps its exact {ref,role} shape and capabilityHash. Undeclared (key absent) is surfaced as an advisory by the security spec." },
+            "independence": { "enum": ["independent", "correlated"], "description": "declared observer-set independence posture (oracle S6, ); OPTIONAL, present only when declared. correlated = shared upstream, an M-of-N single point of failure. Undeclared = advisory." }
+          }
+        },
+        "canonicalization": {
+          "type": "object",
+          "required": ["mode", "tolerance"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "enum": ["exact", "median"], "description": "what counts as the same claim: exact for discrete events, median for numeric feeds" },
+            "tolerance": { "type": ["string", "null"], "description": "agreement band for numeric feeds; null for exact" }
+          }
+        },
+        "timeout": { "type": ["string", "null"], "description": "deadline for reaching quorum; null when none" },
+        "fallback": { "enum": ["abort", "escalate"], "description": "fail-closed behavior when quorum is not reached (degrade deferred until it names its reduced target, /S1)" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "enum": [1, 2, 3], "description": "1 by default; 2 iff any effect carries a conditional guard `when` (); 3 iff the spec carries an attestation policy (/) — a consumer that ignores it would deploy the coordination without the M-of-N guard, so a pre-3 consumer must refuse. Attestation subsumes the `when` bump (3 whether or not a `when` is also present). The validator enforces the exact conditional. A semantics-changing feature a lower-version consumer must refuse." },
+    "kind": { "const": "neutrino.capability-spec" },
+    "specVersion": {
+      "type": "string",
+      "description": "The DSL/semantic version of the procedure (ProcedureView.version).",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "procedure": { "type": "string", "minLength": 1 },
+    "trigger": { "type": ["string", "null"] },
+    "identity": {
+      "type": "object",
+      "description": "Capability-spec identity + hashes (D2/D6). capabilityHash covers the PRIMARY semantic content — it excludes the identity block, the two derived line-bearing projections (sourceMap, targetRequirements), AND the envelope discriminators (kind, schemaVersion, ), so it is a pure semantic identity — formatting- and envelope-insensitive; specHash is the whole-spec digest (everything minus the hash fields). Compact canonical form is sorted-key raw UTF-8 (ensure_ascii=False). Both lowercase-hex sha256.",
+      "required": ["capabilityHash", "specHash"],
+      "additionalProperties": false,
+      "properties": {
+        "capabilityHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "specHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "category"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "minLength": 1 },
+          "category": { "$ref": "#/$defs/valueCategory" }
+        }
+      }
+    },
+    "attestations": {
+      "description": "Optional (oracle S1, ): M-of-N attestation policies on evidence inputs. Present ONLY when declared, so an unattested spec is byte-identical and its capabilityHash is unchanged.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/attestationPolicy" }
+    },
+    "computes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "expr", "category", "deps", "ast"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "expr": { "type": "string", "minLength": 1 },
+          "category": { "$ref": "#/$defs/valueCategory" },
+          "deps": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "ast": { "$ref": "#/$defs/exprNode" }
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "name", "ledger", "owner", "participant", "party",
+                     "amount", "currency", "idempotencyKey"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "enum": ["debit", "credit"] },
+          "name": { "type": "string", "minLength": 1 },
+          "ledger": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string", "minLength": 1 },
+          "participant": { "type": ["string", "null"] },
+          "party": { "$ref": "#/$defs/operand" },
+          "amount": { "$ref": "#/$defs/operand" },
+          "currency": { "$ref": "#/$defs/operand" },
+          "idempotencyKey": { "$ref": "#/$defs/operand" },
+          "when": {
+            "description": "Optional conditional guard (): the leg posts iff this comparison predicate holds. Additive + backward-compatible (absent on unguarded legs).",
+            "type": "object",
+            "required": ["expr", "ast"],
+            "additionalProperties": false,
+            "properties": {
+              "expr": { "type": "string", "minLength": 1 },
+              "ast": { "$ref": "#/$defs/exprNode" }
+            }
+          },
+          "memo": {
+            "description": "Optional effect metadata (M5 token S3, ): a free-text memo/reference carried WITH the movement and surfaced in each backend's emitted event/row. Metadata only — not a value type or token primitive. Additive: present ONLY when declared, so an effect without a memo is byte-identical (capabilityHash unchanged).",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "additionalProperties": false,
+        "properties": { "kind": { "enum": ["balanced"] } }
+      }
+    },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "role", "org", "capabilities", "binding",
+                     "bindRuntimes", "bindMinAssurance"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "role": { "type": "string" },
+          "org": { "type": ["string", "null"] },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "binding": { "enum": ["fixed", "to_be_bound"] },
+          "bindRuntimes": { "type": "array", "items": { "type": "string" } },
+          "bindMinAssurance": { "type": "string", "enum": ["", "A1", "A2", "A3", "A4"] }
+        }
+      }
+    },
+    "topology": {
+      "type": "object",
+      "required": ["allowedOrgPairs"],
+      "additionalProperties": false,
+      "properties": {
+        "allowedOrgPairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["orgA", "orgB", "roleA", "roleB"],
+            "additionalProperties": false,
+            "properties": {
+              "orgA": { "type": "string", "minLength": 1 },
+              "orgB": { "type": "string", "minLength": 1 },
+              "roleA": { "type": "string" },
+              "roleB": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "description": "The one canonical coordination state machine the slot lifecycle and the on-chain surface both project from (acceptance). The fixed OPEN..CLOSE machine, extended (oracle S3, ) with an explicit M-of-N quorum gate (QUORUM_PENDING/QUORUM_MET/QUORUM_TIMEOUT + the declared abort/escalate timeout fallback) when the spec carries an attestation policy; the post departs only from QUORUM_MET, so a leg never fires on < M. The DSL has no author-defined state machines yet (L2), so it is not source-derived beyond the effect-bearing transitions and the attestation-driven quorum gate.",
+      "required": ["instanceKey", "initialState", "states", "transitions", "terminalStates"],
+      "additionalProperties": false,
+      "properties": {
+        "instanceKey": {
+          "type": "object",
+          "description": "Composed instance key (amendment): the fields whose tuple identifies one coordination instance. `declared` is the explicit procedure-level instance key when the coordination declares one independently of its effects (absent for a legacy effect-keyed coordination).",
+          "required": ["fields"],
+          "additionalProperties": false,
+          "properties": {
+            "fields": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "declared": { "type": "string", "minLength": 1 }
+          }
+        },
+        "initialState": { "type": "string", "minLength": 1 },
+        "states": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/state" } },
+        "transitions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/transition" } },
+        "terminalStates": {
+          "type": "object",
+          "description": "The terminal-state kinds (amendment): which state each of success/aborted/contested maps to (null when the shape has no such terminal).",
+          "required": ["success", "aborted", "contested"],
+          "additionalProperties": false,
+          "properties": {
+            "success": { "type": ["string", "null"] },
+            "aborted": { "type": ["string", "null"] },
+            "contested": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "targetRequirements": {
+      "type": "object",
+      "description": "The per-requirement records a renderer/profile is matched against BEFORE rendering (WP4/, AD3) — semantic primitives with provenance, not domain labels. Derived from the spec content, not hand-authored.",
+      "required": ["requirements", "evidenceStyle", "unsupportedConstructs"],
+      "additionalProperties": false,
+      "properties": {
+        "requirements": { "type": "array", "items": { "$ref": "#/$defs/targetRequirement" } },
+        "evidenceStyle": { "enum": ["single_hash", "batched_root"] },
+        "unsupportedConstructs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "sourceMap": {
+      "type": "array",
+      "description": "DSL -> spec JSON path map: the 1-based source span per spec construct (source is null only when an op carries no file location).",
+      "items": {
+        "type": "object",
+        "required": ["specPath", "construct", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "specPath": { "type": "string", "minLength": 1 },
+          "construct": { "type": "string", "minLength": 1 },
+          "source": { "oneOf": [ { "type": "null" }, { "$ref": "#/$defs/sourceSpan" } ] }
+        }
+      }
+    }
+  }
+}

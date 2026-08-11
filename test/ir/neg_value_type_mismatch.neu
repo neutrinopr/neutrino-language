@@ -1,0 +1,35 @@
+// Negative (WP1a, ): a debit/credit `amount` operand must be a numeric value
+// (money/decimal). Here `amount` is declared `string`, so the typed-value verifier rejects
+// it before any backend generation, with a machine-readable code + source location.
+// (party/currency ids may be strings; only the numeric axis is enforced per role.)
+procedure neg_value_type_mismatch {
+    trigger t
+    input who    : party
+    input amount : string
+    input cur    : currency
+    input k      : string
+    debit d {
+        ledger          = "a"
+        owner           = "o"
+        party           = %who
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %k
+    }
+    credit c {
+        ledger          = "b"
+        owner           = "o"
+        party           = %who
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %k
+    }
+    assert balanced
+}
+
+// Frontend parser/verifier NEGATIVE (S5/): neutrino-translate must REJECT this
+// malformed source. %not asserts the non-zero exit; FileCheck matches the diagnostic.
+// (RUN/CHECK are appended so the code's line numbers stay stable for the language-
+// intelligence tests that also consume this fixture.)
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: [value_type.mismatch] amount operand must be a numeric

@@ -1,0 +1,22 @@
+{
+  "scenario": "token_mint_happy_path",
+  "procedure": "token_mint",
+  "inputs": {
+    "mint_id": "mint-001",
+    "supply_id": "token-reserve",
+    "holder_id": "holder-001",
+    "amount": 2500,
+    "currency": "EUR",
+    "supply_approved": 1
+  },
+  "expect": {
+    "ledger": {
+      "token.supply": -2500,
+      "token.balance": 2500
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

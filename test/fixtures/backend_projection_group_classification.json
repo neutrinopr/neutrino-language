@@ -1,0 +1,24 @@
+{
+  "kind": "neutrino.backend-projection-group-classification.v1",
+  "schemaVersion": 1,
+  "groups": [
+    {
+      "id": "group:money",
+      "effects": ["posting:debit", "posting:credit"],
+      "mustBalance": true,
+      "expectedProjection": "BalancedEffectGroup"
+    },
+    {
+      "id": "group:audit",
+      "effects": ["effect:audit-record"],
+      "mustBalance": false,
+      "expectedProjection": "EffectGroup"
+    },
+    {
+      "id": "group:fees",
+      "effects": ["posting:fee-debit", "posting:fee-credit"],
+      "mustBalance": true,
+      "expectedProjection": "BalancedEffectGroup"
+    }
+  ]
+}

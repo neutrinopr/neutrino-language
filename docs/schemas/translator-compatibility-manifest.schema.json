@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/translator-compatibility-manifest/v1",
+  "title": "Translator Compatibility Manifest",
+  "description": "Published translator-owned M4 compatibility surface (). A committed, machine-readable file downstream components inspect to fail closed on an unsupported language level or schema version, without building the toolchain. Values are pinned to include/Neutrino/VersionInfo.h and docs/schemas/*.schema.json by scripts/validators/validate_compatibility_manifest.py. This schema pins the SHAPE; the validator pins the VALUES.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "compatibilityManifestVersion", "translator", "language", "artifactSchemas", "conformanceVectorVersion", "semanticProfileVersion", "semanticLanguageVersion"],
+  "properties": {
+    "kind": { "const": "neutrino.translator-compatibility-manifest" },
+    "schemaVersion": { "const": 1 },
+    "compatibilityManifestVersion": { "type": "string", "minLength": 1 },
+    "_note": { "type": "string" },
+    "semanticProfileVersion": { "type": "integer", "minimum": 1, "description": "The semantic-realization-profile contract version () this release accepts in a target profile's semanticProfile block; pinned to VersionInfo.h kSemanticProfileVersion." },
+    "semanticLanguageVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "description": "The semantic-agreement language version () the portable agreement identity is expressed in; pinned to VersionInfo.h kSemanticLanguageVersion. An agreement-identity object declaring an unknown version fails closed on ingest." },
+    "translator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["toolVersion", "mlirDialectVersion", "schemaBundleVersion"],
+      "properties": {
+        "toolVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "mlirDialectVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "schemaBundleVersion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["l1ArtifactFormat", "levels"],
+      "properties": {
+        "l1ArtifactFormat": { "type": "string", "minLength": 1 },
+        "levels": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["supported", "max"],
+          "properties": {
+            "supported": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "future": { "type": "array", "items": { "type": "string" } },
+            "max": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "artifactSchemas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["l2DomainSemantics", "l3BindingManifest", "slotBindingTopology", "dialectExpansionManifest", "backendProfileCatalog", "bindingPolicy", "bindingReceipt", "runtimeEvidence"],
+      "properties": {
+        "l2DomainSemantics": { "type": "integer", "minimum": 1 },
+        "l3BindingManifest": { "type": "array", "items": { "type": "integer", "minimum": 1 }, "minItems": 1 },
+        "slotBindingTopology": { "type": "integer", "minimum": 1 },
+        "dialectExpansionManifest": { "type": "integer", "minimum": 1 },
+        "backendProfileCatalog": { "type": "integer", "minimum": 1 },
+        "bindingPolicy": { "type": "string", "minLength": 1 },
+        "bindingReceipt": { "type": "string", "minLength": 1 },
+        "runtimeEvidence": { "type": "string", "minLength": 1 }
+      }
+    },
+    "featureFlags": {
+      "type": "object",
+      "additionalProperties": { "type": "boolean" }
+    },
+    "conformanceVectorVersion": { "type": "string", "minLength": 1 },
+    "consumers": {
+      "type": "object",
+      "properties": {
+        "_note": { "type": "string" },
+        "network": { "$ref": "#/$defs/consumerRange" },
+        "agents": { "$ref": "#/$defs/consumerRange" }
+      }
+    }
+  },
+  "$defs": {
+    "consumerRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minToolVersion": { "type": ["string", "null"] },
+        "maxToolVersion": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

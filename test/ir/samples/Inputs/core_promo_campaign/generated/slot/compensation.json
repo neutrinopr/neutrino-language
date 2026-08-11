@@ -1,0 +1,18 @@
+{
+  "kind": "neutrino.slot-compensation",
+  "capability": "coordinate.core_promo_campaign",
+  "compensable": {
+    "COMMIT": {
+      "how": "post the inverse of each committed leg",
+      "reverses": [
+        { "entry": "sponsor_commission_funding", "ledger": "sponsor.promo_pool", "inverseOf": "debit" },
+        { "entry": "promoter_commission", "ledger": "promoter.commission", "inverseOf": "credit" },
+        { "entry": "sponsor_reimbursement_funding", "ledger": "sponsor.promo_pool", "inverseOf": "debit" },
+        { "entry": "fulfiller_reimbursement", "ledger": "fulfiller.reimbursement", "inverseOf": "credit" }
+      ],
+      "idempotency": "core_promo_campaign:<idempotency_key>:compensation"
+    }
+  },
+  "nonCompensable": ["OPEN", "NEGOTIATE", "PROPOSE", "REJECT", "CLOSE"],
+  "invariantAfterCompensation": "balanced"
+}

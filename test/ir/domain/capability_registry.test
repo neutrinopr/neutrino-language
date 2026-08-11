@@ -1,0 +1,9 @@
+//  slice 1: the authoritative capability registry is compiler-owned and published as ONE
+// artifact. `--capability-registry` byte-matches docs/semantic-capability-registry.json; the
+// artifact's shape/versioning holds; every record is internally consistent (id pattern,
+// dimension/value split, category rule); and the registry's capability-id set EQUALS the published
+// closed vocabulary — a pure projection of knownSemanticFeatures(), no capability introduced or
+// dropped, so the M7 intake seam anchors executable reductions against exactly the closed namespace.
+// See check_capability_registry.py.
+//
+// RUN: python3 %S/check_capability_registry.py %neutrino-translate %docs/semantic-capability-registry.json %docs/semantic-feature-vocabulary.json

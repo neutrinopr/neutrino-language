@@ -1,0 +1,6 @@
+{
+  "mode": "to_be_bound",
+  "runtimes": ["evm", "jvm"],
+  "minAssurance": "A2",
+  "authorizedBinder": "sponsorco"
+}

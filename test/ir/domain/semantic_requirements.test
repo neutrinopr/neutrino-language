@@ -1,0 +1,24 @@
+// The semantic-requirements target projects the single compiler-owned
+// coordinationPlanRequirements derivation. Source and canonical-spec
+// reconstruction must be byte-identical and scenario-free.
+//
+// RUN: %neutrino-gen --target=semantic-requirements %test/ir/samples/Inputs/core_document_escrow/source/core_document_escrow.neu -o %t.source
+// RUN: %neutrino-gen --target=semantic-requirements --from-spec %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json -o %t.spec
+// RUN: diff %t.source/semantic-requirements.json %t.spec/semantic-requirements.json
+// RUN: python3 %S/check_semantic_requirements.py %t.source/semantic-requirements.json %docs/semantic-feature-vocabulary.json %docs/schemas/semantic-requirements.schema.json
+// RUN: %FileCheck %s < %t.source/semantic-requirements.json
+
+// CHECK: "kind": "neutrino.semantic-requirements"
+// CHECK: "metrics": {
+// CHECK: "effectCount": 4
+// CHECK: "requirements": [
+// CHECK: "feature": "authorization:explicit"
+// CHECK: "feature": "effect:credit"
+// CHECK: "feature": "effect:debit"
+// CHECK: "feature": "guard:conditional"
+// CHECK: "feature": "invariant:balanced"
+// CHECK: "feature": "replay:idempotent"
+// CHECK: "feature": "terminal:aborted"
+// CHECK: "feature": "terminal:success"
+// CHECK: "schemaVersion": 1
+// CHECK: "semanticProfileVersion": 3

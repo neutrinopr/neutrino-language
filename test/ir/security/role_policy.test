@@ -1,0 +1,13 @@
+// [30] per-org-pair role policy: 'allow A with B { A as r }' hard-gates each org's role — the
+// per-pair roles flow into the IR, and a satisfied policy passes the security gate and lowers.
+//
+// DEFINE: %{rc} = %test/ir/security/Inputs/core_role_constrained
+// DEFINE: %{rscn} = %{rc}/scenario/core_role_constrained_happy_path.json
+// DEFINE: %{rsrc} = %{rc}/source/core_role_constrained.neu
+// RUN: %neutrino-translate %{rsrc} -o %t.mlir
+// RUN: %FileCheck %s < %t.mlir
+// RUN: %neutrino-gen --target=security --scenario=%{rscn} %{rsrc} -o %t.d
+// RUN: %FileCheck --check-prefix=SEC %s < %t.d/security.json
+// RUN: %neutrino-gen --target=solidity --scenario=%{rscn} %{rsrc} -o %t.sol
+// CHECK: allow_orgs{{.*}}role_a = "sponsor"{{.*}}role_b = "merchant"
+// SEC: "ok": true

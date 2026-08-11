@@ -1,0 +1,4 @@
+// [7] generators escape unsafe DSL string literals: a quoted ledger name is SQL-escaped (acq''s.balance)
+// in Postgres and kept intact/normalized in the Solidity ledger literal. See check_escaping.py.
+//
+// RUN: python3 %S/check_escaping.py %neutrino-gen %S/../../quoted_names.neu %S/../../quoted_names.json

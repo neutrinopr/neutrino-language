@@ -1,0 +1,174 @@
+{
+  "blockComment": null,
+  "blockDelimiters": [
+    [
+      "{",
+      "}"
+    ],
+    [
+      "[",
+      "]"
+    ]
+  ],
+  "canonicalExtension": ".neu",
+  "functions": [
+    {
+      "arity": "1..2",
+      "description": "round to k minor-unit places; identity on minor units (round(x, k) == x)",
+      "name": "round"
+    }
+  ],
+  "keywordCategories": {
+    "connector": [
+      "and",
+      "as",
+      "balanced",
+      "between",
+      "with"
+    ],
+    "field": [
+      "amount",
+      "assurance",
+      "bind_min_assurance",
+      "bind_runtimes",
+      "binding",
+      "canonicalization",
+      "capabilities",
+      "currency",
+      "fallback",
+      "idempotency_key",
+      "independence",
+      "ledger",
+      "memo",
+      "observer_role",
+      "observer_set",
+      "org",
+      "owner",
+      "party",
+      "quorum",
+      "role",
+      "timeout",
+      "tolerance",
+      "when"
+    ],
+    "statement": [
+      "agreement",
+      "allow",
+      "assert",
+      "attest",
+      "compute",
+      "credit",
+      "debit",
+      "input",
+      "instance_key",
+      "participant",
+      "procedure",
+      "trigger",
+      "version"
+    ]
+  },
+  "keywords": [
+    "agreement",
+    "allow",
+    "amount",
+    "and",
+    "as",
+    "assert",
+    "assurance",
+    "attest",
+    "balanced",
+    "between",
+    "bind_min_assurance",
+    "bind_runtimes",
+    "binding",
+    "canonicalization",
+    "capabilities",
+    "compute",
+    "credit",
+    "currency",
+    "debit",
+    "fallback",
+    "idempotency_key",
+    "independence",
+    "input",
+    "instance_key",
+    "ledger",
+    "memo",
+    "observer_role",
+    "observer_set",
+    "org",
+    "owner",
+    "participant",
+    "party",
+    "procedure",
+    "quorum",
+    "role",
+    "timeout",
+    "tolerance",
+    "trigger",
+    "version",
+    "when",
+    "with"
+  ],
+  "kind": "neutrino.language-metadata",
+  "language": "neutrino",
+  "legacyExtensions": [],
+  "lineComments": [
+    "//",
+    "#"
+  ],
+  "operators": [
+    {
+      "kind": "binary",
+      "symbol": "+"
+    },
+    {
+      "kind": "binary",
+      "symbol": "-"
+    },
+    {
+      "kind": "binary",
+      "symbol": "*"
+    },
+    {
+      "kind": "binary",
+      "symbol": "/"
+    },
+    {
+      "kind": "comparison",
+      "symbol": "<"
+    },
+    {
+      "kind": "comparison",
+      "symbol": "<="
+    },
+    {
+      "kind": "comparison",
+      "symbol": ">"
+    },
+    {
+      "kind": "comparison",
+      "symbol": ">="
+    },
+    {
+      "kind": "comparison",
+      "symbol": "=="
+    },
+    {
+      "kind": "comparison",
+      "symbol": "!="
+    }
+  ],
+  "schemaVersion": 2,
+  "stringDelimiters": [
+    "\""
+  ],
+  "valueTypes": [
+    "money",
+    "decimal",
+    "party",
+    "currency",
+    "evidence",
+    "string"
+  ]
+}

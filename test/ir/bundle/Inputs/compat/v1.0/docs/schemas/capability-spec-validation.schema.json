@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/capability-spec-validation/v1",
+  "title": "Neutrino Capability-Spec Validation Report",
+  "description": "The translator-owned validation result for a capability-spec, emitted by scripts/validators/validate_capability_spec.py () on stdout and persisted by build-tools BUILD as capability-spec-validation.json. It is a translator->build-tools CONTRACT (): admission consumes it to ground a *verified* capability-spec, so it is version-pinned here. The report NAMES the validated spec's identity (capabilityHash + specHash) so a consumer can BIND it to a specific spec; because the validator recomputes both hashes and fails closed on a mismatch (spec.hash_mismatch), an `ok:true` report attests the declared identity matches the spec's content. `capabilityHash`/`specHash` are null only when the spec is unreadable / has no well-formed identity. Fail-closed (additionalProperties:false).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "ok", "capabilityHash", "specHash", "diagnostics"],
+  "properties": {
+    "kind": { "const": "neutrino.capability-spec-validation" },
+    "schemaVersion": { "const": 1 },
+    "ok": { "type": "boolean" },
+    "capabilityHash": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "identity.capabilityHash of the validated spec (semantic identity), or null."
+    },
+    "specHash": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "identity.specHash of the validated spec (whole-artifact digest), or null."
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "severity": { "type": "string", "enum": ["error", "warning"] },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "file": {
+      "type": "string",
+      "description": "Optional: the input file basename (present in the --out spec.report.json form)."
+    },
+    "procedure": {
+      "type": ["string", "null"],
+      "description": "Optional: the validated spec's procedure name (present in the --out form)."
+    },
+    "signer": {
+      "type": "string",
+      "description": "Optional BUILD signature envelope (): the signer id whose key the signature verifies against. The translator validator itself emits an UNSIGNED report; build-tools BUILD signs it (Ed25519 over the canonical attestation bytes) so admission can trust it came from a trusted source, not a caller. Absent = unsigned (dev/honest-case)."
+    },
+    "signature": {
+      "type": "string",
+      "description": "Optional BUILD signature envelope (): base64 Ed25519 signature by `signer` over the canonical attestation bytes (kind, schemaVersion, verdict, capabilityHash, specHash). NOT part of the signed payload."
+    },
+    "signatureSuite": {
+      "type": "string",
+      "enum": ["ed25519"],
+      "description": "Optional BUILD signature envelope (): the signature suite (only ed25519)."
+    }
+  }
+}

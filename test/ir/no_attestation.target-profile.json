@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "kind": "neutrino.target-profile",
+  "profileId": "target.test.no_attestation.v1",
+  "profileVersion": 1,
+  "target": "solidity",
+  "runtimeFamily": "on_chain",
+  "executionMode": "simulated",
+  "supportedFeatures": [
+    "binding:flexible",
+    "effect:credit",
+    "effect:debit",
+    "guard:conditional",
+    "invariant:balanced",
+    "topology:org_coordination",
+    "topology:participants",
+    "value_category:currency",
+    "value_category:decimal",
+    "value_category:evidence",
+    "value_category:money",
+    "value_category:party",
+    "value_category:string"
+  ],
+  "unsupportedConstructs": [],
+  "fallbackPolicy": "fail_closed",
+  "capabilitySpecVersion": "v1"
+}

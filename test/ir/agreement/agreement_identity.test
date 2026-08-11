@@ -1,0 +1,25 @@
+// [] The portable semantic-agreement identity: a versioned agreement envelope
+// + a domain-separated, length-framed agreementHash over the capability-spec's
+// canonical semantic bytes. The gate script proves it is deterministic,
+// MLIR==from-spec identical, realization-invariant, and fails closed (tamper /
+// unknown version), and that the committed golden vector's exact preimage bytes
+// recompute to their expected digest.
+//
+// RUN: python3 %S/check_agreement_identity.py %neutrino-gen %examples %S/../../..
+//
+// DEFINE: %{soa} = %curated3
+//
+// A source-authored agreement emits a schema-valid, hash-verified identity:
+// RUN: %neutrino-gen --target=agreement-identity %curated3-source -o %t.ai
+// RUN: %FileCheck %s --check-prefix=ID < %t.ai/agreement-identity.json
+// ID-DAG: "kind": "neutrino.agreement-identity"
+// ID-DAG: "domain": "neutrino.agreement.v1"
+// ID-DAG: "agreementHash": "a0bfb7dcd9cbf997f6e23e89fa63452ff317da6682e01b3ee1a244946a2cb3bd"
+// RUN: python3 %scripts/validators/validate_agreement_identity.py --artifact %t.ai/agreement-identity.json --verify-hashes %{soa}/generated/capability-spec/capability-spec.json
+//
+// A tampered capability-spec (a changed semantic field, a stale capabilityHash)
+// is REFUSED before any artifact is written:
+// RUN: python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); p["procedure"] += "__tampered"; json.dump(p,open(sys.argv[2],"w"))' %{soa}/generated/capability-spec/capability-spec.json %t.tam.json
+// RUN: %not %neutrino-gen --target=agreement-identity --from-spec %t.tam.json -o %t.tam 2>&1 | %FileCheck %s --check-prefix=TAMPER
+// TAMPER: capabilityHash mismatch
+// RUN: test ! -e %t.tam/agreement-identity.json

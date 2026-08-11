@@ -1,0 +1,448 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "contribution"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "offer_id"
+      },
+      "kind": "debit",
+      "ledger": "sponsor.commitment",
+      "name": "sponsor_commitment",
+      "owner": "sponsor",
+      "participant": "Sponsor",
+      "party": {
+        "kind": "ref",
+        "value": "sponsor_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "contribution"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "offer_id"
+      },
+      "kind": "credit",
+      "ledger": "merchant.expected_contribution",
+      "name": "merchant_expected_contribution",
+      "owner": "merchant",
+      "participant": "Merchant",
+      "party": {
+        "kind": "ref",
+        "value": "merchant_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "300394cd718cde7cf1c6d950413d5128aa860d4b32374542d42b8e64525bf4ff",
+    "specHash": "19b737c54d2190c610b0cdce7d544255f08501ddb85abd4da33de5ea307afda1"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "offer_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "sponsor_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "merchant_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "contribution",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "offer_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "evm",
+        "jvm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "Sponsor",
+      "org": "sponsorco",
+      "role": "sponsor"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Merchant",
+      "org": "acme",
+      "role": "merchant"
+    }
+  ],
+  "procedure": "core_flexible_binding",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input offer_id",
+      "source": {
+        "column": 1,
+        "line": 40
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input sponsor_id",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input merchant_id",
+      "source": {
+        "column": 1,
+        "line": 42
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input contribution",
+      "source": {
+        "column": 1,
+        "line": 43
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 44
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "debit sponsor_commitment",
+      "source": {
+        "column": 1,
+        "line": 46
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit merchant_expected_contribution",
+      "source": {
+        "column": 1,
+        "line": 56
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "participant Sponsor",
+      "source": {
+        "column": 1,
+        "line": 24
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Merchant",
+      "source": {
+        "column": 1,
+        "line": 31
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "allow sponsorco with acme",
+      "source": {
+        "column": 1,
+        "line": 35
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 66
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input offer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 40
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input sponsor_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 41
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input contribution",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 43
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 44
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit sponsor_commitment",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 46
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit merchant_expected_contribution",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 56
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 66
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant Sponsor",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 24
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Sponsor",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 24
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow sponsorco with acme",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 35
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "sponsorco",
+        "orgB": "acme",
+        "roleA": "sponsor",
+        "roleB": "merchant"
+      }
+    ]
+  },
+  "trigger": "sponsored_offer_proposed"
+}

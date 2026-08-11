@@ -1,0 +1,17 @@
+{
+  "kind": "neutrino.runtime-evidence",
+  "bindingId": "bnd-7f3a9c21",
+  "agreementHash": "a1b2c3d4e5f60718293a4b5c6d7e8f90112233445566778899aabbccddeeff00",
+  "irHash": "0011223344556677889900aabbccddeeff112233445566778899aabbccddeeff",
+  "capabilityId": "coordinate.core_flexible_binding",
+  "capabilityVersion": "1.0.0",
+  "runtimeIdentity": "evm:local-anvil:0xA11ce0000000000000000000000000000000A11c",
+  "participantIdentity": "Sponsor",
+  "event": { "name": "COMMIT", "transcriptRef": "transcript:core_flexible_binding:seq-2" },
+  "sequence": 2,
+  "previousEvidenceHash": "1111111111111111111111111111111111111111111111111111111111111111",
+  "evidenceHash": "2222222222222222222222222222222222222222222222222222222222222222",
+  "verificationResult": "pass",
+  "signatureSuite": "ed25519",
+  "signature": "MEQCIH...demo-evidence-signature...Ag"
+}

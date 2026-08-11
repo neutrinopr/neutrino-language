@@ -1,0 +1,5 @@
+// The normalized plan carries authorization actors, effect bindings, and
+// organization topology through both construction paths. The helper also
+// proves label-invariant canonicalization and fail-closed malformed variants.
+//
+// RUN: python3 %S/check_coordination_plan_authorization.py --gen %neutrino-gen --source %S/coordination_plan.neu --tmp %t

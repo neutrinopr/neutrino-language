@@ -1,0 +1,87 @@
+//  S2: an EXTERNAL, hand-authored v3 domain-semantics artifact for a
+// source-backed domain (core_document_escrow) is a COMPLETE input to the intake
+// seam — admitted, reduced through the  reducer against the concrete
+// coordination plan, registry-conformant, and byte-identical to the source-path
+// reduction. Reuses classify_m7_intake (admission), neutrino-emit
+// --kind=domain-reduction (the  reducer), and the  capability registry;
+// no parallel model. See check_m7_reduction_conformance.py.
+//
+// DEFINE: %{ext}  = %examples/m7-intake/core_document_escrow_external.l2v3.json
+// DEFINE: %{spec} = %test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json
+// DEFINE: %{src}  = %test/ir/samples/Inputs/core_document_escrow/source/core_document_escrow.neu
+// DEFINE: %{conform} = python3 %scripts/gates/check_m7_reduction_conformance.py
+// DEFINE: %{classify} = python3 %scripts/gates/classify_m7_intake.py
+
+// --- admission: the external ontology-shaped artifact is admitted ---
+// RUN: %{classify} --artifact %{ext} | %FileCheck %s --check-prefix=ADMIT
+// ADMIT: "admitted": true
+
+// --- conformance: admitted + reduced against the concrete coordination plan + registry-anchored ---
+// RUN: %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %neutrino-emit | %FileCheck %s --check-prefix=CONFORM
+// CONFORM: "conformant": true
+// CONFORM: "effect:debit"
+
+// --- source-path parity: the external artifact reduces IDENTICALLY whether the
+//     coordination plan is built from the capability-spec or the source .neu ---
+// RUN: %neutrino-emit --kind=domain-reduction %{ext} --reduce-against %{spec} > %t.ext.spec
+// RUN: %neutrino-emit --kind=domain-reduction %{ext} --reduce-against %{src} > %t.ext.src
+// RUN: diff %t.ext.spec %t.ext.src
+
+// the committed golden reduction (consumed build-free by the  S3 governance
+// gate) is byte-identical to what the live  reducer emits — it cannot drift:
+// RUN: diff %t.ext.spec %examples/m7-intake/core_document_escrow_external.reduction.json
+
+// --- faithful stand-in: the hand-authored external artifact reduces byte-for-byte
+//     the same as the compiler's own l2.domain IR ---
+// RUN: %neutrino-emit --kind=domain-reduction %S/Inputs/reingest_domain.mlir --reduce-against %{spec} > %t.ir
+// RUN: diff %t.ext.spec %t.ir
+
+// --- conformance under the source-path coordination plan matches the spec-path reduction ---
+// RUN: %{conform} --artifact %{ext} --reduce-against %{src} --neutrino-emit %neutrino-emit --expect-reduction %t.ext.spec | %FileCheck %s --check-prefix=CONFORM
+
+// --- the COMPILER-EMITTED sidecar is REFUSED by admission (no versioned/hash-anchored
+//     provenance): it is the reduction artifact, not the M7 intake artifact. This is
+//     exactly what the external ontology-shaped fixture supplies. ---
+// RUN: %neutrino-emit --kind=domain-semantics %S/Inputs/reingest_domain.mlir > %t.emit.json
+// RUN: %not %{classify} --artifact %t.emit.json | %FileCheck %s --check-prefix=EMITREFUSE
+// EMITREFUSE: intake.unversioned_mapping
+
+// --- fail-closed tamper witnesses (stable conformance.* codes) ---
+// registry category flipped -> the declared kind no longer matches the authority:
+// RUN: python3 -c "import json,sys; r=json.load(open(sys.argv[1])); [c.update(category='obligation') for c in r['capabilities'] if c['id']=='effect:debit']; json.dump(r,open(sys.argv[2],'w'))" %examples/../docs/semantic-capability-registry.json %t.reg.badcat.json
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %neutrino-emit --registry %t.reg.badcat.json | %FileCheck %s --check-prefix=BADCAT
+// BADCAT: conformance.category_mismatch
+
+// registry capability removed -> an executable reduction targets an unregistered capability:
+// RUN: python3 -c "import json,sys; r=json.load(open(sys.argv[1])); r['capabilities']=[c for c in r['capabilities'] if c['id']!='effect:debit']; json.dump(r,open(sys.argv[2],'w'))" %examples/../docs/semantic-capability-registry.json %t.reg.drop.json
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %neutrino-emit --registry %t.reg.drop.json | %FileCheck %s --check-prefix=DROP
+// DROP: conformance.unregistered_capability
+
+// a divergent reduction is not a parity match:
+// RUN: echo '{"bindings":[],"domain":"x"}' > %t.wrong.red
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %neutrino-emit --expect-reduction %t.wrong.red | %FileCheck %s --check-prefix=PARITY
+// PARITY: conformance.parity_mismatch
+
+// a registry from a DIFFERENT semantic-profile version is refused, not reinterpreted:
+// RUN: python3 -c "import json,sys; r=json.load(open(sys.argv[1])); r['semanticProfileVersion']=999; json.dump(r,open(sys.argv[2],'w'))" %examples/../docs/semantic-capability-registry.json %t.reg.stale.json
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %neutrino-emit --registry %t.reg.stale.json | %FileCheck %s --check-prefix=STALE
+// STALE: conformance.stale_registry
+
+// a duplicate capability id is not the governed registry:
+// RUN: python3 -c "import json,sys; r=json.load(open(sys.argv[1])); r['capabilities'].append(dict(r['capabilities'][0])); json.dump(r,open(sys.argv[2],'w'))" %examples/../docs/semantic-capability-registry.json %t.reg.dup.json
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %neutrino-emit --registry %t.reg.dup.json | %FileCheck %s --check-prefix=DUP
+// DUP: conformance.malformed
+
+// a fake/regressed emitter that drops the executable binding is caught (a zero
+// exit is NOT proof): the admitted artifact's executable edge has no binding.
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %S/Inputs/fake_emit_empty.sh | %FileCheck %s --check-prefix=INCOMPLETE
+// INCOMPLETE: conformance.reduction_incomplete
+
+// a non-object reducer output fails closed with a stable code, never a traceback:
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %S/Inputs/fake_emit_array.sh | %FileCheck %s --check-prefix=NONOBJ
+// NONOBJ: conformance.malformed
+
+// a binding object MISSING its required fields fails closed with a stable code,
+// never a KeyError on downstream feature access:
+// RUN: %not %{conform} --artifact %{ext} --reduce-against %{spec} --neutrino-emit %S/Inputs/fake_emit_partial.sh | %FileCheck %s --check-prefix=BADBIND
+// BADBIND: conformance.malformed

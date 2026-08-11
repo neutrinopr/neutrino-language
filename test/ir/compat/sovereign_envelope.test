@@ -1,0 +1,8 @@
+// [73] sovereign-lowering envelope (): the official-translator envelope validates (shape + consumer
+// compat + real artifact hashes) and is consumable by check_compatibility.py directly; incompatible
+// dialect, missing language version, absolute+traversal artifact paths (POSIX & Windows), and malformed
+// sourceHash/capabilityVersion each fail closed; the published schema path pattern matches the
+// validator. See check_sovereign_envelope.py.
+//
+// RUN: python3 %S/check_sovereign_envelope.py %scripts/validators/validate_sovereign_envelope.py \
+// RUN:   %scripts/gates/check_compatibility.py %examples %docs/schemas/sovereign-lowering-envelope.schema.json

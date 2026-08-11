@@ -1,0 +1,16 @@
+{
+  "kind": "neutrino.slot-transcript-policy",
+  "capability": "coordinate.sponsored_offer_agreement",
+  "hashChain": {
+    "perEnvelope": "payloadHash = sha256(canonical(payload))",
+    "chain": "previousTranscriptHash links each envelope to the prior one",
+    "includesRejected": true,
+    "includesDiagnostics": true
+  },
+  "anchoring": {
+    "default": "per session close",
+    "valueMovingCommit": "optional per-commit anchor",
+    "anchorRef": { "chain": "evm", "records": "commitmentHash of committed legs", "via": "blockchain slot as coordinator-of-record" }
+  },
+  "evidence": []
+}

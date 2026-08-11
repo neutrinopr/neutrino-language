@@ -1,0 +1,168 @@
+{
+  "contentDigest": "sha256:782be08315357c6ad22e84762648ce295dc2f49dff4da4c10589b5bb0e5e59fd",
+  "coreContractBundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+  "declaredPackDigest": "sha256:cf10193c68593e3445dafe02104aa6ea23524e2698168af61377dcd8f6205856",
+  "kind": "neutrino.public-pack-receipt/1",
+  "members": [
+    {
+      "bytes": 6385,
+      "mode": "100644",
+      "path": "pack.json",
+      "sha256": "ff3369ad0faacc3d4a01c5d3e499be9af18cd29ee06020aab4acc3b85a8ccda4"
+    },
+    {
+      "bytes": 4547,
+      "mode": "100644",
+      "path": "generated/capability/postgres.json",
+      "sha256": "2ac5bed676203c25dc5546948b4cd822a17c6a10774e31669c3d1a5189505db6"
+    },
+    {
+      "bytes": 4506,
+      "mode": "100644",
+      "path": "generated/capability/solidity.json",
+      "sha256": "47c3a4b7045914651be23606c38cb0e95127d96299abf8e90c0ae9ed96f1a5bf"
+    },
+    {
+      "bytes": 9146,
+      "mode": "100644",
+      "path": "generated/capability-spec/capability-spec.json",
+      "sha256": "e741666bbdeb40377b37833e3a3d7ebb574c83e921df204644ee8c0eab079326"
+    },
+    {
+      "bytes": 2534,
+      "mode": "100644",
+      "path": "generated/coverage/coverage.json",
+      "sha256": "af7708a904ffd08a148fbd4bb3d5128c3d372f1e6d67de85a7dd2342ea72d5a3"
+    },
+    {
+      "bytes": 3558,
+      "mode": "100644",
+      "path": "generated/postgres/procedure.sql",
+      "sha256": "7f80d0864ef8cde4ef9457a65d11f96e1d9674e98b00d2e9207c60c57979ca0b"
+    },
+    {
+      "bytes": 265,
+      "mode": "100644",
+      "path": "generated/postgres/reconciliation.sql",
+      "sha256": "9376545e4d3cef235015c7aca18869e8cef7bace79a7ccc682f82c2e69cace52"
+    },
+    {
+      "bytes": 3944,
+      "mode": "100755",
+      "path": "generated/postgres/run_db_test.sh",
+      "sha256": "f1565bb600179ae4411548deb126ec82c8d55aa92d1b73d181a47a3889af2b6c"
+    },
+    {
+      "bytes": 1909,
+      "mode": "100644",
+      "path": "generated/postgres/schema.sql",
+      "sha256": "a33d99de1cb5d86537c12f12bdb4e940f2bf293bb6536827239b226b3935dce5"
+    },
+    {
+      "bytes": 1381,
+      "mode": "100644",
+      "path": "generated/security/security.json",
+      "sha256": "aea315b0bcc91be762ec35a2e8818305f9ec2891dabd4ad6831ffd2e81eea17a"
+    },
+    {
+      "bytes": 1163,
+      "mode": "100644",
+      "path": "generated/slot/binding-topology.json",
+      "sha256": "15ed8c04523380c453a3c5285354e3228a48dfc560c130de1c739b46396270af"
+    },
+    {
+      "bytes": 1886,
+      "mode": "100644",
+      "path": "generated/slot/capability.json",
+      "sha256": "0487134b92e0b7aa0265c03f54ed6b36151205633abff5da8772f79138c6cfbb"
+    },
+    {
+      "bytes": 858,
+      "mode": "100644",
+      "path": "generated/slot/capability.lock",
+      "sha256": "5ba3f6bebb1fb169c82b332e25697b7f6d3b80f07e5f03bf27c45ca50939a9c6"
+    },
+    {
+      "bytes": 644,
+      "mode": "100644",
+      "path": "generated/slot/compensation.json",
+      "sha256": "98ae6b2be53c7391958a647762f405f08116ce89baad0bde9dfed82f15709591"
+    },
+    {
+      "bytes": 1133,
+      "mode": "100644",
+      "path": "generated/slot/envelope.example.json",
+      "sha256": "97ad24476b23c9e913a9011ca8f4e4b024d60a85e622fa843c973f2f1a569cf9"
+    },
+    {
+      "bytes": 1610,
+      "mode": "100644",
+      "path": "generated/slot/envelope.schema.json",
+      "sha256": "6c3907e6ad94b8734f5f209284d6b806d5790dd2bdf5831f3e506eec7e8fc221"
+    },
+    {
+      "bytes": 931,
+      "mode": "100644",
+      "path": "generated/slot/operations.json",
+      "sha256": "615d696c3ee3c1677cc36746b100cc1985c1298cd0e043955c16f239d52cc07d"
+    },
+    {
+      "bytes": 592,
+      "mode": "100644",
+      "path": "generated/slot/transcript.json",
+      "sha256": "83da491c6364923132e1d61fd6b739809fd06c98aad60cb24d950b7d92d2acaa"
+    },
+    {
+      "bytes": 160,
+      "mode": "100644",
+      "path": "generated/solidity/foundry.toml",
+      "sha256": "d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+    },
+    {
+      "bytes": 2409,
+      "mode": "100644",
+      "path": "generated/solidity/src/SponsoredOfferAgreement.sol",
+      "sha256": "924f0e8a7e3130bcc42352f6fa0c28b27e18b701c2cb78548a20e045ec089370"
+    },
+    {
+      "bytes": 3987,
+      "mode": "100644",
+      "path": "generated/solidity/test/SponsoredOfferAgreement.t.sol",
+      "sha256": "bf41ab2373f653d9f5d67fd408c042f1f9a42cbe3bd8ed4bf77aa1e8a21315b9"
+    },
+    {
+      "bytes": 759,
+      "mode": "100644",
+      "path": "generated/test-realization/test-realization.json",
+      "sha256": "9c49079197adf20a4ecc08fe1e193095595d6a134a12b3858ca892fcb399a03c"
+    },
+    {
+      "bytes": 1401,
+      "mode": "100644",
+      "path": "generated/views/Merchant.json",
+      "sha256": "27573148cb71cecad4119ca47ad9504f7cc45f84f4e8360cae54c622e3d00fd9"
+    },
+    {
+      "bytes": 1373,
+      "mode": "100644",
+      "path": "generated/views/Sponsor.json",
+      "sha256": "19a2648a44a55b59427bfb47baf1e0e61b217c5cc8c0d560be9885d4f6cf5c4f"
+    },
+    {
+      "bytes": 630,
+      "mode": "100644",
+      "path": "scenario/sponsored_offer_agreement_happy_path.json",
+      "sha256": "0cdbe31b0d16e15acaf6906246e04f7d947d48f1fdd2eabba04527d96ce5bd26"
+    },
+    {
+      "bytes": 1836,
+      "mode": "100644",
+      "path": "source/sponsored_offer_agreement.neu",
+      "sha256": "cbafeb60275627a6d22338ee2b62de139be76fcc30458235d234e7d32a2222bc"
+    }
+  ],
+  "packId": "sponsored_offer_agreement",
+  "packPath": "domains/packs/sponsored_offer_agreement/pack",
+  "receiptIdentity": "sha256:cb53090d115a0493aa0af233bbbbbeec5f9642b6303528e2ec661d9eb5ca33b5",
+  "schemaVersion": 1
+}

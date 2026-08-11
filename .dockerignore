@@ -1,0 +1,9 @@
+# Keep the build context small: rebuild everything inside the image.
+out/
+build/
+.foundry/
+.git/
+.pytest_cache/
+jvm-wrapper/build/
+jvm-wrapper/.gradle/
+**/.DS_Store

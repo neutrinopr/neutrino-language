@@ -1,0 +1,40 @@
+{
+  "concepts": [
+    {
+      "classification": "executable",
+      "kind": "state",
+      "name": "x"
+    }
+  ],
+  "domain": "dbo",
+  "domainSemanticsHash": "fc7f58f4d5be3e664cd09f329c99e58b9b6e1b83d975d29fc0660a1dd06de006",
+  "failureModes": [],
+  "implements": "coordinate.core_promo_campaign",
+  "imports": [],
+  "invariants": [],
+  "kind": "neutrino.l2-domain-semantics",
+  "l1Features": [
+    {
+      "kind": "primitive",
+      "name": "effect:debit"
+    }
+  ],
+  "provenance": [
+    {
+      "source": "s",
+      "status": "accepted",
+      "subject": "r"
+    }
+  ],
+  "reductions": [
+    {
+      "from": "x",
+      "id": "r",
+      "lossiness": "lossless",
+      "relation": "expands",
+      "to": "effect:debit"
+    }
+  ],
+  "schemaVersion": 2,
+  "version": "1.0.0"
+}

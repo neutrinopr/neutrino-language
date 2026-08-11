@@ -1,0 +1,8 @@
+// Conformance NEGATIVE: `binding_manifest { ... }` is NOT accepted source syntax (M3
+// source-level non-goal) — the parser must reject it, not silently ignore it.
+procedure pseudo_binding_manifest {
+    trigger t
+    binding_manifest {
+        field = "value"
+    }
+}

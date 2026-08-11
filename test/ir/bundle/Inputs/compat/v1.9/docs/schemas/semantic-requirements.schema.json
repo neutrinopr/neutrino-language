@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/semantic-requirements/v1",
+  "title": "neutrino.semantic-requirements",
+  "description": "The scenario-free compiler-owned semantic requirements and metrics derived from a verified CoordinationPlan.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "semanticProfileVersion", "requirements", "metrics"],
+  "properties": {
+    "kind": {"const": "neutrino.semantic-requirements"},
+    "schemaVersion": {"const": 1},
+    "semanticProfileVersion": {"type": "integer", "minimum": 1},
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["feature", "primitive"],
+        "properties": {
+          "feature": {"type": "string", "pattern": "^[a-z][a-z_]*:[a-z][a-z0-9_]*$"},
+          "primitive": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expressionDepth", "effectCount", "effectGroupCount", "attestationCount", "computeCount", "operationSteps"],
+      "properties": {
+        "expressionDepth": {"type": "integer", "minimum": 0},
+        "effectCount": {"type": "integer", "minimum": 0},
+        "effectGroupCount": {"type": "integer", "minimum": 0},
+        "attestationCount": {"type": "integer", "minimum": 0},
+        "computeCount": {"type": "integer", "minimum": 0},
+        "operationSteps": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "neutrino.capability-security",
+  "schemaVersion": "0.1.0",
+  "procedure": "sponsored_offer_agreement",
+  "dslVersion": "0.1.0",
+  "ok": true,
+  "categories": [
+    {
+      "category": "authorization",
+      "status": "pass",
+      "findings": ["2 participant(s) declared; every value-moving leg bound to a declared participant", "leg 'sponsor_commitment' (debit sponsor.commitment) authorized by participant 'Sponsor' (role 'sponsor')", "leg 'merchant_expected_contribution' (credit merchant.expected_contribution) authorized by participant 'Merchant' (role 'merchant')"]
+    },
+    {
+      "category": "value",
+      "status": "pass",
+      "findings": ["balanced invariant asserted; debits conserve credits"]
+    },
+    {
+      "category": "topology",
+      "status": "pass",
+      "findings": ["no inter-capability invocations declared; composition trivially satisfied", "cross-organization coordination permitted by declared policy (1 allowed pair(s))"]
+    },
+    {
+      "category": "trustBoundary",
+      "status": "pass",
+      "findings": ["every ledger leg carries an idempotency_key (replay-safe)", "0 evidence/attestation input(s) declared"]
+    },
+    {
+      "category": "state",
+      "status": "n/a",
+      "findings": ["no explicit state-machine construct in the current DSL (L2)"]
+    }
+  ],
+  "advisories": 0,
+  "violations": 0,
+  "resultCode": 0
+}

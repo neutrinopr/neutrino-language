@@ -1,0 +1,26 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_promo_campaign",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "7438d20f5e41d9ffd3d3d32ed3d8d180cdcdfb9b022ddfcddb342b2029718239", "specVersion": "1.0.0" },
+  "participant": { "name": "Sponsor", "role": "sponsor", "org": "sponsorco", "slotId": "coordinate.core_promo_campaign#Sponsor" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "redemption_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 51, "column": 1 } },
+    { "name": "sponsor_id", "type": "party", "specPath": "inputs[1]", "source": { "line": 52, "column": 1 } },
+    { "name": "commission", "type": "money", "specPath": "inputs[4]", "source": { "line": 55, "column": 1 } },
+    { "name": "reimbursement", "type": "money", "specPath": "inputs[5]", "source": { "line": 56, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[6]", "source": { "line": 57, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "promoterco", "role": "promoter" },
+    { "org": "fulfillerco", "role": "fulfiller" }
+  ],
+  "binding": { "mode": "to_be_bound", "runtimes": ["evm"], "minAssurance": "A2", "authorizedBinder": "sponsorco" },
+  "evidenceObligations": [
+    { "leg": "sponsor_commission_funding", "kind": "debit", "ledger": "sponsor.promo_pool", "specPath": "effects[0]", "source": { "line": 59, "column": 1 } },
+    { "leg": "sponsor_reimbursement_funding", "kind": "debit", "ledger": "sponsor.promo_pool", "specPath": "effects[2]", "source": { "line": 79, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

@@ -1,0 +1,1929 @@
+{
+  "kind": "neutrino.solidity-harness-printer.retirement-inventory.v2",
+  "documentId": "urn:neutrino:document:solidity-harness-printer-v1",
+  "primaryTU": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+  "scope": "Handwritten .t.sol authoring sites (codetext line()/block()) in the Foundry test-harness generator. Emitted by check_solidity_harness_printer.py --emit; the fail-closed ratchet drives this toward zero as constructs migrate to typed harness nodes over the generic driver (). Byte-identity of the .t.sol goldens is bound by the golden/IR-lit test surface, not by this manifest.",
+  "baseline": 238,
+  "constructCounts": {
+    "assertion-and-call": 2,
+    "cheatcode-interface": 3,
+    "computed": 141,
+    "expect-emit": 5,
+    "expect-revert": 8,
+    "helper-fn": 11,
+    "import": 1,
+    "mock-quorum-guard": 6,
+    "other": 28,
+    "pragma": 3,
+    "scenario-test-fn": 18,
+    "setUp": 4,
+    "spdx": 3,
+    "state-var-declaration": 5
+  },
+  "sites": [
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_instances_are_isolated_per_key() public {\", \"}\", {line(\"gua",
+      "digest": "01f33b0df7edd9b3"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "helper-fn",
+      "fingerprint": "line(\"function expectRevert(bytes calldata) external;\")",
+      "digest": "049abf42453b9039"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(accStatus(\"_k\") + solString(\"gated status\") + \");\")",
+      "digest": "0dc46017a262b2d5"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"return keccak256(bytes(\" + KEY + \"));\")",
+      "digest": "1749849c4713007e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_unaccepted_quorum_rejected() public {\", \"}\", {line(\"vm.expe",
+      "digest": "1886b2972036d206"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"accepted[claimId] = v;\")",
+      "digest": "21975753522f4d4a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c = new \" + name + \"(address(guard));\")",
+      "digest": "2913c5d53574f9de"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"replay\\\"));\")",
+      "digest": "2a6187c74ac297f7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"event \" + name + \"Accepted(string \" + key + \");\")",
+      "digest": "2cd05e49e27a72f0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + altArgs + \");\")",
+      "digest": "35ed79add2445f07"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"function test_accept_records_evidence_and_emits() \" \"public {\", \"}\", std:",
+      "digest": "3af59c74833b2920"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "state-var-declaration",
+      "fingerprint": "line(\"Vm constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);\")",
+      "digest": "3b8782262510f75a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"return accepted[claimId];\")",
+      "digest": "49a6343e4f670d79"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "setUp",
+      "fingerprint": "block(\"function setUp() public {\", \"}\", {line(\"guard = new MockQuorumGuard();\"),",
+      "digest": "4f9d54d686a18c0e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(accStatus(\"_k\") + solString(\"accepted\") + \");\")",
+      "digest": "5371c15cd44e1b01"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "mock-quorum-guard",
+      "fingerprint": "line(\"mapping(bytes32 => bool) public accepted;\")",
+      "digest": "72d570b2a3e6db16"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"// each instance key keeps its own status; no sharing\")",
+      "digest": "73b1b3ccfe9cdb7b"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "mock-quorum-guard",
+      "fingerprint": "block(\"contract MockQuorumGuard {\", \"}\", {line(\"mapping(bytes32 => bool) public ",
+      "digest": "7403abb6d3b92d04"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"guard.setAccepted(keccak256(bytes(\" + KEY + \"_2)), true);\")",
+      "digest": "78e7bfcfdbff535a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string constant \" + upper(p.first) + \" = \" + solString(val.s) + \";\")",
+      "digest": "7af840d15bf90f41"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string constant \" + KEY + \"_2 = \" + solString(tr.inputs.at(key).s + \"-2\") ",
+      "digest": "7deb8504a1385095"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(name + \" c;\")",
+      "digest": "7e8e7f109cc11fd0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"emit \" + name + \"Accepted(\" + KEY + \");\")",
+      "digest": "824c0e802db670d0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "helper-fn",
+      "fingerprint": "block(\"function setAccepted(bytes32 claimId, bool v) external {\", \"}\", {line(\"ac",
+      "digest": "84ca8048f1fb54bd"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "state-var-declaration",
+      "fingerprint": "line(\"MockQuorumGuard guard;\")",
+      "digest": "89705418b2d636dd"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "helper-fn",
+      "fingerprint": "line(\"function expectEmit(bool, bool, bool, bool) external;\")",
+      "digest": "9787a8adbf735195"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"quorum not accepted\\\"));\")",
+      "digest": "a2cbe4cc3a5689a6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "cheatcode-interface",
+      "fingerprint": "block(\"interface Vm {\", \"}\", {line(\"function expectRevert(bytes calldata) extern",
+      "digest": "b271823e7cf2cf0e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"contract \" + name + \"Test {\", \"}\", std::move(tb))",
+      "digest": "c09d62a67883c509"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(accStatus(\"keccak256(bytes(\" + KEY + \"_2))\") + solString(\"k2 status\") + \");",
+      "digest": "c33dfc5da47c7d3e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + callArgs + \");\")",
+      "digest": "c8c0a5c1abb8ee34"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + callArgs + \");\")",
+      "digest": "c8c0a5c1abb8ee34"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + callArgs + \");\")",
+      "digest": "c8c0a5c1abb8ee34"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + callArgs + \");\")",
+      "digest": "c8c0a5c1abb8ee34"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + callArgs + \");\")",
+      "digest": "c8c0a5c1abb8ee34"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.accept(\" + callArgs + \");\")",
+      "digest": "c8c0a5c1abb8ee34"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"guard = new MockQuorumGuard();\")",
+      "digest": "c924a0025e35d8a9"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_accepted_quorum_proceeds() public {\", \"}\", {line(\"bytes32 _",
+      "digest": "ccbf3a354eb5b7aa"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(accStatus(\"keccak256(bytes(\" + KEY + \"))\") + solString(\"k1 status\") + \");\")",
+      "digest": "ccdf3502bafd0958"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"guard.setAccepted(keccak256(bytes(\" + KEY + \")), true);\")",
+      "digest": "cd1bded9d6a740ea"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"guard.setAccepted(keccak256(bytes(\" + KEY + \")), true);\")",
+      "digest": "cd1bded9d6a740ea"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"guard.setAccepted(keccak256(bytes(\" + KEY + \")), true);\")",
+      "digest": "cd1bded9d6a740ea"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"guard.setAccepted(keccak256(bytes(\" + KEY + \")), true);\")",
+      "digest": "cd1bded9d6a740ea"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(accStatus(\"_k\") + solString(\"still accepted\") + \");\")",
+      "digest": "cd8ef624cfb51824"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_replay_is_refused() public {\", \"}\", {line(\"bytes32 _k = _ke",
+      "digest": "cf94aa6b3baf0ab5"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "pragma",
+      "fingerprint": "line(\"pragma solidity ^0.8.20;\")",
+      "digest": "d26fe7c990f7e3dc"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"/// Generated by the Neutrino Translator from scenario \\\"\" + tr.scenario +",
+      "digest": "dceb9e918dd96e0a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "helper-fn",
+      "fingerprint": "block(\"function _key() internal pure returns (bytes32) {\", \"}\", {line(\"return ke",
+      "digest": "e40952390372e012"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "spdx",
+      "fingerprint": "line(\"// SPDX-License-Identifier: MIT\")",
+      "digest": "e9fb8dfd641e56f4"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "expect-emit",
+      "fingerprint": "line(\"vm.expectEmit(true, true, true, true);\")",
+      "digest": "f038c263d289af50"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"import \\\"../src/\" + name + \".sol\\\";\")",
+      "digest": "f1ae6617a639c5f8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"uint256 constant \" + upper(p.first) + \" = \" + std::to_string(val.i) + \";\")",
+      "digest": "f703f35b5061bb9c"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityEvidenceTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"function isAccepted(bytes32 claimId) external view returns \" \"(bool) {\", ",
+      "digest": "fc47eec8f410aabb"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.debitTotal(_k) == c.creditTotal(_k), \" \"\\\"debit==credit\\\");\")",
+      "digest": "0088a339db8faa9f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "helper-fn",
+      "fingerprint": "line(\"function expectRevert(bytes calldata) external;\")",
+      "digest": "049abf42453b9039"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) == uint256(\" + name + \".Status.Reconciled)",
+      "digest": "049f56dec1e9d3e2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"event \" + pascalCase(e.getString(\"name\").value_or(\"\")) + verb + \"(string p",
+      "digest": "0757d8b5ca21d279"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.attest(\" + KEY + \");\")",
+      "digest": "0bc5b3709aa12fb2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.attest(\" + KEY + \");\")",
+      "digest": "0bc5b3709aa12fb2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_happy_path_reaches_reconciled_with_events() public {\", \"}\",",
+      "digest": "1400f098aab9676c"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"return keccak256(bytes(\" + KEY + \"));\")",
+      "digest": "1749849c4713007e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"// each workflow key keeps its own totals; no sharing/double \" \"counting\")",
+      "digest": "1aa734f332bcb300"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"accepted[claimId] = v;\")",
+      "digest": "21975753522f4d4a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) == uint256(\" + name + \".Status.Reconciled)",
+      "digest": "23fdde5a091a96cc"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c = new \" + name + \"(address(guard));\")",
+      "digest": "2913c5d53574f9de"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"replay\\\"));\")",
+      "digest": "2a6187c74ac297f7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"event \" + name + \"Reconciled(string \" + key + \");\")",
+      "digest": "347078cea3045c92"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_unaccepted_quorum_rejected() public {\", \"}\", {line(\"vm.expe",
+      "digest": "39d6330c9aff293b"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "state-var-declaration",
+      "fingerprint": "line(\"Vm constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);\")",
+      "digest": "3b8782262510f75a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"return accepted[claimId];\")",
+      "digest": "49a6343e4f670d79"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_replay_is_safe_no_double_debit() public {\", \"}\", {line(\"byt",
+      "digest": "49e28a3701234875"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "assertion-and-call",
+      "fingerprint": "line(\"require(c.debitTotal(_k) == c.creditTotal(_k), \\\"balanced\\\");\")",
+      "digest": "4d9940c7350f77fc"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "setUp",
+      "fingerprint": "block(\"function setUp() public {\", \"}\", {line(\"guard = new MockQuorumGuard();\"),",
+      "digest": "4f9d54d686a18c0e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_workflows_are_isolated_per_key() public {\", \"}\", {line(acc(",
+      "digest": "5dd9f59d98b7bb38"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"event \" + pascalCase(obj(&v, \"compute\").getString(\"name\").value_or(\"\")) + ",
+      "digest": "62c4b2aa17c501c3"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"emit \" + pascalCase(cname) + \"Computed(EXPECT_\" + upper(cname) + \");\")",
+      "digest": "64a50dff2632c5a0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_accepted_quorum_proceeds() public {\", \"}\", {line(\"bytes32 _",
+      "digest": "6db764106490b17d"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"event \" + trig + \"(string \" + key + \");\")",
+      "digest": "70647a0a3c71b242"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(acc(KEY + \"_2\"))",
+      "digest": "728ca880c14331e2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "mock-quorum-guard",
+      "fingerprint": "line(\"mapping(bytes32 => bool) public accepted;\")",
+      "digest": "72d570b2a3e6db16"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "mock-quorum-guard",
+      "fingerprint": "block(\"contract MockQuorumGuard {\", \"}\", {line(\"mapping(bytes32 => bool) public ",
+      "digest": "7403abb6d3b92d04"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string constant \" + upper(p.first) + \" = \" + solString(val.s) + \";\")",
+      "digest": "7af840d15bf90f41"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string constant \" + KEY + \"_2 = \" + solString(tr.inputs.at(key).s + \"-2\") ",
+      "digest": "7deb8504a1385095"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(name + \" c;\")",
+      "digest": "7e8e7f109cc11fd0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + altArgs + \");\")",
+      "digest": "810b506b9fe11b4e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.net(_k, \" + solString(kv.first) + \") == int256(\" + std::to_strin",
+      "digest": "8293d8354419bec2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "helper-fn",
+      "fingerprint": "block(\"function setAccepted(bytes32 claimId, bool v) external {\", \"}\", {line(\"ac",
+      "digest": "84ca8048f1fb54bd"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "state-var-declaration",
+      "fingerprint": "line(\"MockQuorumGuard guard;\")",
+      "digest": "89705418b2d636dd"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"emit \" + trig + \"(\" + KEY + \");\")",
+      "digest": "8e8edfe2f29918e8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_invalid_transition_ordering_rejected() public {\", \"}\", {lin",
+      "digest": "9081d485a42fc601"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.debitTotal(_k) == \" + debitTotalExpr + \", \\\"no double debit\\\");\"",
+      "digest": "968a17d38ca981c0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "helper-fn",
+      "fingerprint": "line(\"function expectEmit(bool, bool, bool, bool) external;\")",
+      "digest": "9787a8adbf735195"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"missing attestation\\\"));\")",
+      "digest": "9eecc177d2914994"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"quorum not accepted\\\"));\")",
+      "digest": "a2cbe4cc3a5689a6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.debitTotal(_k) == \" + debitTotalExpr + \", \\\"debit total\\\");\")",
+      "digest": "a8095948f2a216f7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.debitTotal(keccak256(bytes(\" + KEY + \"_2))) == \" + debitTotalExp",
+      "digest": "ad304a79944781d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"uint256 constant EXPECT_\" + upper(kv.first) + \" = \" + std::to_string(kv.se",
+      "digest": "aff4f64efe2bb822"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.debitTotal(keccak256(bytes(\" + KEY + \"))) == \" + debitTotalExpr ",
+      "digest": "b19d1026c8b9e062"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "cheatcode-interface",
+      "fingerprint": "block(\"interface Vm {\", \"}\", {line(\"function expectRevert(bytes calldata) extern",
+      "digest": "b271823e7cf2cf0e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_balanced_invariant_holds() public {\", \"}\", {line(\"bytes32 _",
+      "digest": "b69c9afd85e4cc32"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"contract \" + name + \"Test {\", \"}\", std::move(tb))",
+      "digest": "c09d62a67883c509"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"guard = new MockQuorumGuard();\")",
+      "digest": "c924a0025e35d8a9"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "setUp",
+      "fingerprint": "block(\"function setUp() public {\", \"}\", {line(\"c = new \" + name + \"();\")})",
+      "digest": "ccf55d0d8d5605a4"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"bad transition\\\"));\")",
+      "digest": "cd03fab30cb21411"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "pragma",
+      "fingerprint": "line(\"pragma solidity ^0.8.20;\")",
+      "digest": "d26fe7c990f7e3dc"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"/// Generated by the Neutrino Translator from scenario \\\"\" + tr.scenario +",
+      "digest": "dceb9e918dd96e0a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_missing_attestation_rejected() public {\", \"}\", {line(\"vm.ex",
+      "digest": "e141ac1130f95a7a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "helper-fn",
+      "fingerprint": "block(\"function _key() internal pure returns (bytes32) {\", \"}\", {line(\"return ke",
+      "digest": "e40952390372e012"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "spdx",
+      "fingerprint": "line(\"// SPDX-License-Identifier: MIT\")",
+      "digest": "e9fb8dfd641e56f4"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c = new \" + name + \"();\")",
+      "digest": "ea98dab7d6eb795d"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-emit",
+      "fingerprint": "line(\"vm.expectEmit(true, true, true, true);\")",
+      "digest": "f038c263d289af50"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-emit",
+      "fingerprint": "line(\"vm.expectEmit(true, true, true, true);\")",
+      "digest": "f038c263d289af50"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-emit",
+      "fingerprint": "line(\"vm.expectEmit(true, true, true, true);\")",
+      "digest": "f038c263d289af50"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "expect-emit",
+      "fingerprint": "line(\"vm.expectEmit(true, true, true, true);\")",
+      "digest": "f038c263d289af50"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"import \\\"../src/\" + name + \".sol\\\";\")",
+      "digest": "f1ae6617a639c5f8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"emit \" + name + \"Reconciled(\" + KEY + \");\")",
+      "digest": "f3d89f9dacec1112"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"emit \" + pascalCase(e.getString(\"name\").value_or(\"\")) + verb + \"(\" + testS",
+      "digest": "f5474579c0b24710"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"uint256 constant \" + upper(p.first) + \" = \" + std::to_string(val.i) + \";\")",
+      "digest": "f703f35b5061bb9c"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"function isAccepted(bytes32 claimId) external view returns \" \"(bool) {\", ",
+      "digest": "fc47eec8f410aabb"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(acc(KEY))",
+      "digest": "ffe2f5b35ce7785f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(acc(KEY))",
+      "digest": "ffe2f5b35ce7785f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(acc(KEY))",
+      "digest": "ffe2f5b35ce7785f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(acc(KEY))",
+      "digest": "ffe2f5b35ce7785f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateSolidityTestFromSpec",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(acc(KEY))",
+      "digest": "ffe2f5b35ce7785f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "helper-fn",
+      "fingerprint": "line(\"function expectRevert(bytes calldata) external;\")",
+      "digest": "049abf42453b9039"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_incremental_commit_then_terminal() public {\", \"}\", std::mov",
+      "digest": "0d9b032984693aad"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"_c[\" + idx + \"] = \" + solString(categoryName(cat).str()) + \";\")",
+      "digest": "11aa77cccaa6b8e7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.debitTotal(_k) == _d, \\\"group commits exactly \" \"once\\\");\")",
+      "digest": "15626c30344fc8f4"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "import",
+      "fingerprint": "line(\"import \\\"../src/CoordinationEnvelope.sol\\\";\")",
+      "digest": "15ee55998f10c318"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"return keccak256(bytes(\" + KEY + \"));\")",
+      "digest": "1749849c4713007e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"// ... but a DIFFERENT payload B is submitted on the (unbound) \" \"key.\")",
+      "digest": "25c550fc8d5605bb"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"// key1 reaches terminal.\")",
+      "digest": "27495567fde45469"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_replay_after_terminal_refused() public {\", \"}\", std::move(b",
+      "digest": "2913480febf48415"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"replay\\\"));\")",
+      "digest": "2a6187c74ac297f7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string[] memory _n = new string[](\" + std::to_string(sortedInputs.size()) ",
+      "digest": "2d2e7a4dc8c3c9a5"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"function isAccepted(bytes32 claimId) external view returns \" \"(bool) {\", ",
+      "digest": "2f549ecb934ffac0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) \" + std::string(last ? \"== \" : \"!= \") + RE",
+      "digest": "2f761bf56abe1558"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "setUp",
+      "fingerprint": "block(\"function setUp() public {\", \"}\", std::move(su))",
+      "digest": "2fa9514d4ebf2668"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"bytes32 _cl = _claim(\" + KEY + \");\")",
+      "digest": "30394a99a1c17198"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"bytes32 _cl = _claim(\" + KEY + \");\")",
+      "digest": "30394a99a1c17198"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"bytes32 _cl = _claim(\" + KEY + \");\")",
+      "digest": "30394a99a1c17198"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "state-var-declaration",
+      "fingerprint": "line(\"Vm constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);\")",
+      "digest": "3b8782262510f75a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_cross_key_isolation() public {\", \"}\", std::move(b))",
+      "digest": "3c0247ee98fa320c"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(tg.second) + \".setAcceptedClaim(_k, _claim(\" + KEY + \"));\")",
+      "digest": "412bd57d7c840eb2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) != \" + RECON + \", \\\"no premature terminal\\",
+      "digest": "434da63cbe09ec72"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.keyClaim(_k) == _cl, \\\"keyClaim pinned to the \" \"recomputed exec",
+      "digest": "44ba9e9c12dddf27"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"function setAcceptedClaim(bytes32 claimId, bytes32 claim) \" \"external {\",",
+      "digest": "4a536b717528c340"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"// terminal), so nothing re-posts.\")",
+      "digest": "4d3603e2ae350d01"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"// no policy accepted yet: a call commits nothing, leaves the \" \"key's\")",
+      "digest": "4f39c3563abfaef6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "expect-revert",
+      "fingerprint": "line(\"vm.expectRevert(bytes(\\\"claim mismatch\\\"));\")",
+      "digest": "55bf7b802f1c06b6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c = new \" + name + \"(\" + ctorArgs + \");\")",
+      "digest": "61546ba256ac3543"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.keyClaim(_k) == bytes32(0), \\\"no-progress leaves \" \"keyClaim \" \"",
+      "digest": "62ec17a64f729337"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"return CoordinationEnvelope.claim(\" + solString(identity) + \", _kv, _n, _c, _",
+      "digest": "6659a2f0c382ec8e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line((num ? \"uint256 constant \" : \"string constant \") + upper(pin.name) + \"_ALT ",
+      "digest": "6c022060bc479498"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k2)) == \" + RECON + \", \\\"k2 reconciles indepen",
+      "digest": "6cb9b91a15171be7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(perPolicies[i]) + \" = new MockQuorumGuard();\")",
+      "digest": "6d1658f59a1b44f8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"// accept policy '\" + pol + \"' for THIS execution claim -> its group commi",
+      "digest": "6dc0c024d082c819"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + callArgs + \");\")",
+      "digest": "6fa2b283ce7a412a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"// the quorum accepted payload A's execution claim ...\")",
+      "digest": "72e5b34bb6bbc820"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"bytes32 _k = _key();\")",
+      "digest": "796a7f34345087d6"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string constant \" + KEY + \"_2 = \" + solString(tr.inputs.at(key).s + \"-2\") ",
+      "digest": "7deb8504a1385095"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"// claim unset, and does not reconcile (no premature terminal).\")",
+      "digest": "7e170fab24b03e6c"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(name + \" c;\")",
+      "digest": "7e8e7f109cc11fd0"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line((num ? \"uint256 constant \" : \"string constant \") + upper(pin.name) + \" = \" ",
+      "digest": "82f9183913482f7e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_guard_acceptance_of_A_does_not_authorize_B() public {\", \"}\"",
+      "digest": "86dffffebe959a36"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "assertion-and-call",
+      "fingerprint": "line(\"require(_d > 0, \\\"group posted its debit legs\\\");\")",
+      "digest": "881eb567b6ff44fe"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(tg.second) + \".setAcceptedClaim(_k, _cl);\")",
+      "digest": "8eb614c9b75f655f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) == \" + RECON + \", \\\"reconciled\\\");\")",
+      "digest": "8f950b126c018dd8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) == \" + RECON + \", \\\"k1 unchanged\\\");\")",
+      "digest": "9203f884ac6770de"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "mock-quorum-guard",
+      "fingerprint": "block(\"contract MockQuorumGuard {\", \"}\", {line(\"mapping(bytes32 => bytes32) publ",
+      "digest": "a18b95c591cc5fd2"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"function acceptedExecutionClaim(bytes32 claimId) external view \" \"returns",
+      "digest": "a1ab3e07d1c9381e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_group_commits_exactly_once() public {\", \"}\", {line(\"bytes32",
+      "digest": "a4e19c158db51c0c"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(pol) + \".setAcceptedClaim(_k, _cl);\")",
+      "digest": "ac8f7c7a234a623e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + altKeyArgs + \");\")",
+      "digest": "ad7bb922e42a0fcc"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"return claimOf[claimId] != bytes32(0);\")",
+      "digest": "ad8e2481987e4d4b"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.keyClaim(_k) == bytes32(0), \\\"B did not commit, so the \" \"key st",
+      "digest": "b054dd6de3880bc9"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(tg.second) + \".setAcceptedClaim(_k2, _claim(\" + KEY + \"_2));\")",
+      "digest": "b6407a1b6df98fa8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.\" + grp(gi) + \", \\\"group \" + std::to_string(gi) + \" committed on",
+      "digest": "b67555d3697d61c7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"// key2 (keyed on \" + KEY + \"_2, its own claim) executes independently to ",
+      "digest": "b89fdee26c95be00"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"_n[\" + idx + \"] = \" + solString(sortedInputs[i].name) + \";\")",
+      "digest": "bc42147c60d104ed"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k)) == \" + RECON + \", \\\"k1 reconciled\\\");\")",
+      "digest": "be1e6b80c2abde3b"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "cheatcode-interface",
+      "fingerprint": "block(\"interface Vm {\", \"}\", {line(\"function expectRevert(bytes calldata) extern",
+      "digest": "beb3fb012282db49"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"// re-execute: the group is already committed (and the \" \"key not yet\")",
+      "digest": "bf56469345861c00"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "computed",
+      "fingerprint": "block(\"contract \" + name + \"Test {\", \"}\", std::move(tb))",
+      "digest": "c09d62a67883c509"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.keyClaim(_k2) == _claim(\" + KEY + \"_2), \\\"k2 bound to its own cl",
+      "digest": "c815326f2d8b2f40"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string[] memory _c = new string[](\" + std::to_string(sortedInputs.size()) ",
+      "digest": "c84ecfa0990a52c8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"MockQuorumGuard \" + guardVar(p) + \";\")",
+      "digest": "caf6f8d4650eb453"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"string[] memory _v = new string[](\" + std::to_string(sortedInputs.size()) ",
+      "digest": "cb49c86ac416e47a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"claimOf[claimId] = claim;\")",
+      "digest": "cdbfed272dfb123e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"uint256 _d = c.debitTotal(_k);\")",
+      "digest": "d1bc267f819b8e51"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "pragma",
+      "fingerprint": "line(\"pragma solidity ^0.8.20;\")",
+      "digest": "d26fe7c990f7e3dc"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(p0) + \".setAcceptedClaim(_k, _cl);\")",
+      "digest": "d57c652862c36d7f"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "other",
+      "fingerprint": "line(\"return claimOf[claimId];\")",
+      "digest": "d5c07f83e9cc574e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"/// Generated by the Neutrino Translator from scenario \\\"\" + tr.scenario +",
+      "digest": "dceb9e918dd96e0a"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "helper-fn",
+      "fingerprint": "block(\"function _key() internal pure returns (bytes32) {\", \"}\", {line(\"return ke",
+      "digest": "e40952390372e012"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(uint256(c.statusOf(_k2)) != \" + RECON + \", \\\"k2 open before its ow",
+      "digest": "e4621ef89c11e738"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(!c.\" + grp(g0) + \", \\\"acceptance of A must not authorize a differe",
+      "digest": "e4dc3c60b0b45054"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"bytes32 _k2 = keccak256(bytes(\" + KEY + \"_2));\")",
+      "digest": "e8ab8aed1cd71a98"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "spdx",
+      "fingerprint": "line(\"// SPDX-License-Identifier: MIT\")",
+      "digest": "e9fb8dfd641e56f4"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.keyClaim(_k) == _claim(\" + KEY + \"), \\\"claim bound on first \" \"c",
+      "digest": "ed083da65a412193"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"require(c.\" + grp(g0) + \", \\\"group committed\\\");\")",
+      "digest": "ed58f08546397412"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"import \\\"../src/\" + name + \".sol\\\";\")",
+      "digest": "f1ae6617a639c5f8"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + altPayloadArgs + \");\")",
+      "digest": "f2f25fb69f361859"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"c.execute(\" + altPayloadArgs + \");\")",
+      "digest": "f2f25fb69f361859"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "helper-fn",
+      "fingerprint": "block(\"function _claim(string memory _kv) internal pure returns (bytes32) {\", \"}",
+      "digest": "f71c363f26d60472"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(p0) + \".setAcceptedClaim(_k, _claim(\" + KEY + \"));\")",
+      "digest": "fb266335cc55490e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(guardVar(p0) + \".setAcceptedClaim(_k, _claim(\" + KEY + \"));\")",
+      "digest": "fb266335cc55490e"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "mock-quorum-guard",
+      "fingerprint": "line(\"mapping(bytes32 => bytes32) public claimOf;\")",
+      "digest": "fb8a129a4f34f8f7"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "block",
+      "category": "scenario-test-fn",
+      "fingerprint": "block(\"function test_changed_payload_after_commit_reverts() public {\", \"}\", {lin",
+      "digest": "fc651f3b7965b848"
+    },
+    {
+      "path": "lib/backends/solidity/harness/GenSolidityTest.cpp",
+      "function": "generateTemporalTest",
+      "builder": "line",
+      "category": "computed",
+      "fingerprint": "line(\"_v[\" + idx + \"] = \" + v + \";\")",
+      "digest": "fee13696bb6827fd"
+    }
+  ]
+}

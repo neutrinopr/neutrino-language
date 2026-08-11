@@ -1,0 +1,7 @@
+// [43] T9-R0 characterization: solidity/postgres golden + schema-hash bridge vector (no drift) — every
+// deterministic generated source file for sponsored_offer_agreement +
+// merchant_sponsored_installment
+// byte-matches the committed domain-major golden (no missing AND no extra artifact); the capabilityHash
+// (Fabric EnvelopeHeader.schema_hash bridge) is pinned and decodes to 32 bytes. See check_characterization.py.
+//
+// RUN: python3 %S/check_characterization.py %neutrino-gen %examples

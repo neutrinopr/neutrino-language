@@ -1,0 +1,8 @@
+// [46] D8: hover resolves the ENCLOSING front-end symbol (translator-owned ranges, not regex) — it
+// reads a participant's start line from the front-end outline, hovers there, and expects that
+// participant (Sponsor) resolved with a non-empty construct doc; a non-lowering source fails closed
+// (ok:false, hover null, diagnostics). See check_hover.py.
+//
+// RUN: python3 %S/check_hover.py %scripts/generators/neutrino_lang.py %neutrino-emit \
+// RUN:   %test/ir/domain/Inputs/core_flexible_binding/source/core_flexible_binding.neu \
+// RUN:   %S/../neg_missing_field.neu

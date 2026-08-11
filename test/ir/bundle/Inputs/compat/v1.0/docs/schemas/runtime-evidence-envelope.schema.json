@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/runtime-evidence-envelope/v1",
+  "title": "Runtime Evidence Envelope",
+  "description": "A3 record: a signed event/transition linking runtime behavior back to the agreement, IR, binding, and runtime identity, in a sequence/hash chain. Produced by the network/runtime; SHOULD reference (not re-invent) the Fabric transcript. See docs/binding/TRUST_LATE_BINDING_CONTRACT.md.",
+  "type": "object",
+  "required": [
+    "kind", "bindingId", "agreementHash", "irHash", "capabilityId",
+    "capabilityVersion", "runtimeIdentity", "event", "sequence",
+    "previousEvidenceHash", "evidenceHash", "verificationResult", "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "kind": { "const": "neutrino.runtime-evidence" },
+    "bindingId": { "type": "string", "minLength": 1 },
+    "agreementHash": { "$ref": "#/$defs/hexSha256" },
+    "irHash": { "$ref": "#/$defs/hexSha256" },
+    "capabilityId": { "type": "string", "minLength": 1 },
+    "capabilityVersion": { "type": "string" },
+    "runtimeIdentity": { "type": "string", "minLength": 1 },
+    "participantIdentity": { "type": "string" },
+    "event": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "description": "State transition / workflow event (e.g. an OPEN..CLOSE operation)." },
+        "transcriptRef": { "type": "string", "description": "Reference into the Fabric transcript this evidence corresponds to." }
+      }
+    },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "previousEvidenceHash": {
+      "oneOf": [ { "$ref": "#/$defs/hexSha256" }, { "type": "null" } ],
+      "description": "Hash of the prior evidence in the chain; null for the first."
+    },
+    "evidenceHash": { "$ref": "#/$defs/hexSha256" },
+    "verificationResult": {
+      "enum": ["pass", "soft-deviation", "hard-deviation", "critical-deviation"],
+      "description": "Runtime's verdict for this evidence (deviation classes are network/T4-owned)."
+    },
+    "signatureSuite": { "type": "string" },
+    "signature": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "hexSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

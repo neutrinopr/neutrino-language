@@ -1,0 +1,9 @@
+// canonicalSemantics(CoordinationPlan) consumes only the verified CoordinationPlan.
+// The single curated manifest supplies all three frozen pairs; typed semantics
+// compare byte-identically while authorization topology remains non-empty.
+// Transition declaration order is erased, but changing the initial state bites.
+// An external graph above the exact tie-search bound fails before artifact emission.
+// Adding another balanced posting obligation must break both canonical semantics and
+// governed renders.
+//
+// RUN: python3 %S/check_canonical_plan_semantics.py %neutrino-gen %examples %docs/m6-curated-example-corpus.json %docs/diagnostic-taxonomy.json

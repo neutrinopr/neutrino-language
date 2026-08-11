@@ -1,0 +1,88 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_role_constrained",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "d491d163221ad796f606ab2235f083be575dc673517b80eadb76c97cf5979077",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "Merchant",
+    "role": "merchant",
+    "org": "acme",
+    "slotId": "coordinate.core_role_constrained#Merchant"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [
+    {
+      "name": "offer_id",
+      "type": "string",
+      "specPath": "inputs[0]",
+      "source": {
+        "line": 35,
+        "column": 1
+      }
+    },
+    {
+      "name": "merchant_id",
+      "type": "party",
+      "specPath": "inputs[2]",
+      "source": {
+        "line": 37,
+        "column": 1
+      }
+    },
+    {
+      "name": "contribution",
+      "type": "money",
+      "specPath": "inputs[3]",
+      "source": {
+        "line": 38,
+        "column": 1
+      }
+    },
+    {
+      "name": "currency",
+      "type": "currency",
+      "specPath": "inputs[4]",
+      "source": {
+        "line": 39,
+        "column": 1
+      }
+    }
+  ],
+  "permittedCounterparties": [
+    {
+      "org": "sponsorco",
+      "role": "sponsor"
+    }
+  ],
+  "evidenceObligations": [
+    {
+      "leg": "merchant_expected_contribution",
+      "kind": "credit",
+      "ledger": "merchant.expected_contribution",
+      "specPath": "effects[1]",
+      "source": {
+        "line": 51,
+        "column": 1
+      }
+    }
+  ],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

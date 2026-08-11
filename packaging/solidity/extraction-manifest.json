@@ -1,0 +1,808 @@
+{
+  "dependencyGraph": {
+    "generatedEdges": {
+      "BackendProjectionCodecFields.inc": {
+        "inputs": [
+          "docs/schemas/finalized-projection-v1.schema.json",
+          "include/Neutrino/BackendProjection.h",
+          "include/Neutrino/CoordinationPlan.h",
+          "include/Neutrino/ProjectionGateMode.h"
+        ],
+        "producer": "scripts/generators/gen_finalized_projection_schema.py"
+      },
+      "SolidityEmitBuilderDecls.inc": {
+        "inputs": [
+          "lib/backends/TargetPrinter.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td"
+        ],
+        "producer": "scripts/generators/backend_recipe_gen.py"
+      },
+      "SolidityEmitBuilders.inc": {
+        "inputs": [
+          "lib/backends/TargetPrinter.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td"
+        ],
+        "producer": "scripts/generators/backend_recipe_gen.py"
+      },
+      "SolidityPrinterHandlers.inc": {
+        "inputs": [
+          "lib/backends/TargetPrinter.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td"
+        ],
+        "producer": "scripts/generators/gen_target_node_registry.py"
+      },
+      "SolidityProjection.inc": {
+        "inputs": [
+          "lib/backends/TargetPrinter.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td",
+          "lib/backends/solidity/recipes/SolidityProjectionSchema.td"
+        ],
+        "producer": "scripts/generators/backend_recipe_gen.py"
+      },
+      "SolidityRecipeBuilders.inc": {
+        "inputs": [
+          "lib/backends/BackendIdiom.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td",
+          "lib/backends/solidity/recipes/SolidityEffectfulIdiomRecipes.td",
+          "lib/backends/solidity/recipes/SolidityEvidenceIdiomRecipes.td",
+          "lib/backends/solidity/recipes/SolidityIdiomRecipes.td",
+          "lib/backends/solidity/recipes/SolidityTemporalIdiomRecipes.td"
+        ],
+        "producer": "scripts/generators/backend_recipe_gen.py"
+      },
+      "SolidityTargetEnums.inc": {
+        "inputs": [
+          "lib/backends/TargetPrinter.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td"
+        ],
+        "producer": "scripts/generators/gen_target_node_registry.py"
+      },
+      "SolidityTargetNodes.inc": {
+        "inputs": [
+          "lib/backends/TargetPrinter.td",
+          "lib/backends/solidity/model/SolidityTargetNodes.td"
+        ],
+        "producer": "scripts/generators/gen_target_node_registry.py"
+      },
+      "finalized-projection-v1.schema.json": {
+        "byteComparedWith": "docs/schemas/finalized-projection-v1.schema.json",
+        "inputs": [
+          "docs/schemas/finalized-projection-v1.schema.json",
+          "include/Neutrino/BackendProjection.h",
+          "include/Neutrino/CoordinationPlan.h",
+          "include/Neutrino/ProjectionGateMode.h"
+        ],
+        "producer": "scripts/generators/gen_finalized_projection_schema.py"
+      },
+      "solidity_recipes.inc": {
+        "inputs": [
+          "lib/backends/BackendIdiom.td",
+          "lib/backends/solidity/recipes/SolidityEffectfulIdiomRecipes.td",
+          "lib/backends/solidity/recipes/SolidityEvidenceIdiomRecipes.td",
+          "lib/backends/solidity/recipes/SolidityIdiomRecipes.td",
+          "lib/backends/solidity/recipes/SolidityTemporalIdiomRecipes.td"
+        ],
+        "producer": "scripts/generators/gen_backend_idiom_recipes.py"
+      }
+    },
+    "linkEdges": [
+      {
+        "from": "neutrino-solidity-backend",
+        "to": "neutrino-solidity-package-private",
+        "visibility": "private"
+      },
+      {
+        "from": "neutrino-solidity-package-private",
+        "to": "neutrino.backend-source-runtime/1",
+        "visibility": "private-source"
+      },
+      {
+        "from": "neutrino.backend-source-runtime/1",
+        "to": "LLVM Support 15",
+        "visibility": "private"
+      }
+    ],
+    "runtimeEdge": {
+      "contract": "neutrino.backend-protocol/1",
+      "from": "installed backend-free core",
+      "payload": "neutrino.finalized-projection/1",
+      "startup": "neutrino.backend-startup/1",
+      "to": "neutrino-solidity-backend"
+    }
+  },
+  "documentId": "urn:neutrino:document:solidity-package-extraction-v1",
+  "forbiddenReachback": [
+    "lib/backends/postgres",
+    "translator-checkout-absolute-path",
+    "undeclared-generated-product",
+    "uninstalled-private-core-path"
+  ],
+  "generatedBuildProducts": [
+    "BackendProjectionCodecFields.inc",
+    "SolidityEmitBuilderDecls.inc",
+    "SolidityEmitBuilders.inc",
+    "SolidityPrinterHandlers.inc",
+    "SolidityProjection.inc",
+    "SolidityRecipeBuilders.inc",
+    "SolidityTargetEnums.inc",
+    "SolidityTargetNodes.inc",
+    "finalized-projection-v1.schema.json",
+    "solidity_recipes.inc"
+  ],
+  "groups": {
+    "authoredIncludes": [
+      {
+        "byteLen": 3421,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/CoordinationEnvelope.sol.inc",
+        "provenance": "neutrino-translator:lib/backends/solidity/CoordinationEnvelope.sol.inc",
+        "sha256": "sha256:36decac0cabdfd95f7cf94aadfd5648c7b9f76ee6ab7bb33b225a43c77c0edd8"
+      },
+      {
+        "byteLen": 10909,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/ThresholdQuorumAcceptance.sol.inc",
+        "provenance": "neutrino-translator:lib/backends/solidity/ThresholdQuorumAcceptance.sol.inc",
+        "sha256": "sha256:95a65f0adcd91a16de196318a1ffe9e57f4dadf1533a56bc619fa9cb726795fc"
+      },
+      {
+        "byteLen": 3880,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityCallableCoverage.inc",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityCallableCoverage.inc",
+        "sha256": "sha256:c7795871436b2583227863b050c15df78df4a8e428c0504dcd6e39de05083b69"
+      },
+      {
+        "byteLen": 149,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityRecipePackage.inc",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityRecipePackage.inc",
+        "sha256": "sha256:a7941e4d0d850386abe71f3376d7d4775af4affbfcd9e7ba19a9bf249a2d66ba"
+      }
+    ],
+    "backendHeaders": [
+      {
+        "byteLen": 1818,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "include/Neutrino/SolidityEmit.h",
+        "provenance": "neutrino-translator:include/Neutrino/SolidityEmit.h",
+        "sha256": "sha256:cd934c87b8fb7d6f9cb4bbf137eb015897983f5ba398097985457dc491eb951e"
+      },
+      {
+        "byteLen": 633,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "include/Neutrino/SolidityPackageArtifacts.h",
+        "provenance": "neutrino-translator:include/Neutrino/SolidityPackageArtifacts.h",
+        "sha256": "sha256:5ec7df3d7329c440711eb99b38c0785c40e24bf3bddaff5bf1039cc07f736c92"
+      },
+      {
+        "byteLen": 2004,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityRecipeProvider.h",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityRecipeProvider.h",
+        "sha256": "sha256:49800de784cd47a29611d1a7cf8609bae253707b3d00a6fdb97da0e2ceb37f60"
+      },
+      {
+        "byteLen": 3099,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityRenderer.h",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityRenderer.h",
+        "sha256": "sha256:fb86d76e5c02412ef99db0fe95edbe7cc65063e2e8a405402771932f8e756437"
+      },
+      {
+        "byteLen": 22685,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityTargetAdapter.h",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityTargetAdapter.h",
+        "sha256": "sha256:57b53b75a31008a69262c1d089e7df85a10d241224140b8debeecf076742beaa"
+      },
+      {
+        "byteLen": 2129,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityTargetValidation.h",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityTargetValidation.h",
+        "sha256": "sha256:04c7960c3152f0cc542655594dfa2517529b78140c2d317ee558c8c0f2e610bb"
+      }
+    ],
+    "backendSources": [
+      {
+        "byteLen": 2697,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/GenSolidityQuorumGuard.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/GenSolidityQuorumGuard.cpp",
+        "sha256": "sha256:82937a55984d734097bc3ba518e7ccdedba1ef953b77ac5addaffdbdfc260315"
+      },
+      {
+        "byteLen": 2883,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityEmit.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityEmit.cpp",
+        "sha256": "sha256:8818112af8fdcc19d9e24257790bb3be3ace1617e47c6305e2dab29cbf66ec03"
+      },
+      {
+        "byteLen": 27383,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityRecipeProvider.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityRecipeProvider.cpp",
+        "sha256": "sha256:15318898810e3510f51002ae5a54c07848bf5149e53b5c81459f1899fc3ffe95"
+      },
+      {
+        "byteLen": 2084,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityRenderer.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityRenderer.cpp",
+        "sha256": "sha256:69f7e926ba678c1476734e365979ad38107bafe25c4fe50e36e69d3d2442dd68"
+      },
+      {
+        "byteLen": 3437,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityTargetAdapter.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityTargetAdapter.cpp",
+        "sha256": "sha256:70179113d2f07d18d647942884e32aa8c0d067368bf6afebbf4cd40769ea7c63"
+      },
+      {
+        "byteLen": 17974,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/provider/SolidityTargetValidation.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/provider/SolidityTargetValidation.cpp",
+        "sha256": "sha256:80da671f428669b8ebcb53b4c2d98174e606eab5b048f8f7a216341bf569a647"
+      }
+    ],
+    "generatorInputs": [
+      {
+        "byteLen": 17361,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "docs/schemas/finalized-projection-v1.schema.json",
+        "provenance": "neutrino-translator:docs/schemas/finalized-projection-v1.schema.json",
+        "sha256": "sha256:97e5e29b87fa08990f276a33eedbb249e5afc247dc9a56e66c540dbea9f13e32"
+      },
+      {
+        "byteLen": 29237,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "include/Neutrino/BackendProjection.h",
+        "provenance": "neutrino-translator:include/Neutrino/BackendProjection.h",
+        "sha256": "sha256:a624d5e7151f613da75ff5b257f096d16684c18974723b80c1fd3d0503c4136d"
+      },
+      {
+        "byteLen": 18359,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "include/Neutrino/CoordinationPlan.h",
+        "provenance": "neutrino-translator:include/Neutrino/CoordinationPlan.h",
+        "sha256": "sha256:9dd075835a38cd61ff4193e349a33bb659a622a7802660dcdb24663a5317a81d"
+      },
+      {
+        "byteLen": 513,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "include/Neutrino/ProjectionGateMode.h",
+        "provenance": "neutrino-translator:include/Neutrino/ProjectionGateMode.h",
+        "sha256": "sha256:18cb213e9c97adf5295a0447a9a48bfa6bff4d4c4fd8436497f72b76ad1d2765"
+      }
+    ],
+    "generators": [
+      {
+        "byteLen": 118468,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "scripts/generators/backend_recipe_gen.py",
+        "provenance": "neutrino-translator:scripts/generators/backend_recipe_gen.py",
+        "sha256": "sha256:e63e4fb8b048c94d5f493eb79d68616851037a9cbbf01aa856ebcd31de06452e"
+      },
+      {
+        "byteLen": 39712,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "scripts/generators/gen_backend_idiom_recipes.py",
+        "provenance": "neutrino-translator:scripts/generators/gen_backend_idiom_recipes.py",
+        "sha256": "sha256:99b2705a5c3ace1c9b3ffe2584c73d42e993b8034bd6227c4f362c10e8d37f92"
+      },
+      {
+        "byteLen": 18677,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "scripts/generators/gen_finalized_projection_schema.py",
+        "provenance": "neutrino-translator:scripts/generators/gen_finalized_projection_schema.py",
+        "sha256": "sha256:72c57f72d8f2f51a2264a08fe6e382bb7233ce62187a9bd76300a3e76c6c92d3"
+      },
+      {
+        "byteLen": 44394,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "scripts/generators/gen_target_node_registry.py",
+        "provenance": "neutrino-translator:scripts/generators/gen_target_node_registry.py",
+        "sha256": "sha256:365541d6c0dc19baba5b3f3fe9af288473c6611455a5aa292711f1303e0b1fa7"
+      }
+    ],
+    "packageBuild": [
+      {
+        "byteLen": 4831,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "docs/m7-core-installed-export.json",
+        "provenance": "neutrino-translator:docs/m7-core-installed-export.json",
+        "sha256": "sha256:fc655fd715c56c1654411eadb4d767fd3eb7627f5fefd00a7f52076e30727322"
+      },
+      {
+        "byteLen": 25710,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/CMakeLists.txt",
+        "provenance": "neutrino-translator:lib/backends/solidity/CMakeLists.txt",
+        "sha256": "sha256:bbcf9c0e6f34da96809bcabb8115b98c7d16c0f716abd0f4d84d581cf2af1e81"
+      },
+      {
+        "byteLen": 9140,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/EXTRACTION.md",
+        "provenance": "neutrino-translator:lib/backends/solidity/EXTRACTION.md",
+        "sha256": "sha256:2dc2b89fa22562325568d9a07dcbf0895a1e849f40b53cfc7c59ea9ca69a9df7"
+      },
+      {
+        "byteLen": 10430,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "packaging/solidity/CMakeLists.txt",
+        "provenance": "neutrino-translator:packaging/solidity/CMakeLists.txt",
+        "sha256": "sha256:f54c3ab12f88c9ea5b4582f880e8ed4c3a6927b9830f126efaade987cd4218d1"
+      },
+      {
+        "byteLen": 2895,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "packaging/solidity/README.md",
+        "provenance": "neutrino-translator:packaging/solidity/README.md",
+        "sha256": "sha256:9becba3fdc602c440bc216e59787d8248f1e9591663e1e15873c5c399dd5a3a1"
+      },
+      {
+        "byteLen": 48542,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "packaging/solidity/scripts/check_clean_clone.py",
+        "provenance": "neutrino-translator:packaging/solidity/scripts/check_clean_clone.py",
+        "sha256": "sha256:741ad520c7836fe0f0d207282f2fa2bc3ecb1b99230d003a9590cd2f9a057697"
+      },
+      {
+        "byteLen": 6158,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "packaging/solidity/src/SolidityBackendMain.cpp",
+        "provenance": "neutrino-translator:packaging/solidity/src/SolidityBackendMain.cpp",
+        "sha256": "sha256:4c04073b612b86743315aca68647169042bae3a435faacfb83a8c5396b1c30e5"
+      }
+    ],
+    "sharedRuntimeContract": [
+      {
+        "byteLen": 5974,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "packaging/shared/backend-source-runtime-v1.json",
+        "provenance": "neutrino-translator:packaging/shared/backend-source-runtime-v1.json",
+        "sha256": "sha256:e32d68d92f775dc6285852098db22b8da2d257e69e913cde43c631d09596c09d"
+      }
+    ],
+    "sharedRuntimeHeaders": [
+      {
+        "byteLen": 29237,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/BackendProjection.h",
+        "provenance": "neutrino-translator:include/Neutrino/BackendProjection.h",
+        "sha256": "sha256:a624d5e7151f613da75ff5b257f096d16684c18974723b80c1fd3d0503c4136d"
+      },
+      {
+        "byteLen": 828,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/BackendProjectionCodec.h",
+        "provenance": "neutrino-translator:include/Neutrino/BackendProjectionCodec.h",
+        "sha256": "sha256:ba09dd35490311a73a821fffc3665f12796071661b7af97077753a63450d8af2"
+      },
+      {
+        "byteLen": 3318,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/BackendProjectionDriver.h",
+        "provenance": "neutrino-translator:include/Neutrino/BackendProjectionDriver.h",
+        "sha256": "sha256:44ecdad2d9097841bdd87a44c37bc1ec956a0d454374040c882c0d7498c39ede"
+      },
+      {
+        "byteLen": 5027,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/BackendProtocol.h",
+        "provenance": "neutrino-translator:include/Neutrino/BackendProtocol.h",
+        "sha256": "sha256:e740bddddf57219fbfbf45b9efb30e3d003cfbf31d8beb462855124c6f6e9fa2"
+      },
+      {
+        "byteLen": 830,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/BackendStartup.h",
+        "provenance": "neutrino-translator:include/Neutrino/BackendStartup.h",
+        "sha256": "sha256:d6df2b7aa1fa95efae7db81d83997c85538a3ab448f4164aa07fecd74854e4bd"
+      },
+      {
+        "byteLen": 12060,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/CodeText.h",
+        "provenance": "neutrino-translator:include/Neutrino/CodeText.h",
+        "sha256": "sha256:7461f763ab2080c02613ecb4fda2686ed6c0c46db91f7944ab969d0a3984d439"
+      },
+      {
+        "byteLen": 7422,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/Expr.h",
+        "provenance": "neutrino-translator:include/Neutrino/Expr.h",
+        "sha256": "sha256:b1cdbf2bdd9fba61fb567c9b969ee1764dc5f98f1806dc3298453f457be92fcc"
+      },
+      {
+        "byteLen": 2826,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/JsonUtil.h",
+        "provenance": "neutrino-translator:include/Neutrino/JsonUtil.h",
+        "sha256": "sha256:8e6bbb647093bad33506dde03aa112abec99aae57025a3046a10ccb0cc5c7e91"
+      },
+      {
+        "byteLen": 513,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/ProjectionGateMode.h",
+        "provenance": "neutrino-translator:include/Neutrino/ProjectionGateMode.h",
+        "sha256": "sha256:18cb213e9c97adf5295a0447a9a48bfa6bff4d4c4fd8436497f72b76ad1d2765"
+      },
+      {
+        "byteLen": 10113,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/RecipeModule.h",
+        "provenance": "neutrino-translator:include/Neutrino/RecipeModule.h",
+        "sha256": "sha256:f26b0b3cc2b714f96dabf0584c2a01d868ed103f7accb58ca86576e746742121"
+      },
+      {
+        "byteLen": 2603,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/RecipeProviderRegistry.h",
+        "provenance": "neutrino-translator:include/Neutrino/RecipeProviderRegistry.h",
+        "sha256": "sha256:7001a1df78ed28ef5728dfae98225a25ca1a613a6a275025b887844fc9ae31e5"
+      },
+      {
+        "byteLen": 15223,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/RecipeRuntime.h",
+        "provenance": "neutrino-translator:include/Neutrino/RecipeRuntime.h",
+        "sha256": "sha256:0d4521963910d3415815e3897f9d568d706f945021b7f49ff597b1b727299e9e"
+      },
+      {
+        "byteLen": 11444,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/RecipeSessionStore.h",
+        "provenance": "neutrino-translator:include/Neutrino/RecipeSessionStore.h",
+        "sha256": "sha256:f69203df27a165437e4ff8086d51f69898c3555ea82b3f0e7ddf500841f2bf68"
+      },
+      {
+        "byteLen": 581,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/StrCase.h",
+        "provenance": "neutrino-translator:include/Neutrino/StrCase.h",
+        "sha256": "sha256:e94c7ac0a192bcba1c3f26c54a1254df12b029ecbb458c456439c9bbe8ef68c4"
+      },
+      {
+        "byteLen": 8236,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/TargetPrinter.h",
+        "provenance": "neutrino-translator:include/Neutrino/TargetPrinter.h",
+        "sha256": "sha256:8e36e4db2b7ad0773d5beb2d528d268a321808adc0c73dadec65129e409007bf"
+      },
+      {
+        "byteLen": 3594,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "include/Neutrino/ValueModel.h",
+        "provenance": "neutrino-translator:include/Neutrino/ValueModel.h",
+        "sha256": "sha256:94f0922f76d371d45d8abd4f0cdab0340c05ee8430ece846f46b3d5520819bad"
+      }
+    ],
+    "sharedRuntimeSources": [
+      {
+        "byteLen": 8538,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/codetext/CodeText.cpp",
+        "provenance": "neutrino-translator:lib/codetext/CodeText.cpp",
+        "sha256": "sha256:dfb3e12185bf871d07678e3eb8039e28fd0f9a23478c75dda3c466feb510db4f"
+      },
+      {
+        "byteLen": 20632,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/codetext/TargetPrinter.cpp",
+        "provenance": "neutrino-translator:lib/codetext/TargetPrinter.cpp",
+        "sha256": "sha256:87ba11d148e6f367f7dd67fb8a4f9d803b75757a2716db81bf3c2bf910888f11"
+      },
+      {
+        "byteLen": 3082,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/recipe/RecipeExecutor.cpp",
+        "provenance": "neutrino-translator:lib/recipe/RecipeExecutor.cpp",
+        "sha256": "sha256:9609c075abd256f438f85999751298929b13781070f4f2c99a573da73dec894a"
+      },
+      {
+        "byteLen": 16201,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/recipe/RecipeInterpreter.cpp",
+        "provenance": "neutrino-translator:lib/recipe/RecipeInterpreter.cpp",
+        "sha256": "sha256:31945b412ccae34b2a0fc7c1ed9b7e28fa42ce40d32d147330e7f3c05b7fb7fd"
+      },
+      {
+        "byteLen": 1101,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/recipe/RecipeModule.cpp",
+        "provenance": "neutrino-translator:lib/recipe/RecipeModule.cpp",
+        "sha256": "sha256:7e1abc1229bc52dc57aead34ee08253c9600005a16154658f88fe2cd5b9a6de3"
+      },
+      {
+        "byteLen": 2126,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/recipe/RecipeProviderRegistry.cpp",
+        "provenance": "neutrino-translator:lib/recipe/RecipeProviderRegistry.cpp",
+        "sha256": "sha256:d354d2ec342cb8dee2201680ed64537691075d6ec7525ddcda41024380e58599"
+      },
+      {
+        "byteLen": 2591,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/recipe/RecipeRuntime.cpp",
+        "provenance": "neutrino-translator:lib/recipe/RecipeRuntime.cpp",
+        "sha256": "sha256:1defccf7752c13e0a1a7f1ad4697d7365fd1f4f74cddc4c90b9ba3ee5890b839"
+      },
+      {
+        "byteLen": 86350,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/BackendProjection.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/BackendProjection.cpp",
+        "sha256": "sha256:a41ee12b25025b050dfc00583ce27ab87a3693237f55c417cd61492093e5067c"
+      },
+      {
+        "byteLen": 23410,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/BackendProjectionCodec.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/BackendProjectionCodec.cpp",
+        "sha256": "sha256:a3f17a817e8e5ffc73fa3e3b7b86c461257dd60ae62fa651fd0ffa18e1c76c47"
+      },
+      {
+        "byteLen": 41577,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/BackendProtocol.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/BackendProtocol.cpp",
+        "sha256": "sha256:a9272554456215fea7a0d0120664f95bce618cdbfc1ef7ce87c8e4c3a7fd67ac"
+      },
+      {
+        "byteLen": 2904,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/BackendStartup.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/BackendStartup.cpp",
+        "sha256": "sha256:b65389ec37a44fe7f68c9f5714bfe3282e1a2885435c4bb459a7dc58838f6231"
+      },
+      {
+        "byteLen": 22754,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/Expr.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/Expr.cpp",
+        "sha256": "sha256:fe3a581ad20defd6ad266cc1f88439a7a203af0288f3aa27239cb26092fd7db3"
+      },
+      {
+        "byteLen": 4070,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/JsonUtil.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/JsonUtil.cpp",
+        "sha256": "sha256:9d84bc91bdc03911b235a34d1a46a503546a5bfa53bb6bd7cdece76d039a9ead"
+      },
+      {
+        "byteLen": 1239,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/StrCase.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/StrCase.cpp",
+        "sha256": "sha256:214cd77c138f7d6ced5bca1870d25a70cda8e93c6cac9928f947ae569c52b39d"
+      },
+      {
+        "byteLen": 2798,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.backend-source-runtime/1",
+        "path": "lib/spec-contract/ValueModel.cpp",
+        "provenance": "neutrino-translator:lib/spec-contract/ValueModel.cpp",
+        "sha256": "sha256:55c499dbea4d7684697e6ab12a0d00fbd7f4bc8e1950ba2396be09d0de3084e1"
+      }
+    ],
+    "tablegenInputs": [
+      {
+        "byteLen": 13225,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/BackendIdiom.td",
+        "provenance": "neutrino-translator:lib/backends/BackendIdiom.td",
+        "sha256": "sha256:5a8ce3a79caaeac3fcef710ca3fa345b039f6b5274000cf0cc6791cbeb3dcae4"
+      },
+      {
+        "byteLen": 7489,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/TargetPrinter.td",
+        "provenance": "neutrino-translator:lib/backends/TargetPrinter.td",
+        "sha256": "sha256:c3de3ff112111d968a92ec0576a36d76a8bcded0ca619ae13dfa2a2de17f80d2"
+      },
+      {
+        "byteLen": 41974,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/model/SolidityTargetNodes.td",
+        "provenance": "neutrino-translator:lib/backends/solidity/model/SolidityTargetNodes.td",
+        "sha256": "sha256:a5a6669695eb76d4c3fdf823de7494470d996d21b1c9131542ab99fe37af4289"
+      },
+      {
+        "byteLen": 39275,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/recipes/SolidityEffectfulIdiomRecipes.td",
+        "provenance": "neutrino-translator:lib/backends/solidity/recipes/SolidityEffectfulIdiomRecipes.td",
+        "sha256": "sha256:6ad690af4181f0595e46f95af75f4e5525ee97e4497652fa2c40423d9829d578"
+      },
+      {
+        "byteLen": 7462,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/recipes/SolidityEvidenceIdiomRecipes.td",
+        "provenance": "neutrino-translator:lib/backends/solidity/recipes/SolidityEvidenceIdiomRecipes.td",
+        "sha256": "sha256:b3468abe36ff7e083e327b4489f656151466a8875c306a610b7c135c5a19f040"
+      },
+      {
+        "byteLen": 5316,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/recipes/SolidityIdiomRecipes.td",
+        "provenance": "neutrino-translator:lib/backends/solidity/recipes/SolidityIdiomRecipes.td",
+        "sha256": "sha256:1e3212b102a7542c304c6357adaec516470a9277cda7cc828e70097e1c777f57"
+      },
+      {
+        "byteLen": 20123,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/recipes/SolidityProjectionSchema.td",
+        "provenance": "neutrino-translator:lib/backends/solidity/recipes/SolidityProjectionSchema.td",
+        "sha256": "sha256:0c2adf7ad8c5a65f7930ca007d3324b1f1998f25ee1a3d38245e9419bf2b779d"
+      },
+      {
+        "byteLen": 25023,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/recipes/SolidityTemporalIdiomRecipes.td",
+        "provenance": "neutrino-translator:lib/backends/solidity/recipes/SolidityTemporalIdiomRecipes.td",
+        "sha256": "sha256:f1d921ba619fc8740588888263a83776b48eb35ae4d472640b594c0f3acc757e"
+      }
+    ],
+    "testsAndFixtures": [
+      {
+        "byteLen": 1417,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "examples/target-profiles/solidity.target-profile.json",
+        "provenance": "neutrino-translator:examples/target-profiles/solidity.target-profile.json",
+        "sha256": "sha256:6a31a488fabe0b4fb650851862f86d43537d25005ace2a883b92a42f0349c62f"
+      },
+      {
+        "byteLen": 12569,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "lib/backends/solidity/test/solidity_stmt_shell_render_harness.cpp",
+        "provenance": "neutrino-translator:lib/backends/solidity/test/solidity_stmt_shell_render_harness.cpp",
+        "sha256": "sha256:32026870f5879c0e14f687802ce1ea3f3680ab284e0e17832215da3918665782"
+      },
+      {
+        "byteLen": 160,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "test/ir/samples/Inputs/core_document_escrow/generated/solidity/foundry.toml",
+        "provenance": "neutrino-translator:test/ir/samples/Inputs/core_document_escrow/generated/solidity/foundry.toml",
+        "sha256": "sha256:d3755c5f9b2cc7b596bb1dc786a0e5ca9408872e58b3a02a00d831853aa45d6c"
+      },
+      {
+        "byteLen": 2939,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "test/ir/samples/Inputs/core_document_escrow/generated/solidity/src/CoreDocumentEscrow.sol",
+        "provenance": "neutrino-translator:test/ir/samples/Inputs/core_document_escrow/generated/solidity/src/CoreDocumentEscrow.sol",
+        "sha256": "sha256:ccdf26b7206588ebabb8c5de95f8aacc29fb1b98690eb8ad63480826079ec051"
+      },
+      {
+        "byteLen": 4519,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "test/ir/samples/Inputs/core_document_escrow/generated/solidity/test/CoreDocumentEscrow.t.sol",
+        "provenance": "neutrino-translator:test/ir/samples/Inputs/core_document_escrow/generated/solidity/test/CoreDocumentEscrow.t.sol",
+        "sha256": "sha256:34fd26271acc2b2da68aa5acbdb276511262b393fe9628f5d904795108dd70be"
+      },
+      {
+        "byteLen": 490,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "test/ir/samples/Inputs/core_document_escrow/scenario/core_document_escrow_happy_path.json",
+        "provenance": "neutrino-translator:test/ir/samples/Inputs/core_document_escrow/scenario/core_document_escrow_happy_path.json",
+        "sha256": "sha256:3748f2a623f06153985af8996f9675f90ea258d2272f63e4db0f194e01f3aa89"
+      },
+      {
+        "byteLen": 3396,
+        "licenseDisposition": "project-authored-apache-2.0",
+        "ownership": "neutrino.solidity-package/1",
+        "path": "test/ir/samples/Inputs/core_document_escrow/source/core_document_escrow.neu",
+        "provenance": "neutrino-translator:test/ir/samples/Inputs/core_document_escrow/source/core_document_escrow.neu",
+        "sha256": "sha256:12504e70beccff003a4fa0201a681e2767156993d28f382335422881c547880c"
+      }
+    ]
+  },
+  "installedCoreContract": {
+    "cppAbiPolicy": "forbidden",
+    "manifest": "docs/m7-core-installed-export.json",
+    "projectionSchema": "neutrino.finalized-projection/1",
+    "protocol": "neutrino.backend-protocol/1",
+    "startup": "neutrino.backend-startup/1"
+  },
+  "kind": "neutrino.solidity-extraction-manifest/1",
+  "provenance": {
+    "licenseStatus": "project-authored-apache-2.0",
+    "publicationAuthorized": false
+  },
+  "sharedRuntimeContract": {
+    "contents": [
+      "canonical finalized-projection consumer",
+      "protocol state machine",
+      "target-blind recipe runtime",
+      "target-blind CodeText printer"
+    ],
+    "contractDigest": "sha256:580572b4a62dbcd9d174050b83956cbf0d17d47a4e23cc3c86924c18e1f0fd1a",
+    "contractFileSha256": "sha256:e32d68d92f775dc6285852098db22b8da2d257e69e913cde43c631d09596c09d",
+    "contractPath": "packaging/shared/backend-source-runtime-v1.json",
+    "cppAbiCrossesProcess": false,
+    "kind": "neutrino.backend-source-runtime/1",
+    "ownership": "versioned-shared-source-dependency"
+  },
+  "sourceBoundary": "lib/backends/solidity/EXTRACTION.md",
+  "unit": "NeutrinoBackendSolidity"
+}

@@ -1,0 +1,94 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_hybrid_compute_sample",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "7bdeabc4830bf4f66967eb7b12b738b32a340ed5c3e9acb3b44dd8e5c3148a64",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "Requester",
+    "role": "requester",
+    "org": "requesterorg",
+    "slotId": "coordinate.core_hybrid_compute_sample#Requester"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [
+    {
+      "name": "job_id",
+      "type": "string",
+      "specPath": "inputs[0]",
+      "source": {
+        "line": 84,
+        "column": 1
+      }
+    },
+    {
+      "name": "requester_id",
+      "type": "party",
+      "specPath": "inputs[1]",
+      "source": {
+        "line": 85,
+        "column": 1
+      }
+    },
+    {
+      "name": "bounty",
+      "type": "money",
+      "specPath": "inputs[3]",
+      "source": {
+        "line": 87,
+        "column": 1
+      }
+    },
+    {
+      "name": "currency",
+      "type": "currency",
+      "specPath": "inputs[4]",
+      "source": {
+        "line": 88,
+        "column": 1
+      }
+    }
+  ],
+  "permittedCounterparties": [
+    {
+      "org": "hybridinfra",
+      "role": "orchestrator"
+    },
+    {
+      "org": "supplyorg"
+    },
+    {
+      "org": "verifierorg"
+    }
+  ],
+  "evidenceObligations": [
+    {
+      "leg": "requester_bounty",
+      "kind": "debit",
+      "ledger": "requester.bounty",
+      "specPath": "effects[0]",
+      "source": {
+        "line": 90,
+        "column": 1
+      }
+    }
+  ],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

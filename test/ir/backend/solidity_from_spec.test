@@ -1,0 +1,69 @@
+// [86] the Solidity renderer is a real ingestion entry point (`--from-spec`): a valid external spec
+// renders byte-identically to the normal path, and an ill-typed external spec is rejected with
+// expr.type before any artifact is written (the renderer re-types the ingested AST, /).
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// (a) valid spec renders byte-identically to the committed contract.
+// RUN: %neutrino-gen --target=solidity --from-spec %{msi}/generated/capability-spec/capability-spec.json -o %t.ok
+// RUN: diff %t.ok/src/CoreSampleInstallment.sol %{msi}/generated/solidity/src/CoreSampleInstallment.sol
+// RUN: test ! -e %t.ok/src/ThresholdQuorumAcceptance.sol
+// (a2) an attested spec emits the complete source bundle byte-identically to
+// the receipt-verified pack oracle, including the reviewed guard.
+// DEFINE: %{cer} = %curated5
+// RUN: %neutrino-gen --target=solidity --from-spec %{cer}/generated/capability-spec/capability-spec.json -o %t.attested-spec
+// RUN: diff -rq %t.attested-spec/src %{cer}/generated/solidity/src
+// RUN: test -f %t.attested-spec/src/ThresholdQuorumAcceptance.sol
+// The deletion probe proves the parity witness bites if --from-spec drops a
+// policy-required source while still emitting the coordination contract.
+// RUN: rm -rf %t.attested-tampered
+// RUN: cp -R %t.attested-spec/src %t.attested-tampered
+// RUN: rm %t.attested-tampered/ThresholdQuorumAcceptance.sol
+// RUN: %not diff -rq %t.attested-tampered %{cer}/generated/solidity/src
+// (a3) an attested source-only spec also emits the complete production bundle,
+// with no fabricated scenario or Foundry harness. `%{cer}` is already bound to
+// `%curated5` at (a2) above and is unchanged here, so re-DEFINE-ing it is not a
+// different value — it is a duplicate that lit refuses ().
+// RUN: %neutrino-gen --target=solidity --from-spec %{cer}/generated/capability-spec/capability-spec.json -o %t.source-only
+// RUN: test "$(find %t.source-only/src -maxdepth 1 -name '*.sol' | wc -l | tr -d ' ')" -eq 2
+// RUN: test -f %t.source-only/src/ThresholdQuorumAcceptance.sol
+// RUN: test ! -e %t.source-only/test
+// (b) an ill-typed external spec -> EXIT_IR(4), expr.type, NO artifact.
+// RUN: %neutrino-gen --target=solidity --from-spec %S/illtyped.capability-spec.json -o %t.ill; [ $? -eq 4 ]
+// RUN: test ! -e %t.ill/src
+// RUN: %FileCheck --check-prefix=ILL %s < %t.ill/diagnostics.json
+// [85](b) a spec whose lifecycle has NO success terminal -> fail closed with spec.ast, NO artifact
+//         (the fixed Reconciled terminal projects the spec's success terminal; it can't be invented).
+// RUN: %neutrino-gen --target=solidity --from-spec %S/no_success.capability-spec.json -o %t.ns; [ $? -eq 4 ]
+// RUN: test ! -e %t.ns/src
+// RUN: %FileCheck --check-prefix=AST %s < %t.ns/diagnostics.json
+//
+// [85](e) a spec whose terminal.success names a state ABSENT from the lifecycle transitions
+//         (a dangling, unreachable terminal) -> fail closed with spec.ast, NO artifact. The
+//         reachability check lives ONCE in projectBackendGraph ( part 3), not re-derived
+//         per backend, so both rails refuse identically before any emission.
+// RUN: %neutrino-gen --target=solidity --from-spec %S/dangling_terminal.capability-spec.json -o %t.dt; [ $? -eq 4 ]
+// RUN: test ! -e %t.dt/src
+// RUN: %FileCheck --check-prefix=DANGLE %s < %t.dt/diagnostics.json
+//
+// [85](f) lifecycle-role soundness ( part 3 G1): the backend collapses the
+//         lifecycle to a 2-state None->Accepted/Reconciled quotient. A posting
+//         (effect-committing) transition whose target can still reach an
+//         aborted/contested terminal makes that collapse unsound (the backend
+//         would commit the ledger + reconcile on a path that can still abort).
+//         Enforced once in projectBackendGraph; refuse with spec.ast, NO
+//         artifact. Byte-identical to a valid spec until the check runs.
+// RUN: %neutrino-gen --target=solidity --from-spec %S/posting_nonsuccess.capability-spec.json -o %t.pn; [ $? -eq 4 ]
+// RUN: test ! -e %t.pn/src
+// RUN: %FileCheck --check-prefix=QUOTIENT %s < %t.pn/diagnostics.json
+//         The dual failure: a posting whose target reaches NO terminal (a dead
+//         end / terminal-free path) also refuses — the check requires the
+//         reachable-terminal set to be EXACTLY {success}, not merely free of
+//         non-success terminals.
+// RUN: %neutrino-gen --target=solidity --from-spec %S/posting_deadend.capability-spec.json -o %t.pd; [ $? -eq 4 ]
+// RUN: test ! -e %t.pd/src
+// RUN: %FileCheck --check-prefix=NODEST %s < %t.pd/diagnostics.json
+// ILL: expr.type
+// AST: spec.ast
+// DANGLE: unreachable-terminal:success:SETTLED
+// QUOTIENT: posting-reaches-non-success-terminal:COMMIT:REJECTED
+// NODEST: posting-reaches-no-success-terminal:STRAND

@@ -1,0 +1,29 @@
+{
+  "capabilityHash": "49bc44a5c88216e23c0bcbda50b668c1c96915a729d2b8a085356c58536fd487",
+  "computed": {},
+  "eventChain": [
+    "SponsoredOfferProposed",
+    "SponsorCommitmentDebited",
+    "MerchantExpectedContributionCredited",
+    "CoreSecuredOfferReconciled"
+  ],
+  "inputs": {
+    "contribution": 5000,
+    "currency": "EUR",
+    "merchant_id": "merchant-001",
+    "offer_id": "offer-001",
+    "sponsor_id": "sponsor-001"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "merchant.expected_contribution": 5000,
+    "sponsor.commitment": -5000
+  },
+  "procedure": "core_secured_offer",
+  "scenario": "core_secured_offer_happy_path",
+  "schemaVersion": 1
+}

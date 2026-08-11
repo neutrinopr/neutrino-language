@@ -1,0 +1,12 @@
+// / current-vs-prior bundle compatibility. The committed, COMPLETE + self-consistent frozen
+// v1.0 and pre-change v1.9 boundaries (Inputs/compat/v1.0 and v1.9 — bundle + every pinned artifact)
+// are validated by the current released verifier against their frozen roots; the current bundle is a
+// backward-compatible evolution across the WHOLE normative surface (contracts, bundle identity +
+// canonicalization, the complete compatibility policy map, every published version axis by the verifier's
+// rule — toolVersion semver / all others incl. semanticLanguageVersion + nested schemas.* exact — and the
+// diagnostic taxonomy by content: envelope identity, append-only categories, and every prior code's
+// identity); the exact-pin keeps the two boundaries distinct; and the SAME evaluator non-vacuously
+// classifies contract, taxonomy, policy, and version-axis breakage. See check_bundle_compat.py.
+//
+// RUN: python3 %S/check_bundle_compat.py %examples/.. %S/Inputs/compat/v1.0 \
+// RUN:   %S/Inputs/compat/v1.9 %S/Inputs/pack/pack.json %scripts/validators/verify_domain_pack.py

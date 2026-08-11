@@ -1,0 +1,8 @@
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+libs = []
+optimizer = true
+via_ir = true
+# Generated artifacts; run with: forge test --use <solc 0.8.x>

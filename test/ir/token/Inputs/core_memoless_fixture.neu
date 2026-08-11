@@ -1,0 +1,44 @@
+// Negative control for the synthetic memo fixture: identical effect shape, no memo.
+procedure core_memoless_fixture {
+    trigger memoless_fixture_requested
+    version "1.0.0"
+
+    participant Origin {
+        role = "fixture_origin"
+        org  = "fixture-a"
+    }
+    participant Destination {
+        role = "fixture_destination"
+        org  = "fixture-b"
+    }
+    allow "fixture-a" with "fixture-b" {
+        "fixture-a" as "fixture_origin"
+        "fixture-b" as "fixture_destination"
+    }
+
+    input proof_id       : string
+    input origin_id      : party
+    input destination_id : party
+    input amount         : money
+    input currency       : currency
+
+    debit plain_debit {
+        ledger          = "core.fixture.balance"
+        owner           = "origin"
+        participant     = "Origin"
+        party           = %origin_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %proof_id
+    }
+    credit plain_credit {
+        ledger          = "core.fixture.balance"
+        owner           = "destination"
+        participant     = "Destination"
+        party           = %destination_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %proof_id
+    }
+    assert balanced
+}

@@ -1,0 +1,5 @@
+// [4] neutrino-emit produces the events inspection projection (names MerchantSubsidyDebited); the naive
+// raw-MLIR sql/contract projections are retired () — each fails closed with the retirement
+// diagnostic, not a pseudo-backend artifact. See check_emit_projection.py.
+//
+// RUN: python3 %S/check_emit_projection.py %neutrino-emit %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu

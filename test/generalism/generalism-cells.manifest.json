@@ -1,0 +1,3454 @@
+{
+  "schemaId": "https://neutrino/contracts/capability-spec/v1",
+  "classificationVersion": 2,
+  "featureCount": 101,
+  "coveredCount": 34,
+  "cellCount": 50,
+  "witnessedCellCount": 34,
+  "seedCount": 16,
+  "unclassifiedCoordinates": [],
+  "uncoveredFeatures": [
+    [
+      "canonicalization",
+      "exact"
+    ],
+    [
+      "canonicalization",
+      "median"
+    ],
+    [
+      "classification:accessControl",
+      "attester_set"
+    ],
+    [
+      "classification:accessControl",
+      "msg_sender_role"
+    ],
+    [
+      "classification:accessControl",
+      "open"
+    ],
+    [
+      "classification:accessControl",
+      "participant_set"
+    ],
+    [
+      "classification:accessControl",
+      "verifier_attested"
+    ],
+    [
+      "classification:characteristics",
+      "idempotent"
+    ],
+    [
+      "classification:characteristics",
+      "liftable_events"
+    ],
+    [
+      "classification:characteristics",
+      "minimal_state"
+    ],
+    [
+      "classification:characteristics",
+      "replay_protected"
+    ],
+    [
+      "classification:evidenceStyle",
+      "attestation_set"
+    ],
+    [
+      "classification:evidenceStyle",
+      "cross_domain_message"
+    ],
+    [
+      "classification:evidenceStyle",
+      "merkle_root"
+    ],
+    [
+      "classification:evidenceStyle",
+      "netting_state"
+    ],
+    [
+      "classification:evidenceStyle",
+      "single_hash"
+    ],
+    [
+      "classification:evidenceStyle",
+      "state_machine"
+    ],
+    [
+      "classification:identityBinding",
+      "authorized_attesters"
+    ],
+    [
+      "classification:identityBinding",
+      "msg_sender"
+    ],
+    [
+      "classification:identityBinding",
+      "named_participants"
+    ],
+    [
+      "classification:identityBinding",
+      "none"
+    ],
+    [
+      "classification:identityBinding",
+      "source_domain"
+    ],
+    [
+      "classification:oracleDependency",
+      "none"
+    ],
+    [
+      "classification:oracleDependency",
+      "optional_bridge_oracle"
+    ],
+    [
+      "classification:oracleDependency",
+      "requires_oracle"
+    ],
+    [
+      "classification:orderingModel",
+      "none"
+    ],
+    [
+      "classification:orderingModel",
+      "per_source_nonce"
+    ],
+    [
+      "classification:partyModel",
+      "bilateral"
+    ],
+    [
+      "classification:partyModel",
+      "cross_domain"
+    ],
+    [
+      "classification:partyModel",
+      "multi"
+    ],
+    [
+      "classification:partyModel",
+      "single"
+    ],
+    [
+      "classification:timeBound",
+      "optional"
+    ],
+    [
+      "classification:timeBound",
+      "strict"
+    ],
+    [
+      "classification:timeBound",
+      "unbound"
+    ],
+    [
+      "compute",
+      "present"
+    ],
+    [
+      "currency_dimension",
+      "single"
+    ],
+    [
+      "degenerate",
+      "boundary"
+    ],
+    [
+      "degenerate",
+      "empty_effects"
+    ],
+    [
+      "degenerate",
+      "missing_leg"
+    ],
+    [
+      "degenerate",
+      "zero_amount"
+    ],
+    [
+      "expr_kind",
+      "bin"
+    ],
+    [
+      "expr_kind",
+      "call"
+    ],
+    [
+      "expr_kind",
+      "cmp"
+    ],
+    [
+      "expr_kind",
+      "num"
+    ],
+    [
+      "expr_kind",
+      "var"
+    ],
+    [
+      "expr_op",
+      "!="
+    ],
+    [
+      "expr_op",
+      "*"
+    ],
+    [
+      "expr_op",
+      "+"
+    ],
+    [
+      "expr_op",
+      "/"
+    ],
+    [
+      "expr_op",
+      "<"
+    ],
+    [
+      "expr_op",
+      "<="
+    ],
+    [
+      "expr_op",
+      "=="
+    ],
+    [
+      "expr_op",
+      ">"
+    ],
+    [
+      "expr_op",
+      ">="
+    ],
+    [
+      "fallback",
+      "abort"
+    ],
+    [
+      "fallback",
+      "escalate"
+    ],
+    [
+      "participant_scoping",
+      "multi"
+    ],
+    [
+      "participant_scoping",
+      "single"
+    ],
+    [
+      "value_category",
+      "currency"
+    ],
+    [
+      "value_category",
+      "decimal"
+    ],
+    [
+      "value_category",
+      "evidence"
+    ],
+    [
+      "value_category",
+      "extension"
+    ],
+    [
+      "value_category",
+      "money"
+    ],
+    [
+      "value_category",
+      "party"
+    ],
+    [
+      "value_category",
+      "string"
+    ],
+    [
+      "when_guard",
+      "guard_false"
+    ],
+    [
+      "when_guard",
+      "present"
+    ]
+  ],
+  "bindingLifecycleDispositions": [
+    {
+      "family": "assurance",
+      "value": "A1",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:assurance:A1",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locus": "observerSet",
+      "specField": "assurance",
+      "cellValue": "A1",
+      "controlValue": "A2",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid observer-set value is carried in a rebuilt capability-spec and consumed by the observation-binding validator through an exact valid<->valid binding equality check",
+      "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+      "observerSet": "customs_oracles",
+      "bindingField": "assurance",
+      "consumer": "scripts/validators/validate_observation_binding.py",
+      "mismatchCode": "binding.observer_assurance_mismatch",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance"
+    },
+    {
+      "family": "assurance",
+      "value": "A2",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:assurance:A2",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locus": "observerSet",
+      "specField": "assurance",
+      "cellValue": "A2",
+      "controlValue": "A1",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid observer-set value is carried in a rebuilt capability-spec and consumed by the observation-binding validator through an exact valid<->valid binding equality check",
+      "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+      "observerSet": "customs_oracles",
+      "bindingField": "assurance",
+      "consumer": "scripts/validators/validate_observation_binding.py",
+      "mismatchCode": "binding.observer_assurance_mismatch",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance"
+    },
+    {
+      "family": "assurance",
+      "value": "A3",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:assurance:A3",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locus": "observerSet",
+      "specField": "assurance",
+      "cellValue": "A3",
+      "controlValue": "A2",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid observer-set value is carried in a rebuilt capability-spec and consumed by the observation-binding validator through an exact valid<->valid binding equality check",
+      "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+      "observerSet": "customs_oracles",
+      "bindingField": "assurance",
+      "consumer": "scripts/validators/validate_observation_binding.py",
+      "mismatchCode": "binding.observer_assurance_mismatch",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance"
+    },
+    {
+      "family": "assurance",
+      "value": "A4",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:assurance:A4",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locus": "observerSet",
+      "specField": "assurance",
+      "cellValue": "A4",
+      "controlValue": "A3",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid observer-set value is carried in a rebuilt capability-spec and consumed by the observation-binding validator through an exact valid<->valid binding equality check",
+      "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+      "observerSet": "customs_oracles",
+      "bindingField": "assurance",
+      "consumer": "scripts/validators/validate_observation_binding.py",
+      "mismatchCode": "binding.observer_assurance_mismatch",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance"
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:bind_min_assurance:",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "bindMinAssurance",
+      "cellValue": "",
+      "controlValue": "A2",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "minAssurance",
+      "cellTopologyValue": "A1",
+      "controlTopologyValue": "A2",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance"
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A1",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:bind_min_assurance:A1",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "bindMinAssurance",
+      "cellValue": "A1",
+      "controlValue": "A2",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "minAssurance",
+      "cellTopologyValue": "A1",
+      "controlTopologyValue": "A2",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance"
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A2",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:bind_min_assurance:A2",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "bindMinAssurance",
+      "cellValue": "A2",
+      "controlValue": "A1",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "minAssurance",
+      "cellTopologyValue": "A2",
+      "controlTopologyValue": "A1",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance"
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A3",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:bind_min_assurance:A3",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "bindMinAssurance",
+      "cellValue": "A3",
+      "controlValue": "A2",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "minAssurance",
+      "cellTopologyValue": "A3",
+      "controlTopologyValue": "A2",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance"
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A4",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:bind_min_assurance:A4",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "bindMinAssurance",
+      "cellValue": "A4",
+      "controlValue": "A3",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "minAssurance",
+      "cellTopologyValue": "A4",
+      "controlTopologyValue": "A3",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance"
+    },
+    {
+      "family": "evidence_style",
+      "value": "batched_root",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:evidence_style:batched_root",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransitionEvidence",
+      "specField": "evidence",
+      "cellValue": "batched_root",
+      "controlValue": "single_hash",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-derived transition evidence style is carried with an independent chained obligation in a rebuilt capability-spec and consumed through an exact valid<->valid coordination-plan byte delta with producer/consumer drop tampers",
+      "transition": "COMMIT",
+      "evidenceChained": true,
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "producerTamper": "drop-transition-evidence-style-from-capability-spec",
+      "consumerTamper": "drop-transition-evidence-style-from-coordination-plan",
+      "source": "schema",
+      "coordinate": "/transition/evidence/oneOf1/style"
+    },
+    {
+      "family": "evidence_style",
+      "value": "single_hash",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:evidence_style:single_hash",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransitionEvidence",
+      "specField": "evidence",
+      "cellValue": "single_hash",
+      "controlValue": "batched_root",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-derived transition evidence style is carried with an independent chained obligation in a rebuilt capability-spec and consumed through an exact valid<->valid coordination-plan byte delta with producer/consumer drop tampers",
+      "transition": "COMMIT",
+      "evidenceChained": true,
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "producerTamper": "drop-transition-evidence-style-from-capability-spec",
+      "consumerTamper": "drop-transition-evidence-style-from-coordination-plan",
+      "source": "schema",
+      "coordinate": "/transition/evidence/oneOf1/style"
+    },
+    {
+      "family": "idempotency",
+      "value": "noop_on_identical",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:idempotency:noop_on_identical",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "idempotency",
+      "cellValue": "noop_on_identical",
+      "controlValue": "reject",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/idempotency"
+    },
+    {
+      "family": "idempotency",
+      "value": "reject",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:idempotency:reject",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "idempotency",
+      "cellValue": "reject",
+      "controlValue": "noop_on_identical",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/idempotency"
+    },
+    {
+      "family": "independence",
+      "value": "correlated",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:independence:correlated",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locus": "observerSet",
+      "specField": "independence",
+      "cellValue": "correlated",
+      "controlValue": "independent",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid observer-set value is carried in a rebuilt capability-spec and consumed by the observation-binding validator through an exact valid<->valid binding equality check",
+      "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+      "observerSet": "customs_oracles",
+      "bindingField": "independence",
+      "consumer": "scripts/validators/validate_observation_binding.py",
+      "mismatchCode": "binding.observer_independence_mismatch",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/independence"
+    },
+    {
+      "family": "independence",
+      "value": "independent",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:independence:independent",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locus": "observerSet",
+      "specField": "independence",
+      "cellValue": "independent",
+      "controlValue": "correlated",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid observer-set value is carried in a rebuilt capability-spec and consumed by the observation-binding validator through an exact valid<->valid binding equality check",
+      "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+      "observerSet": "customs_oracles",
+      "bindingField": "independence",
+      "consumer": "scripts/validators/validate_observation_binding.py",
+      "mismatchCode": "binding.observer_independence_mismatch",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/independence"
+    },
+    {
+      "family": "participant_binding",
+      "value": "fixed",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:participant_binding:fixed",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "binding",
+      "cellValue": "fixed",
+      "controlValue": "to_be_bound",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "lateBindingMode",
+      "cellTopologyValue": "fixed",
+      "controlTopologyValue": "to_be_bound",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/binding"
+    },
+    {
+      "family": "participant_binding",
+      "value": "to_be_bound",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:participant_binding:to_be_bound",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locus": "participant",
+      "specField": "binding",
+      "cellValue": "to_be_bound",
+      "controlValue": "fixed",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid binding/lifecycle value is carried into the derived topology and consumed by the binding-manifest validator with a valid<->valid behavioral delta",
+      "participant": "EscrowAgent",
+      "topologyField": "lateBindingMode",
+      "cellTopologyValue": "to_be_bound",
+      "controlTopologyValue": "fixed",
+      "consumer": "scripts/validators/validate_binding_manifest.py",
+      "source": "schema",
+      "coordinate": "/participants/binding"
+    },
+    {
+      "family": "terminal_kind",
+      "value": "aborted",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:terminal_kind:aborted",
+      "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+      "locus": "lifecycleState",
+      "specField": "terminalKind",
+      "cellValue": "aborted",
+      "controlValue": "success",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid terminalKind is carried by a terminal lifecycle state and consumed by the capability-spec validator through the lifecycle.terminalStates mapping",
+      "state": "REJECTED",
+      "tamperState": "CLOSED",
+      "terminalStateField": "aborted",
+      "consumer": "scripts/validators/validate_capability_spec.py",
+      "mismatchCode": "spec.bad_terminal_state",
+      "source": "schema",
+      "coordinate": "/state/terminalKind"
+    },
+    {
+      "family": "terminal_kind",
+      "value": "contested",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:terminal_kind:contested",
+      "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+      "locus": "lifecycleState",
+      "specField": "terminalKind",
+      "cellValue": "contested",
+      "controlValue": "success",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid terminalKind is carried by a terminal lifecycle state and consumed by the capability-spec validator through the lifecycle.terminalStates mapping",
+      "state": "CONTESTED",
+      "tamperState": "CLOSED",
+      "terminalStateField": "contested",
+      "consumer": "scripts/validators/validate_capability_spec.py",
+      "mismatchCode": "spec.bad_terminal_state",
+      "source": "schema",
+      "coordinate": "/state/terminalKind"
+    },
+    {
+      "family": "terminal_kind",
+      "value": "success",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:terminal_kind:success",
+      "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+      "locus": "lifecycleState",
+      "specField": "terminalKind",
+      "cellValue": "success",
+      "controlValue": "aborted",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid terminalKind is carried by a terminal lifecycle state and consumed by the capability-spec validator through the lifecycle.terminalStates mapping",
+      "state": "CLOSED",
+      "tamperState": "REJECTED",
+      "terminalStateField": "success",
+      "consumer": "scripts/validators/validate_capability_spec.py",
+      "mismatchCode": "spec.bad_terminal_state",
+      "source": "schema",
+      "coordinate": "/state/terminalKind"
+    },
+    {
+      "family": "transition_effect",
+      "value": "compensate",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_effect:compensate",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "effects",
+      "cellValue": [
+        "compensate"
+      ],
+      "controlValue": [
+        "post"
+      ],
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/effects"
+    },
+    {
+      "family": "transition_effect",
+      "value": "consume",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_effect:consume",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "effects",
+      "cellValue": [
+        "consume"
+      ],
+      "controlValue": [
+        "post"
+      ],
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/effects"
+    },
+    {
+      "family": "transition_effect",
+      "value": "post",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_effect:post",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "effects",
+      "cellValue": [
+        "post"
+      ],
+      "controlValue": [
+        "reserve"
+      ],
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/effects"
+    },
+    {
+      "family": "transition_effect",
+      "value": "release",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_effect:release",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "effects",
+      "cellValue": [
+        "release"
+      ],
+      "controlValue": [
+        "post"
+      ],
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/effects"
+    },
+    {
+      "family": "transition_effect",
+      "value": "reserve",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_effect:reserve",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransition",
+      "specField": "effects",
+      "cellValue": [
+        "reserve"
+      ],
+      "controlValue": [
+        "post"
+      ],
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-valid transition field is carried in a rebuilt capability-spec and consumed by the coordination-plan from-spec renderer through an exact valid<->valid coordination-plan byte delta",
+      "transition": "COMMIT",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "source": "schema",
+      "coordinate": "/transition/effects"
+    },
+    {
+      "family": "transition_guard",
+      "value": "deadline",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_guard:deadline",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransitionGuard",
+      "specField": "guards",
+      "cellValue": "deadline",
+      "controlValue": "participant",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-derived transition guard kind is carried at a content-located guard in a rebuilt capability-spec and consumed through an exact valid<->valid coordination-plan byte delta with independent producer/consumer drop tampers",
+      "transition": "COMMIT",
+      "guardDetail": "generalism-guard-kind",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "producerTamper": "drop-transition-guard-kind-from-capability-spec",
+      "consumerTamper": "drop-transition-guard-kind-from-coordination-plan",
+      "source": "schema",
+      "coordinate": "/transition/guards/kind"
+    },
+    {
+      "family": "transition_guard",
+      "value": "participant",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_guard:participant",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransitionGuard",
+      "specField": "guards",
+      "cellValue": "participant",
+      "controlValue": "sequence",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-derived transition guard kind is carried at a content-located guard in a rebuilt capability-spec and consumed through an exact valid<->valid coordination-plan byte delta with independent producer/consumer drop tampers",
+      "transition": "COMMIT",
+      "guardDetail": "generalism-guard-kind",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "producerTamper": "drop-transition-guard-kind-from-capability-spec",
+      "consumerTamper": "drop-transition-guard-kind-from-coordination-plan",
+      "source": "schema",
+      "coordinate": "/transition/guards/kind"
+    },
+    {
+      "family": "transition_guard",
+      "value": "sequence",
+      "status": "valid_carry_and_consume",
+      "creditsCoverage": true,
+      "cellId": "bind:transition_guard:sequence",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locus": "lifecycleTransitionGuard",
+      "specField": "guards",
+      "cellValue": "sequence",
+      "controlValue": "deadline",
+      "requiredProof": "valid_carry_and_consume",
+      "reason": "schema-derived transition guard kind is carried at a content-located guard in a rebuilt capability-spec and consumed through an exact valid<->valid coordination-plan byte delta with independent producer/consumer drop tampers",
+      "transition": "COMMIT",
+      "guardDetail": "generalism-guard-kind",
+      "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+      "producerTamper": "drop-transition-guard-kind-from-capability-spec",
+      "consumerTamper": "drop-transition-guard-kind-from-coordination-plan",
+      "source": "schema",
+      "coordinate": "/transition/guards/kind"
+    }
+  ],
+  "features": [
+    {
+      "family": "assurance",
+      "value": "A1",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance",
+      "cells": [
+        "bind:assurance:A1"
+      ]
+    },
+    {
+      "family": "assurance",
+      "value": "A2",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance",
+      "cells": [
+        "bind:assurance:A2"
+      ]
+    },
+    {
+      "family": "assurance",
+      "value": "A3",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance",
+      "cells": [
+        "bind:assurance:A3"
+      ]
+    },
+    {
+      "family": "assurance",
+      "value": "A4",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/assurance",
+      "cells": [
+        "bind:assurance:A4"
+      ]
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance",
+      "cells": [
+        "bind:bind_min_assurance:"
+      ]
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A1",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance",
+      "cells": [
+        "bind:bind_min_assurance:A1"
+      ]
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A2",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance",
+      "cells": [
+        "bind:bind_min_assurance:A2"
+      ]
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A3",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance",
+      "cells": [
+        "bind:bind_min_assurance:A3"
+      ]
+    },
+    {
+      "family": "bind_min_assurance",
+      "value": "A4",
+      "source": "schema",
+      "coordinate": "/participants/bindMinAssurance",
+      "cells": [
+        "bind:bind_min_assurance:A4"
+      ]
+    },
+    {
+      "family": "canonicalization",
+      "value": "exact",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/canonicalization/mode",
+      "cells": []
+    },
+    {
+      "family": "canonicalization",
+      "value": "median",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/canonicalization/mode",
+      "cells": []
+    },
+    {
+      "family": "classification:accessControl",
+      "value": "attester_set",
+      "source": "classification",
+      "coordinate": "dimensions/accessControl",
+      "cells": []
+    },
+    {
+      "family": "classification:accessControl",
+      "value": "msg_sender_role",
+      "source": "classification",
+      "coordinate": "dimensions/accessControl",
+      "cells": []
+    },
+    {
+      "family": "classification:accessControl",
+      "value": "open",
+      "source": "classification",
+      "coordinate": "dimensions/accessControl",
+      "cells": []
+    },
+    {
+      "family": "classification:accessControl",
+      "value": "participant_set",
+      "source": "classification",
+      "coordinate": "dimensions/accessControl",
+      "cells": []
+    },
+    {
+      "family": "classification:accessControl",
+      "value": "verifier_attested",
+      "source": "classification",
+      "coordinate": "dimensions/accessControl",
+      "cells": []
+    },
+    {
+      "family": "classification:characteristics",
+      "value": "idempotent",
+      "source": "classification",
+      "coordinate": "dimensions/characteristics",
+      "cells": []
+    },
+    {
+      "family": "classification:characteristics",
+      "value": "liftable_events",
+      "source": "classification",
+      "coordinate": "dimensions/characteristics",
+      "cells": []
+    },
+    {
+      "family": "classification:characteristics",
+      "value": "minimal_state",
+      "source": "classification",
+      "coordinate": "dimensions/characteristics",
+      "cells": []
+    },
+    {
+      "family": "classification:characteristics",
+      "value": "replay_protected",
+      "source": "classification",
+      "coordinate": "dimensions/characteristics",
+      "cells": []
+    },
+    {
+      "family": "classification:evidenceStyle",
+      "value": "attestation_set",
+      "source": "classification",
+      "coordinate": "dimensions/evidenceStyle",
+      "cells": []
+    },
+    {
+      "family": "classification:evidenceStyle",
+      "value": "cross_domain_message",
+      "source": "classification",
+      "coordinate": "dimensions/evidenceStyle",
+      "cells": []
+    },
+    {
+      "family": "classification:evidenceStyle",
+      "value": "merkle_root",
+      "source": "classification",
+      "coordinate": "dimensions/evidenceStyle",
+      "cells": []
+    },
+    {
+      "family": "classification:evidenceStyle",
+      "value": "netting_state",
+      "source": "classification",
+      "coordinate": "dimensions/evidenceStyle",
+      "cells": []
+    },
+    {
+      "family": "classification:evidenceStyle",
+      "value": "single_hash",
+      "source": "classification",
+      "coordinate": "dimensions/evidenceStyle",
+      "cells": []
+    },
+    {
+      "family": "classification:evidenceStyle",
+      "value": "state_machine",
+      "source": "classification",
+      "coordinate": "dimensions/evidenceStyle",
+      "cells": []
+    },
+    {
+      "family": "classification:identityBinding",
+      "value": "authorized_attesters",
+      "source": "classification",
+      "coordinate": "dimensions/identityBinding",
+      "cells": []
+    },
+    {
+      "family": "classification:identityBinding",
+      "value": "msg_sender",
+      "source": "classification",
+      "coordinate": "dimensions/identityBinding",
+      "cells": []
+    },
+    {
+      "family": "classification:identityBinding",
+      "value": "named_participants",
+      "source": "classification",
+      "coordinate": "dimensions/identityBinding",
+      "cells": []
+    },
+    {
+      "family": "classification:identityBinding",
+      "value": "none",
+      "source": "classification",
+      "coordinate": "dimensions/identityBinding",
+      "cells": []
+    },
+    {
+      "family": "classification:identityBinding",
+      "value": "source_domain",
+      "source": "classification",
+      "coordinate": "dimensions/identityBinding",
+      "cells": []
+    },
+    {
+      "family": "classification:oracleDependency",
+      "value": "none",
+      "source": "classification",
+      "coordinate": "dimensions/oracleDependency",
+      "cells": []
+    },
+    {
+      "family": "classification:oracleDependency",
+      "value": "optional_bridge_oracle",
+      "source": "classification",
+      "coordinate": "dimensions/oracleDependency",
+      "cells": []
+    },
+    {
+      "family": "classification:oracleDependency",
+      "value": "requires_oracle",
+      "source": "classification",
+      "coordinate": "dimensions/oracleDependency",
+      "cells": []
+    },
+    {
+      "family": "classification:orderingModel",
+      "value": "none",
+      "source": "classification",
+      "coordinate": "dimensions/orderingModel",
+      "cells": []
+    },
+    {
+      "family": "classification:orderingModel",
+      "value": "per_source_nonce",
+      "source": "classification",
+      "coordinate": "dimensions/orderingModel",
+      "cells": []
+    },
+    {
+      "family": "classification:partyModel",
+      "value": "bilateral",
+      "source": "classification",
+      "coordinate": "dimensions/partyModel",
+      "cells": []
+    },
+    {
+      "family": "classification:partyModel",
+      "value": "cross_domain",
+      "source": "classification",
+      "coordinate": "dimensions/partyModel",
+      "cells": []
+    },
+    {
+      "family": "classification:partyModel",
+      "value": "multi",
+      "source": "classification",
+      "coordinate": "dimensions/partyModel",
+      "cells": []
+    },
+    {
+      "family": "classification:partyModel",
+      "value": "single",
+      "source": "classification",
+      "coordinate": "dimensions/partyModel",
+      "cells": []
+    },
+    {
+      "family": "classification:timeBound",
+      "value": "optional",
+      "source": "classification",
+      "coordinate": "dimensions/timeBound",
+      "cells": []
+    },
+    {
+      "family": "classification:timeBound",
+      "value": "strict",
+      "source": "classification",
+      "coordinate": "dimensions/timeBound",
+      "cells": []
+    },
+    {
+      "family": "classification:timeBound",
+      "value": "unbound",
+      "source": "classification",
+      "coordinate": "dimensions/timeBound",
+      "cells": []
+    },
+    {
+      "family": "compute",
+      "value": "present",
+      "source": "structural",
+      "coordinate": "compute",
+      "cells": []
+    },
+    {
+      "family": "currency_dimension",
+      "value": "cross",
+      "source": "structural",
+      "coordinate": "currency_dimension",
+      "cells": [
+        "gen:currency_dimension:cross"
+      ]
+    },
+    {
+      "family": "currency_dimension",
+      "value": "single",
+      "source": "structural",
+      "coordinate": "currency_dimension",
+      "cells": []
+    },
+    {
+      "family": "degenerate",
+      "value": "boundary",
+      "source": "structural",
+      "coordinate": "degenerate",
+      "cells": []
+    },
+    {
+      "family": "degenerate",
+      "value": "empty_effects",
+      "source": "structural",
+      "coordinate": "degenerate",
+      "cells": []
+    },
+    {
+      "family": "degenerate",
+      "value": "missing_leg",
+      "source": "structural",
+      "coordinate": "degenerate",
+      "cells": []
+    },
+    {
+      "family": "degenerate",
+      "value": "negative_amount",
+      "source": "structural",
+      "coordinate": "degenerate",
+      "cells": [
+        "gen:degenerate:negative_amount"
+      ]
+    },
+    {
+      "family": "degenerate",
+      "value": "zero_amount",
+      "source": "structural",
+      "coordinate": "degenerate",
+      "cells": []
+    },
+    {
+      "family": "effect_kind",
+      "value": "credit",
+      "source": "schema",
+      "coordinate": "/effects/kind",
+      "cells": [
+        "gen:effect_kind:credit"
+      ]
+    },
+    {
+      "family": "effect_kind",
+      "value": "debit",
+      "source": "schema",
+      "coordinate": "/effects/kind",
+      "cells": [
+        "gen:effect_kind:debit"
+      ]
+    },
+    {
+      "family": "evidence_style",
+      "value": "batched_root",
+      "source": "schema",
+      "coordinate": "/transition/evidence/oneOf1/style",
+      "cells": [
+        "bind:evidence_style:batched_root"
+      ]
+    },
+    {
+      "family": "evidence_style",
+      "value": "single_hash",
+      "source": "schema",
+      "coordinate": "/transition/evidence/oneOf1/style",
+      "cells": [
+        "bind:evidence_style:single_hash"
+      ]
+    },
+    {
+      "family": "expr_kind",
+      "value": "bin",
+      "source": "schema",
+      "coordinate": "/exprNode/kind",
+      "cells": []
+    },
+    {
+      "family": "expr_kind",
+      "value": "call",
+      "source": "schema",
+      "coordinate": "/exprNode/kind",
+      "cells": []
+    },
+    {
+      "family": "expr_kind",
+      "value": "cmp",
+      "source": "schema",
+      "coordinate": "/exprNode/kind",
+      "cells": []
+    },
+    {
+      "family": "expr_kind",
+      "value": "num",
+      "source": "schema",
+      "coordinate": "/exprNode/kind",
+      "cells": []
+    },
+    {
+      "family": "expr_kind",
+      "value": "var",
+      "source": "schema",
+      "coordinate": "/exprNode/kind",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "!=",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "*",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "+",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "-",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": [
+        "gen:expr_op:minus"
+      ]
+    },
+    {
+      "family": "expr_op",
+      "value": "/",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "<",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "<=",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": "==",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": ">",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "expr_op",
+      "value": ">=",
+      "source": "schema",
+      "coordinate": "/exprNode/op",
+      "cells": []
+    },
+    {
+      "family": "fallback",
+      "value": "abort",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/fallback",
+      "cells": []
+    },
+    {
+      "family": "fallback",
+      "value": "escalate",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/fallback",
+      "cells": []
+    },
+    {
+      "family": "idempotency",
+      "value": "noop_on_identical",
+      "source": "schema",
+      "coordinate": "/transition/idempotency",
+      "cells": [
+        "bind:idempotency:noop_on_identical"
+      ]
+    },
+    {
+      "family": "idempotency",
+      "value": "reject",
+      "source": "schema",
+      "coordinate": "/transition/idempotency",
+      "cells": [
+        "bind:idempotency:reject"
+      ]
+    },
+    {
+      "family": "independence",
+      "value": "correlated",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/independence",
+      "cells": [
+        "bind:independence:correlated"
+      ]
+    },
+    {
+      "family": "independence",
+      "value": "independent",
+      "source": "schema",
+      "coordinate": "/attestationPolicy/observerSet/independence",
+      "cells": [
+        "bind:independence:independent"
+      ]
+    },
+    {
+      "family": "invariant",
+      "value": "balanced",
+      "source": "schema",
+      "coordinate": "/invariants/kind",
+      "cells": [
+        "gen:invariant:balanced"
+      ]
+    },
+    {
+      "family": "participant_binding",
+      "value": "fixed",
+      "source": "schema",
+      "coordinate": "/participants/binding",
+      "cells": [
+        "bind:participant_binding:fixed"
+      ]
+    },
+    {
+      "family": "participant_binding",
+      "value": "to_be_bound",
+      "source": "schema",
+      "coordinate": "/participants/binding",
+      "cells": [
+        "bind:participant_binding:to_be_bound"
+      ]
+    },
+    {
+      "family": "participant_scoping",
+      "value": "multi",
+      "source": "structural",
+      "coordinate": "participant_scoping",
+      "cells": []
+    },
+    {
+      "family": "participant_scoping",
+      "value": "single",
+      "source": "structural",
+      "coordinate": "participant_scoping",
+      "cells": []
+    },
+    {
+      "family": "terminal_kind",
+      "value": "aborted",
+      "source": "schema",
+      "coordinate": "/state/terminalKind",
+      "cells": [
+        "bind:terminal_kind:aborted"
+      ]
+    },
+    {
+      "family": "terminal_kind",
+      "value": "contested",
+      "source": "schema",
+      "coordinate": "/state/terminalKind",
+      "cells": [
+        "bind:terminal_kind:contested"
+      ]
+    },
+    {
+      "family": "terminal_kind",
+      "value": "success",
+      "source": "schema",
+      "coordinate": "/state/terminalKind",
+      "cells": [
+        "bind:terminal_kind:success"
+      ]
+    },
+    {
+      "family": "transition_effect",
+      "value": "compensate",
+      "source": "schema",
+      "coordinate": "/transition/effects",
+      "cells": [
+        "bind:transition_effect:compensate"
+      ]
+    },
+    {
+      "family": "transition_effect",
+      "value": "consume",
+      "source": "schema",
+      "coordinate": "/transition/effects",
+      "cells": [
+        "bind:transition_effect:consume"
+      ]
+    },
+    {
+      "family": "transition_effect",
+      "value": "post",
+      "source": "schema",
+      "coordinate": "/transition/effects",
+      "cells": [
+        "bind:transition_effect:post"
+      ]
+    },
+    {
+      "family": "transition_effect",
+      "value": "release",
+      "source": "schema",
+      "coordinate": "/transition/effects",
+      "cells": [
+        "bind:transition_effect:release"
+      ]
+    },
+    {
+      "family": "transition_effect",
+      "value": "reserve",
+      "source": "schema",
+      "coordinate": "/transition/effects",
+      "cells": [
+        "bind:transition_effect:reserve"
+      ]
+    },
+    {
+      "family": "transition_guard",
+      "value": "deadline",
+      "source": "schema",
+      "coordinate": "/transition/guards/kind",
+      "cells": [
+        "bind:transition_guard:deadline"
+      ]
+    },
+    {
+      "family": "transition_guard",
+      "value": "participant",
+      "source": "schema",
+      "coordinate": "/transition/guards/kind",
+      "cells": [
+        "bind:transition_guard:participant"
+      ]
+    },
+    {
+      "family": "transition_guard",
+      "value": "sequence",
+      "source": "schema",
+      "coordinate": "/transition/guards/kind",
+      "cells": [
+        "bind:transition_guard:sequence"
+      ]
+    },
+    {
+      "family": "value_category",
+      "value": "currency",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "value_category",
+      "value": "decimal",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "value_category",
+      "value": "evidence",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "value_category",
+      "value": "extension",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "value_category",
+      "value": "money",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "value_category",
+      "value": "party",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "value_category",
+      "value": "string",
+      "source": "schema",
+      "coordinate": "/valueCategory",
+      "cells": []
+    },
+    {
+      "family": "when_guard",
+      "value": "guard_false",
+      "source": "structural",
+      "coordinate": "when_guard",
+      "cells": []
+    },
+    {
+      "family": "when_guard",
+      "value": "present",
+      "source": "structural",
+      "coordinate": "when_guard",
+      "cells": []
+    }
+  ],
+  "cells": [
+    {
+      "id": "cell01_single_balanced",
+      "kind": "seed",
+      "covers": [
+        [
+          "effect_kind",
+          "debit"
+        ],
+        [
+          "effect_kind",
+          "credit"
+        ],
+        [
+          "invariant",
+          "balanced"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "note": "single balanced debit/credit (baseline FAITHFUL)",
+      "input": {
+        "neu": "procedure cell01_single_balanced {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell01_single_balanced",
+        "procedure": "cell01_single_balanced",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      }
+    },
+    {
+      "id": "cell02_multi_party_fee_split",
+      "kind": "seed",
+      "covers": [
+        [
+          "participant_scoping",
+          "multi"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "note": "4-leg 3-party fee split (multi-party FAITHFUL)",
+      "input": {
+        "neu": "procedure multi_party_fee_split {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    participant Fee {\n        role = \"fee\"\n        org  = \"c\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input fee      : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input fid      : party\n    input key      : string\n    debit d1 {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c1 {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    debit d2 {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c2 {\n        ledger          = \"l.fee\"\n        owner           = \"fee\"\n        participant     = \"Fee\"\n        party           = %fid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "multi_party_fee_split",
+        "procedure": "multi_party_fee_split",
+        "inputs": {
+          "amount": 100,
+          "fee": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "fid": "party-1",
+          "key": "sha256:aa"
+        }
+      }
+    },
+    {
+      "id": "cell03_compute_fee",
+      "kind": "seed",
+      "covers": [
+        [
+          "compute",
+          "present"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "note": "compute (2% fee, non-negative) FAITHFUL",
+      "input": {
+        "neu": "procedure cell03_compute_fee {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input rate : decimal\n    compute fee = amount * rate\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %fee\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell03_compute_fee",
+        "procedure": "cell03_compute_fee",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "rate": 2
+        }
+      }
+    },
+    {
+      "id": "cell04_guard_true",
+      "kind": "seed",
+      "covers": [
+        [
+          "when_guard",
+          "present"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "render",
+      "note": "when guard, guard-TRUE branch FAITHFUL",
+      "input": {
+        "neu": "procedure cell04_guard_true {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell04_guard_true",
+        "procedure": "cell04_guard_true",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "threshold": 100
+        }
+      }
+    },
+    {
+      "id": "cell05_guard_false",
+      "kind": "seed",
+      "covers": [
+        [
+          "when_guard",
+          "guard_false"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "note": "when guard, guard-FALSE branch \u2014 Solidity event-oracle SILENT ()",
+      "input": {
+        "neu": "procedure cell05_guard_false {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell05_guard_false",
+        "procedure": "cell05_guard_false",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "threshold": 100
+        }
+      }
+    },
+    {
+      "id": "cell06_one_sided_guard",
+      "kind": "seed",
+      "covers": [
+        [
+          "invariant",
+          "balanced"
+        ],
+        [
+          "degenerate",
+          "missing_leg"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "guard_false",
+      "witness": "refusal",
+      "note": "one-sided guard (debit guarded, credit not) \u2014 balancer guard-blind ( C1)",
+      "input": {
+        "neu": "procedure cell06_one_sided_guard {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell06_one_sided_guard",
+        "procedure": "cell06_one_sided_guard",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "threshold": 100
+        }
+      }
+    },
+    {
+      "id": "cell07_mutually_exclusive",
+      "kind": "seed",
+      "covers": [
+        [
+          "when_guard",
+          "present"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "note": "mutually-exclusive branches (release OR refund) \u2014 same guard bug SILENT ()",
+      "input": {
+        "neu": "procedure cell07_mutually_exclusive {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input release : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= release\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= release\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell07_mutually_exclusive",
+        "procedure": "cell07_mutually_exclusive",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "release": 100
+        }
+      }
+    },
+    {
+      "id": "cell08_mofn_numeric_guard",
+      "kind": "seed",
+      "covers": [
+        [
+          "expr_op",
+          ">="
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "note": "M-of-N as a numeric guard \u2014 quorum flattened to a number ( semantic loss)",
+      "input": {
+        "neu": "procedure cell08_mofn_numeric_guard {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input signatures : money\n    input quorum : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = signatures >= quorum\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = signatures >= quorum\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell08_mofn_numeric_guard",
+        "procedure": "cell08_mofn_numeric_guard",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "signatures": 100,
+          "quorum": 100
+        }
+      }
+    },
+    {
+      "id": "cell09_temporal_now",
+      "kind": "seed",
+      "covers": [
+        [
+          "degenerate",
+          "boundary"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "note": "temporal `now` \u2014 REFUSED (undeclared symbol, exit 4)",
+      "input": {
+        "neu": "procedure cell09_temporal_now {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = now >= amount\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = now >= amount\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell09_temporal_now",
+        "procedure": "cell09_temporal_now",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      }
+    },
+    {
+      "id": "cell10_unbalanced_missing_leg",
+      "kind": "seed",
+      "covers": [
+        [
+          "degenerate",
+          "missing_leg"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "note": "structurally unbalanced (missing credit leg) \u2014 REFUSED (kernel.balance, exit 4)",
+      "input": {
+        "neu": "procedure cell10_unbalanced_missing_leg {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell10_unbalanced_missing_leg",
+        "procedure": "cell10_unbalanced_missing_leg",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      }
+    },
+    {
+      "id": "cell11_compound_guard",
+      "kind": "seed",
+      "covers": [
+        [
+          "degenerate",
+          "boundary"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "note": "compound guard `a>=b && c>=d` \u2014 REFUSED (grammar)",
+      "input": {
+        "neu": "procedure cell11_compound_guard {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input b : money\n    input c2 : money\n    input d2 : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= b && c2 >= d2\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= b && c2 >= d2\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell11_compound_guard",
+        "procedure": "cell11_compound_guard",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "b": 100,
+          "c2": 100,
+          "d2": 100
+        }
+      }
+    },
+    {
+      "id": "cell12_all_guards_off",
+      "kind": "seed",
+      "covers": [
+        [
+          "degenerate",
+          "empty_effects"
+        ],
+        [
+          "when_guard",
+          "guard_false"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "guard_false",
+      "witness": "render",
+      "note": "empty / all-guards-off settlement (guard-false, no movement)",
+      "input": {
+        "neu": "procedure cell12_all_guards_off {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input threshold : money\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n        when            = amount >= threshold\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell12_all_guards_off",
+        "procedure": "cell12_all_guards_off",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "threshold": 100
+        }
+      }
+    },
+    {
+      "id": "cell13_cross_currency",
+      "kind": "seed",
+      "covers": [
+        [
+          "currency_dimension",
+          "cross"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "note": "cross-currency imbalance (100 USD vs 100 EUR) \u2014 REFUSED (currency-aware, exit 4)",
+      "input": {
+        "neu": "procedure cell13_cross_currency {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input currency2 : currency\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency2\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell13_cross_currency",
+        "procedure": "cell13_cross_currency",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "currency2": "USD"
+        }
+      }
+    },
+    {
+      "id": "cell14_subtraction_underflow",
+      "kind": "seed",
+      "covers": [
+        [
+          "expr_op",
+          "-"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "note": "subtraction-settlement underflow (paid-price legs) \u2014 REFUSED (balance algebra)",
+      "input": {
+        "neu": "procedure cell14_subtraction_underflow {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input price : money\n    compute net = amount - price\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cell14_subtraction_underflow",
+        "procedure": "cell14_subtraction_underflow",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "price": 130
+        }
+      }
+    },
+    {
+      "id": "cellNC_negative_compute",
+      "kind": "seed",
+      "covers": [
+        [
+          "expr_op",
+          "-"
+        ],
+        [
+          "degenerate",
+          "negative_amount"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "note": "negative compute (net=principal-rebate, matched pair driven <0) \u2014 Solidity BROKEN / Postgres SILENT ()",
+      "input": {
+        "neu": "procedure cellNC_negative_compute {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input rebate : money\n    compute net = amount - rebate\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %net\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %net\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cellNC_negative_compute",
+        "procedure": "cellNC_negative_compute",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "rebate": 130
+        }
+      }
+    },
+    {
+      "id": "cellNI_negative_input",
+      "kind": "seed",
+      "covers": [
+        [
+          "degenerate",
+          "negative_amount"
+        ],
+        [
+          "value_category",
+          "money"
+        ]
+      ],
+      "credits": false,
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "note": "negative input amount (-500) \u2014 Solidity type-REFUSED / Postgres SILENT ( P1)",
+      "input": {
+        "neu": "procedure cellNI_negative_input {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "cellNI_negative_input",
+        "procedure": "cellNI_negative_input",
+        "inputs": {
+          "amount": -500,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      }
+    },
+    {
+      "id": "gen:effect_kind:debit",
+      "kind": "generated",
+      "credits": true,
+      "covers": [
+        [
+          "effect_kind",
+          "debit"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "note": "balanced pair; control removes ONLY the debit leg -> not_balanceable",
+      "input": {
+        "neu": "procedure gen_effect_kind_debit {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "gen_effect_kind_debit",
+        "procedure": "gen_effect_kind_debit",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      },
+      "adversarial": {},
+      "mutation": {
+        "op": "remove_block",
+        "header": "debit d"
+      },
+      "control": {
+        "neu": "procedure gen_effect_kind_debit {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      }
+    },
+    {
+      "id": "gen:effect_kind:credit",
+      "kind": "generated",
+      "credits": true,
+      "covers": [
+        [
+          "effect_kind",
+          "credit"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "note": "balanced pair; control removes ONLY the credit leg -> not_balanceable",
+      "input": {
+        "neu": "procedure gen_effect_kind_credit {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "gen_effect_kind_credit",
+        "procedure": "gen_effect_kind_credit",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      },
+      "adversarial": {},
+      "mutation": {
+        "op": "remove_block",
+        "header": "credit c"
+      },
+      "control": {
+        "neu": "procedure gen_effect_kind_credit {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      }
+    },
+    {
+      "id": "gen:invariant:balanced",
+      "kind": "generated",
+      "credits": true,
+      "covers": [
+        [
+          "invariant",
+          "balanced"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "ledger",
+      "note": "balanced pair; control removes ONLY `assert balanced` -> assert_missing",
+      "input": {
+        "neu": "procedure gen_invariant_balanced {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "gen_invariant_balanced",
+        "procedure": "gen_invariant_balanced",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      },
+      "adversarial": {},
+      "mutation": {
+        "op": "remove_block",
+        "header": "assert balanced"
+      },
+      "control": {
+        "neu": "procedure gen_invariant_balanced {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n}\n"
+      }
+    },
+    {
+      "id": "gen:currency_dimension:cross",
+      "kind": "generated",
+      "credits": true,
+      "covers": [
+        [
+          "currency_dimension",
+          "cross"
+        ]
+      ],
+      "adversarialKind": "boundary",
+      "witness": "refusal",
+      "note": "credit in a 2nd currency -> unbalanced; retoken the credit currency ref -> single -> ok",
+      "input": {
+        "neu": "procedure gen_currency_dimension_cross {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input currency2 : currency\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency2\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "gen_currency_dimension_cross",
+        "procedure": "gen_currency_dimension_cross",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "currency2": "EUR"
+        }
+      },
+      "adversarial": {},
+      "mutation": {
+        "op": "retoken",
+        "old": "currency        = %currency2",
+        "new": "currency        = %currency",
+        "count": 1
+      },
+      "control": {
+        "neu": "procedure gen_currency_dimension_cross {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input currency2 : currency\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "refusalCode": "kernel.balance.unbalanced"
+    },
+    {
+      "id": "gen:degenerate:negative_amount",
+      "kind": "generated",
+      "credits": true,
+      "covers": [
+        [
+          "degenerate",
+          "negative_amount"
+        ]
+      ],
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "note": "negative money amount refused (); positive-amount control (same source) -> ok",
+      "input": {
+        "neu": "procedure gen_degenerate_negative_amount {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %amount\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "gen_degenerate_negative_amount",
+        "procedure": "gen_degenerate_negative_amount",
+        "inputs": {
+          "amount": -500,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa"
+        }
+      },
+      "adversarial": {
+        "amount": -500
+      },
+      "mutation": {
+        "op": "scenario",
+        "override": {
+          "amount": 100
+        }
+      },
+      "control": {
+        "adversarial": {
+          "amount": 100
+        }
+      },
+      "refusalCode": "negative"
+    },
+    {
+      "id": "gen:expr_op:minus",
+      "kind": "generated",
+      "credits": true,
+      "covers": [
+        [
+          "expr_op",
+          "-"
+        ]
+      ],
+      "adversarialKind": "negative",
+      "witness": "refusal",
+      "note": "subtraction driven <0 refused (); the `+` control on the same scenario -> ok",
+      "input": {
+        "neu": "procedure gen_expr_op_minus {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input other : money\n    compute r = amount - other\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %r\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %r\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "scenario": {
+        "scenario": "gen_expr_op_minus",
+        "procedure": "gen_expr_op_minus",
+        "inputs": {
+          "amount": 100,
+          "currency": "EUR",
+          "pid": "party-1",
+          "qid": "party-1",
+          "key": "sha256:aa",
+          "other": 999
+        }
+      },
+      "adversarial": {
+        "other": 999
+      },
+      "mutation": {
+        "op": "retoken",
+        "old": "amount - other",
+        "new": "amount + other",
+        "count": 1
+      },
+      "control": {
+        "neu": "procedure gen_expr_op_minus {\n    trigger settlement\n    version \"1.0.0\"\n    participant Payer {\n        role = \"payer\"\n        org  = \"a\"\n    }\n    participant Payee {\n        role = \"payee\"\n        org  = \"b\"\n    }\n    allow \"a\" with \"b\" {\n        \"a\" as \"payer\"\n        \"b\" as \"payee\"\n    }\n    input amount   : money\n    input currency : currency\n    input pid      : party\n    input qid      : party\n    input key      : string\n    input other : money\n    compute r = amount + other\n    debit d {\n        ledger          = \"l.payer\"\n        owner           = \"payer\"\n        participant     = \"Payer\"\n        party           = %pid\n        amount          = %r\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    credit c {\n        ledger          = \"l.payee\"\n        owner           = \"payee\"\n        participant     = \"Payee\"\n        party           = %qid\n        amount          = %r\n        currency        = %currency\n        idempotency_key  = %key\n    }\n    assert balanced\n}\n"
+      },
+      "refusalCode": "negative"
+    },
+    {
+      "id": "bind:assurance:A1",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "assurance",
+          "A1"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid assurance=A1 is derived from test/generalism/Inputs/export_clearance_fixture/capability-spec.json by setting observer-set customs_oracles.assurance to 'A1'; the observation-binding consumer must reject the valid control/tamper when assurance no longer matches the rebuilt capability-spec field with binding.observer_assurance_mismatch",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locator": {
+        "array": "attestations",
+        "sub": "observerSet.assurance",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "value": "A1"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "observerSet",
+        "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+        "specField": "assurance",
+        "cellValue": "A1",
+        "controlValue": "A2",
+        "tamper": "flip-observer-assurance-to-controlValue",
+        "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "consumer": "scripts/validators/validate_observation_binding.py",
+        "mismatchCode": "binding.observer_assurance_mismatch",
+        "expectedRelation": "binding observer-set field equals spec observer-set field"
+      }
+    },
+    {
+      "id": "bind:assurance:A2",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "assurance",
+          "A2"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid assurance=A2 is derived from test/generalism/Inputs/export_clearance_fixture/capability-spec.json by setting observer-set customs_oracles.assurance to 'A2'; the observation-binding consumer must reject the valid control/tamper when assurance no longer matches the rebuilt capability-spec field with binding.observer_assurance_mismatch",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locator": {
+        "array": "attestations",
+        "sub": "observerSet.assurance",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "value": "A2"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "observerSet",
+        "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+        "specField": "assurance",
+        "cellValue": "A2",
+        "controlValue": "A1",
+        "tamper": "flip-observer-assurance-to-controlValue",
+        "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "consumer": "scripts/validators/validate_observation_binding.py",
+        "mismatchCode": "binding.observer_assurance_mismatch",
+        "expectedRelation": "binding observer-set field equals spec observer-set field"
+      }
+    },
+    {
+      "id": "bind:assurance:A3",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "assurance",
+          "A3"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid assurance=A3 is derived from test/generalism/Inputs/export_clearance_fixture/capability-spec.json by setting observer-set customs_oracles.assurance to 'A3'; the observation-binding consumer must reject the valid control/tamper when assurance no longer matches the rebuilt capability-spec field with binding.observer_assurance_mismatch",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locator": {
+        "array": "attestations",
+        "sub": "observerSet.assurance",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "value": "A3"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "observerSet",
+        "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+        "specField": "assurance",
+        "cellValue": "A3",
+        "controlValue": "A2",
+        "tamper": "flip-observer-assurance-to-controlValue",
+        "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "consumer": "scripts/validators/validate_observation_binding.py",
+        "mismatchCode": "binding.observer_assurance_mismatch",
+        "expectedRelation": "binding observer-set field equals spec observer-set field"
+      }
+    },
+    {
+      "id": "bind:assurance:A4",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "assurance",
+          "A4"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid assurance=A4 is derived from test/generalism/Inputs/export_clearance_fixture/capability-spec.json by setting observer-set customs_oracles.assurance to 'A4'; the observation-binding consumer must reject the valid control/tamper when assurance no longer matches the rebuilt capability-spec field with binding.observer_assurance_mismatch",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locator": {
+        "array": "attestations",
+        "sub": "observerSet.assurance",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "value": "A4"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "observerSet",
+        "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+        "specField": "assurance",
+        "cellValue": "A4",
+        "controlValue": "A3",
+        "tamper": "flip-observer-assurance-to-controlValue",
+        "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+        "observerSet": "customs_oracles",
+        "bindingField": "assurance",
+        "consumer": "scripts/validators/validate_observation_binding.py",
+        "mismatchCode": "binding.observer_assurance_mismatch",
+        "expectedRelation": "binding observer-set field equals spec observer-set field"
+      }
+    },
+    {
+      "id": "bind:bind_min_assurance:",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "bind_min_assurance",
+          ""
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid bind_min_assurance= is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.bindMinAssurance to ''; the native slot producer must carry minAssurance='A1' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent bindMinAssurance '' vs 'A2' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "bindMinAssurance",
+        "participant": "EscrowAgent",
+        "value": "",
+        "topologyField": "minAssurance",
+        "topologyValue": "A1"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "bindMinAssurance",
+        "cellValue": "",
+        "controlValue": "A2",
+        "tamper": "flip-minAssurance-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "minAssurance",
+        "cellTopologyValue": "A1",
+        "controlTopologyValue": "A2",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A1",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": true
+        },
+        "controlExpected": {
+          "ok": false,
+          "code": "NEU-2001"
+        }
+      }
+    },
+    {
+      "id": "bind:bind_min_assurance:A1",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "bind_min_assurance",
+          "A1"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid bind_min_assurance=A1 is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.bindMinAssurance to 'A1'; the native slot producer must carry minAssurance='A1' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent bindMinAssurance 'A1' vs 'A2' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "bindMinAssurance",
+        "participant": "EscrowAgent",
+        "value": "A1",
+        "topologyField": "minAssurance",
+        "topologyValue": "A1"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "bindMinAssurance",
+        "cellValue": "A1",
+        "controlValue": "A2",
+        "tamper": "flip-minAssurance-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "minAssurance",
+        "cellTopologyValue": "A1",
+        "controlTopologyValue": "A2",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A1",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": true
+        },
+        "controlExpected": {
+          "ok": false,
+          "code": "NEU-2001"
+        }
+      }
+    },
+    {
+      "id": "bind:bind_min_assurance:A2",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "bind_min_assurance",
+          "A2"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid bind_min_assurance=A2 is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.bindMinAssurance to 'A2'; the native slot producer must carry minAssurance='A2' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent bindMinAssurance 'A2' vs 'A1' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "bindMinAssurance",
+        "participant": "EscrowAgent",
+        "value": "A2",
+        "topologyField": "minAssurance",
+        "topologyValue": "A2"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "bindMinAssurance",
+        "cellValue": "A2",
+        "controlValue": "A1",
+        "tamper": "flip-minAssurance-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "minAssurance",
+        "cellTopologyValue": "A2",
+        "controlTopologyValue": "A1",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A1",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": false,
+          "code": "NEU-2001"
+        },
+        "controlExpected": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "id": "bind:bind_min_assurance:A3",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "bind_min_assurance",
+          "A3"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid bind_min_assurance=A3 is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.bindMinAssurance to 'A3'; the native slot producer must carry minAssurance='A3' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent bindMinAssurance 'A3' vs 'A2' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "bindMinAssurance",
+        "participant": "EscrowAgent",
+        "value": "A3",
+        "topologyField": "minAssurance",
+        "topologyValue": "A3"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "bindMinAssurance",
+        "cellValue": "A3",
+        "controlValue": "A2",
+        "tamper": "flip-minAssurance-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "minAssurance",
+        "cellTopologyValue": "A3",
+        "controlTopologyValue": "A2",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A2",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": false,
+          "code": "NEU-2001"
+        },
+        "controlExpected": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "id": "bind:bind_min_assurance:A4",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "bind_min_assurance",
+          "A4"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid bind_min_assurance=A4 is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.bindMinAssurance to 'A4'; the native slot producer must carry minAssurance='A4' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent bindMinAssurance 'A4' vs 'A3' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "bindMinAssurance",
+        "participant": "EscrowAgent",
+        "value": "A4",
+        "topologyField": "minAssurance",
+        "topologyValue": "A4"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "bindMinAssurance",
+        "cellValue": "A4",
+        "controlValue": "A3",
+        "tamper": "flip-minAssurance-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "minAssurance",
+        "cellTopologyValue": "A4",
+        "controlTopologyValue": "A3",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A3",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": false,
+          "code": "NEU-2001"
+        },
+        "controlExpected": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "id": "bind:evidence_style:batched_root",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "evidence_style",
+          "batched_root"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-derived evidence_style=batched_root is inserted at content-located lifecycle transition COMMIT.evidence.style with chained fixed independently at True; the coordination-plan from-spec consumer must carry the exact object, distinguish the schema-valid style control, and detect independent producer/consumer style drops",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "evidence.style",
+        "transition": "COMMIT",
+        "value": "batched_root",
+        "evidenceChained": true
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransitionEvidence",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "evidence",
+        "cellValue": "batched_root",
+        "controlValue": "single_hash",
+        "transition": "COMMIT",
+        "evidenceChained": true,
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "producerTamper": "drop-transition-evidence-style-from-capability-spec",
+        "consumerTamper": "drop-transition-evidence-style-from-coordination-plan",
+        "expectedRelation": "content-located coordination-plan transition evidence carries style byte-for-byte without inferring the independent chained obligation"
+      }
+    },
+    {
+      "id": "bind:evidence_style:single_hash",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "evidence_style",
+          "single_hash"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-derived evidence_style=single_hash is inserted at content-located lifecycle transition COMMIT.evidence.style with chained fixed independently at True; the coordination-plan from-spec consumer must carry the exact object, distinguish the schema-valid style control, and detect independent producer/consumer style drops",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "evidence.style",
+        "transition": "COMMIT",
+        "value": "single_hash",
+        "evidenceChained": true
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransitionEvidence",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "evidence",
+        "cellValue": "single_hash",
+        "controlValue": "batched_root",
+        "transition": "COMMIT",
+        "evidenceChained": true,
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "producerTamper": "drop-transition-evidence-style-from-capability-spec",
+        "consumerTamper": "drop-transition-evidence-style-from-coordination-plan",
+        "expectedRelation": "content-located coordination-plan transition evidence carries style byte-for-byte without inferring the independent chained obligation"
+      }
+    },
+    {
+      "id": "bind:idempotency:noop_on_identical",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "idempotency",
+          "noop_on_identical"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid idempotency=noop_on_identical is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.idempotency to 'noop_on_identical'; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "idempotency",
+        "transition": "COMMIT",
+        "value": "noop_on_identical"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "idempotency",
+        "cellValue": "noop_on_identical",
+        "controlValue": "reject",
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:idempotency:reject",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "idempotency",
+          "reject"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid idempotency=reject is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.idempotency to 'reject'; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "idempotency",
+        "transition": "COMMIT",
+        "value": "reject"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "idempotency",
+        "cellValue": "reject",
+        "controlValue": "noop_on_identical",
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:independence:correlated",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "independence",
+          "correlated"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid independence=correlated is derived from test/generalism/Inputs/export_clearance_fixture/capability-spec.json by setting observer-set customs_oracles.independence to 'correlated'; the observation-binding consumer must reject the valid control/tamper when independence no longer matches the rebuilt capability-spec field with binding.observer_independence_mismatch",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locator": {
+        "array": "attestations",
+        "sub": "observerSet.independence",
+        "observerSet": "customs_oracles",
+        "bindingField": "independence",
+        "value": "correlated"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "observerSet",
+        "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+        "specField": "independence",
+        "cellValue": "correlated",
+        "controlValue": "independent",
+        "tamper": "flip-observer-independence-to-controlValue",
+        "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+        "observerSet": "customs_oracles",
+        "bindingField": "independence",
+        "consumer": "scripts/validators/validate_observation_binding.py",
+        "mismatchCode": "binding.observer_independence_mismatch",
+        "expectedRelation": "binding observer-set field equals spec observer-set field"
+      }
+    },
+    {
+      "id": "bind:independence:independent",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "independence",
+          "independent"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid independence=independent is derived from test/generalism/Inputs/export_clearance_fixture/capability-spec.json by setting observer-set customs_oracles.independence to 'independent'; the observation-binding consumer must reject the valid control/tamper when independence no longer matches the rebuilt capability-spec field with binding.observer_independence_mismatch",
+      "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+      "locator": {
+        "array": "attestations",
+        "sub": "observerSet.independence",
+        "observerSet": "customs_oracles",
+        "bindingField": "independence",
+        "value": "independent"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "observerSet",
+        "spec": "test/generalism/Inputs/export_clearance_fixture/capability-spec.json",
+        "specField": "independence",
+        "cellValue": "independent",
+        "controlValue": "correlated",
+        "tamper": "flip-observer-independence-to-controlValue",
+        "binding": "test/generalism/Inputs/export_clearance_fixture/binding.json",
+        "observerSet": "customs_oracles",
+        "bindingField": "independence",
+        "consumer": "scripts/validators/validate_observation_binding.py",
+        "mismatchCode": "binding.observer_independence_mismatch",
+        "expectedRelation": "binding observer-set field equals spec observer-set field"
+      }
+    },
+    {
+      "id": "bind:participant_binding:fixed",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "participant_binding",
+          "fixed"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid participant_binding=fixed is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.binding to 'fixed'; the native slot producer must carry lateBindingMode='fixed' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent binding 'fixed' vs 'to_be_bound' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "binding",
+        "participant": "EscrowAgent",
+        "value": "fixed",
+        "topologyField": "lateBindingMode",
+        "topologyValue": "fixed"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "binding",
+        "cellValue": "fixed",
+        "controlValue": "to_be_bound",
+        "tamper": "flip-lateBindingMode-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "lateBindingMode",
+        "cellTopologyValue": "fixed",
+        "controlTopologyValue": "to_be_bound",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A2",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": false,
+          "code": "NEU-3001"
+        },
+        "controlExpected": {
+          "ok": true
+        }
+      }
+    },
+    {
+      "id": "bind:participant_binding:to_be_bound",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "participant_binding",
+          "to_be_bound"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid participant_binding=to_be_bound is derived from test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json by setting EscrowAgent.binding to 'to_be_bound'; the native slot producer must carry lateBindingMode='to_be_bound' and the binding-manifest validator must observe the declared valid<->valid delta; coverage credit requires valid<->valid carry-and-consume proof: EscrowAgent binding 'to_be_bound' vs 'fixed' changes the binding-manifest validator observation",
+      "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "participants",
+        "sub": "binding",
+        "participant": "EscrowAgent",
+        "value": "to_be_bound",
+        "topologyField": "lateBindingMode",
+        "topologyValue": "to_be_bound"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "participant",
+        "spec": "test/ir/samples/Inputs/core_document_escrow/generated/capability-spec/capability-spec.json",
+        "specField": "binding",
+        "cellValue": "to_be_bound",
+        "controlValue": "fixed",
+        "tamper": "flip-lateBindingMode-to-controlTopologyValue",
+        "participant": "EscrowAgent",
+        "topologyField": "lateBindingMode",
+        "cellTopologyValue": "to_be_bound",
+        "controlTopologyValue": "fixed",
+        "manifest": {
+          "runtime": "evm",
+          "assurance": "A2",
+          "binder": "escrowco"
+        },
+        "consumer": "scripts/validators/validate_binding_manifest.py",
+        "expected": {
+          "ok": true
+        },
+        "controlExpected": {
+          "ok": false,
+          "code": "NEU-3001"
+        }
+      }
+    },
+    {
+      "id": "bind:terminal_kind:aborted",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "terminal_kind",
+          "aborted"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid terminal_kind=aborted is derived from test/generalism/fixtures/terminal_kind.capability-spec.json by setting lifecycle state REJECTED.terminalKind to 'aborted'; the capability-spec consumer must reject the valid control/tamper when lifecycle.terminalStates.aborted resolves to a state whose terminalKind is 'success' with spec.bad_terminal_state",
+      "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+      "locator": {
+        "array": "lifecycle.states",
+        "sub": "terminalKind",
+        "state": "REJECTED",
+        "tamperState": "CLOSED",
+        "terminalStateField": "aborted",
+        "value": "aborted"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleState",
+        "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+        "specField": "terminalKind",
+        "cellValue": "aborted",
+        "controlValue": "success",
+        "tamper": "rewire-terminalStates-to-tamperState",
+        "state": "REJECTED",
+        "tamperState": "CLOSED",
+        "terminalStateField": "aborted",
+        "consumer": "scripts/validators/validate_capability_spec.py",
+        "mismatchCode": "spec.bad_terminal_state",
+        "expectedRelation": "lifecycle.terminalStates entry resolves to a terminal state with matching terminalKind"
+      }
+    },
+    {
+      "id": "bind:terminal_kind:contested",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "terminal_kind",
+          "contested"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid terminal_kind=contested is derived from test/generalism/fixtures/terminal_kind.capability-spec.json by setting lifecycle state CONTESTED.terminalKind to 'contested'; the capability-spec consumer must reject the valid control/tamper when lifecycle.terminalStates.contested resolves to a state whose terminalKind is 'success' with spec.bad_terminal_state",
+      "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+      "locator": {
+        "array": "lifecycle.states",
+        "sub": "terminalKind",
+        "state": "CONTESTED",
+        "tamperState": "CLOSED",
+        "terminalStateField": "contested",
+        "value": "contested"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleState",
+        "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+        "specField": "terminalKind",
+        "cellValue": "contested",
+        "controlValue": "success",
+        "tamper": "rewire-terminalStates-to-tamperState",
+        "state": "CONTESTED",
+        "tamperState": "CLOSED",
+        "terminalStateField": "contested",
+        "consumer": "scripts/validators/validate_capability_spec.py",
+        "mismatchCode": "spec.bad_terminal_state",
+        "expectedRelation": "lifecycle.terminalStates entry resolves to a terminal state with matching terminalKind"
+      }
+    },
+    {
+      "id": "bind:terminal_kind:success",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "terminal_kind",
+          "success"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid terminal_kind=success is derived from test/generalism/fixtures/terminal_kind.capability-spec.json by setting lifecycle state CLOSED.terminalKind to 'success'; the capability-spec consumer must reject the valid control/tamper when lifecycle.terminalStates.success resolves to a state whose terminalKind is 'aborted' with spec.bad_terminal_state",
+      "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+      "locator": {
+        "array": "lifecycle.states",
+        "sub": "terminalKind",
+        "state": "CLOSED",
+        "tamperState": "REJECTED",
+        "terminalStateField": "success",
+        "value": "success"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleState",
+        "spec": "test/generalism/fixtures/terminal_kind.capability-spec.json",
+        "specField": "terminalKind",
+        "cellValue": "success",
+        "controlValue": "aborted",
+        "tamper": "rewire-terminalStates-to-tamperState",
+        "state": "CLOSED",
+        "tamperState": "REJECTED",
+        "terminalStateField": "success",
+        "consumer": "scripts/validators/validate_capability_spec.py",
+        "mismatchCode": "spec.bad_terminal_state",
+        "expectedRelation": "lifecycle.terminalStates entry resolves to a terminal state with matching terminalKind"
+      }
+    },
+    {
+      "id": "bind:transition_effect:compensate",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_effect",
+          "compensate"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid transition_effect=compensate is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.effects to ['compensate']; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "effects",
+        "transition": "COMMIT",
+        "value": [
+          "compensate"
+        ]
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "effects",
+        "cellValue": [
+          "compensate"
+        ],
+        "controlValue": [
+          "post"
+        ],
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_effect:consume",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_effect",
+          "consume"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid transition_effect=consume is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.effects to ['consume']; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "effects",
+        "transition": "COMMIT",
+        "value": [
+          "consume"
+        ]
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "effects",
+        "cellValue": [
+          "consume"
+        ],
+        "controlValue": [
+          "post"
+        ],
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_effect:post",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_effect",
+          "post"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid transition_effect=post is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.effects to ['post']; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "effects",
+        "transition": "COMMIT",
+        "value": [
+          "post"
+        ]
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "effects",
+        "cellValue": [
+          "post"
+        ],
+        "controlValue": [
+          "reserve"
+        ],
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_effect:release",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_effect",
+          "release"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid transition_effect=release is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.effects to ['release']; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "effects",
+        "transition": "COMMIT",
+        "value": [
+          "release"
+        ]
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "effects",
+        "cellValue": [
+          "release"
+        ],
+        "controlValue": [
+          "post"
+        ],
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_effect:reserve",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_effect",
+          "reserve"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-valid transition_effect=reserve is derived from test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json by setting lifecycle transition COMMIT.effects to ['reserve']; the coordination-plan from-spec consumer must carry that exact value and produce a different coordination-plan artifact for the valid control",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "effects",
+        "transition": "COMMIT",
+        "value": [
+          "reserve"
+        ]
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransition",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "effects",
+        "cellValue": [
+          "reserve"
+        ],
+        "controlValue": [
+          "post"
+        ],
+        "transition": "COMMIT",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "expectedRelation": "coordination-plan lifecycleTransitions entry carries the spec transition field byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_guard:deadline",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_guard",
+          "deadline"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-derived transition_guard=deadline is inserted at content-located lifecycle transition COMMIT.guards detail='generalism-guard-kind'; the coordination-plan from-spec consumer must carry the exact kind, distinguish the schema-valid control, and detect independent producer/consumer drops",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "guards",
+        "transition": "COMMIT",
+        "value": "deadline",
+        "guardDetail": "generalism-guard-kind"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransitionGuard",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "guards",
+        "cellValue": "deadline",
+        "controlValue": "participant",
+        "transition": "COMMIT",
+        "guardDetail": "generalism-guard-kind",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "producerTamper": "drop-transition-guard-kind-from-capability-spec",
+        "consumerTamper": "drop-transition-guard-kind-from-coordination-plan",
+        "expectedRelation": "content-located coordination-plan transition guard carries the spec guard kind byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_guard:participant",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_guard",
+          "participant"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-derived transition_guard=participant is inserted at content-located lifecycle transition COMMIT.guards detail='generalism-guard-kind'; the coordination-plan from-spec consumer must carry the exact kind, distinguish the schema-valid control, and detect independent producer/consumer drops",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "guards",
+        "transition": "COMMIT",
+        "value": "participant",
+        "guardDetail": "generalism-guard-kind"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransitionGuard",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "guards",
+        "cellValue": "participant",
+        "controlValue": "sequence",
+        "transition": "COMMIT",
+        "guardDetail": "generalism-guard-kind",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "producerTamper": "drop-transition-guard-kind-from-capability-spec",
+        "consumerTamper": "drop-transition-guard-kind-from-coordination-plan",
+        "expectedRelation": "content-located coordination-plan transition guard carries the spec guard kind byte-for-byte"
+      }
+    },
+    {
+      "id": "bind:transition_guard:sequence",
+      "kind": "binding",
+      "credits": true,
+      "covers": [
+        [
+          "transition_guard",
+          "sequence"
+        ]
+      ],
+      "witness": "binding_consume",
+      "note": "schema-derived transition_guard=sequence is inserted at content-located lifecycle transition COMMIT.guards detail='generalism-guard-kind'; the coordination-plan from-spec consumer must carry the exact kind, distinguish the schema-valid control, and detect independent producer/consumer drops",
+      "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+      "locator": {
+        "array": "lifecycle.transitions",
+        "sub": "guards",
+        "transition": "COMMIT",
+        "value": "sequence",
+        "guardDetail": "generalism-guard-kind"
+      },
+      "consumeProof": {
+        "kind": "valid_carry_and_consume",
+        "locus": "lifecycleTransitionGuard",
+        "spec": "test/ir/security/Inputs/core_multi_pair_role/generated/capability-spec/capability-spec.json",
+        "specField": "guards",
+        "cellValue": "sequence",
+        "controlValue": "deadline",
+        "transition": "COMMIT",
+        "guardDetail": "generalism-guard-kind",
+        "consumer": "neutrino-gen --target=coordination-plan --from-spec",
+        "producerTamper": "drop-transition-guard-kind-from-capability-spec",
+        "consumerTamper": "drop-transition-guard-kind-from-coordination-plan",
+        "expectedRelation": "content-located coordination-plan transition guard carries the spec guard kind byte-for-byte"
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+// [83] IDENTITY PRESERVED, REPOINTED to the external-package boundary (M7_BACKEND_PACKAGE_BOUNDARY_ADR
+// section 9). Core no longer owns the Solidity Foundry harness, and the byte/source-compilation authority
+// moved to the package's own witness. This governed identity is KEPT rather than retired precisely because
+// retiring it would delete the only core-side statement that the responsibility left: the assertion has to
+// keep being made from this path, or "core stopped checking" and "core handed the check over" become
+// indistinguishable at the next head.
+//
+// What it no longer asserts: a core-side byte-identity diff against committed Solidity goldens. The curated
+// packs carry no Solidity rail to diff, so the old `[ "$n" -ge 3 ]` floor could only be satisfied by
+// re-committing goldens into core — the exact re-acquisition this boundary forbids.
+//
+// (a) CORE DOES NOT OWN THE EXTERNALIZED HARNESS RESPONSIBILITY. A default render produces contract
+//     sources and NO Foundry harness, and a caller may not override the verified package profile.
+// RUN: rm -rf %t.render && %neutrino-gen --target=solidity --scenario=%curated3-scenario %curated3-source -o %t.render
+// RUN: test -d %t.render/src
+// RUN: test ! -e %t.render/test
+// RUN: test ! -e %t.render/foundry.toml
+// RUN: %not %neutrino-gen --target=solidity --scenario=%curated3-scenario --profile=%examples/target-profiles/postgres.target-profile.json %curated3-source -o %t.bound 2>&1 | %FileCheck --check-prefix=BOUND %s
+// RUN: test ! -e %t.bound/src
+// BOUND: bound to its verified package profile
+//
+// (b) BYTE / SOURCE-COMPILATION AUTHORITY LIVES IN THE PACKAGE WITNESS. The package compiles its emitted
+//     sources ALONE, against its own config, and pins the settings those sources actually require:
+//     `optimizer`/`via_ir` are load-bearing (solc aborts with "Stack too deep" without them) and were once
+//     stated ONLY in the core fixture section 9 re-homes away. Each pattern below binds EXECUTABLE content,
+//     never prose — a grep that a comment can satisfy is not a witness.
+// RUN: grep -q 'SOURCES_ONLY_FOUNDRY_TOML = (' %test/../packaging/solidity/scripts/check_clean_clone.py
+// RUN: grep -qF '"via_ir = true\n"' %test/../packaging/solidity/scripts/check_clean_clone.py
+// RUN: grep -qF '"optimizer = true\n"' %test/../packaging/solidity/scripts/check_clean_clone.py
+// RUN: grep -qF 'sources_only / "foundry.toml"' %test/../packaging/solidity/scripts/check_clean_clone.py
+// RUN: grep -qE '^ +"Stack too deep",$' %test/../packaging/solidity/scripts/check_clean_clone.py
+//
+// (c) NO SOURCE-TREE FALLBACK AND NO RECREATED FOUNDRY HARNESS. A fresh render never yields one (asserted
+//     in (a)), and core may not silently re-acquire one. Core still carries 17 committed harness files —
+//     the re-homing is incomplete, so a "zero harnesses" claim would be false and would pass only because
+//     it was never really evaluated. This is a RATCHET on the true number instead: recreation raises it and
+//     bites; completing the re-homing lowers it and requires a conscious bump, exactly as the retired
+//     golden-count floor did.
+// RUN: cnt=$(find -L %test/.. -name out -prune -o -name .git -prune -o -name .ci -prune -o \( -name foundry.toml -o -name '*.t.sol' \) -print | wc -l | tr -d ' '); \
+// RUN:   [ "$cnt" = 17 ] || { echo "core Foundry harness count is $cnt, pinned at 17: a harness was recreated or re-homed without bumping this floor"; exit 1; }
+// Note on traversal: `-L` is required. The curated packs are SYMLINKS into domains/, and a plain
+// `find` silently refuses to descend them — an earlier draft of this check traversed nothing at all and
+// therefore could never fail.

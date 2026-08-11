@@ -1,0 +1,73 @@
+{
+  "kind": "neutrino.domain-pack",
+  "optionalContracts": [],
+  "packDigest": "sha256:36ba4afdb4fa1435054bed9ed2b9acc40a0344ad2d3310f223db08e71c2bcaee",
+  "packId": "example.external-pack.v2",
+  "payloads": [
+    {
+      "contract": "binding-policy",
+      "mediaType": "application/json",
+      "path": "artifacts/policy.json",
+      "role": "binding-policy",
+      "sha256": "sha256:317926003b90140e245840c00c158e36d17804175948b566b57cb56c7836725c"
+    },
+    {
+      "contract": "target-profile",
+      "mediaType": "application/json",
+      "path": "artifacts/profile.json",
+      "role": "target-profile",
+      "sha256": "sha256:852a147fed2c60a29ef48a35da85eb4addef1ea58b2098683c583eb63ea8d1df"
+    },
+    {
+      "mediaType": "application/x-sh",
+      "path": "generated/postgres/run.sh",
+      "role": "postgres-test-helper",
+      "sha256": "sha256:7d8a03d5f8567063cd71740a3b715258f08edac3086b5de6a7d65048a5a76435"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/schema.sql",
+      "role": "postgres-schema",
+      "sha256": "sha256:08a661b58062867af82d6687625965417573e733ba05a9a0b334f76c79da98cb"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/Synthetic.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:e8b2af6e7459712d13d26ab4991c57c9e2ec67450787133566a6cb00535a241d"
+    },
+    {
+      "mediaType": "application/toml",
+      "path": "generated/solidity/foundry.toml",
+      "role": "solidity-project-config",
+      "sha256": "sha256:f3c322070ff12b3f30c0763d5e9e396499fce734919edcb9161d599962b42bc8"
+    },
+    {
+      "mediaType": "application/json",
+      "path": "scenario/happy_path.json",
+      "role": "scenario",
+      "sha256": "sha256:acb4492556b5b2da87a1a27bf6a214c05483166054907b5fc4ddc88ef4d51e2c"
+    },
+    {
+      "mediaType": "text/x-neutrino",
+      "path": "source/synthetic.neu",
+      "role": "source",
+      "sha256": "sha256:c0d61d44056759ada73d2a05e0594339ef57cfbbd714edb29f2043e4926e371d"
+    }
+  ],
+  "requiredContracts": [
+    "binding-policy",
+    "target-profile"
+  ],
+  "schemaVersion": 2,
+  "targetsBundle": {
+    "bundleDigest": "sha256:2048ad363c1daa088539a8158e26b3497b7013cde2410db7353df619544c4a46",
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.12.0"
+  },
+  "translatorPins": {
+    "capabilitySpecVersion": "v1",
+    "mlirDialectVersion": "0.1.0",
+    "toolVersion": "0.2.0"
+  }
+}

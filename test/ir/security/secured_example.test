@@ -1,0 +1,12 @@
+// [28] secured worked example: the fully-bound core_secured_offer domain passes every security
+// gate, its security.json byte-matches the committed golden, and it lowers to every target with NO
+// --allow-insecure override. Drives the committed example source via %examples ( S5h).
+//
+// DEFINE: %{sso} = %test/ir/security/Inputs/core_secured_offer
+// RUN: %neutrino-gen --target=security --scenario=%{sso}/scenario/core_secured_offer_happy_path.json %{sso}/source/core_secured_offer.neu -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+// RUN: diff %t.d/security.json %{sso}/generated/security/security.json
+// RUN: %neutrino-gen --target=solidity --scenario=%{sso}/scenario/core_secured_offer_happy_path.json %{sso}/source/core_secured_offer.neu -o %t.sol
+// RUN: %neutrino-gen --target=postgres --scenario=%{sso}/scenario/core_secured_offer_happy_path.json %{sso}/source/core_secured_offer.neu -o %t.pg
+// RUN: %neutrino-gen --target=slot     --scenario=%{sso}/scenario/core_secured_offer_happy_path.json %{sso}/source/core_secured_offer.neu -o %t.slot
+// CHECK: "ok": true

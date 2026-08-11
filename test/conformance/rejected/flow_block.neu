@@ -1,0 +1,8 @@
+// Conformance NEGATIVE: `flow { ... }` is NOT accepted source syntax (M3
+// source-level non-goal) — the parser must reject it, not silently ignore it.
+procedure pseudo_flow {
+    trigger t
+    flow {
+        field = "value"
+    }
+}

@@ -1,0 +1,437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/security-primitive-carveout-registry/v1",
+  "title": "Neutrino security-primitive carve-out registry ()",
+  "description": "The exact default-deny registry of handwritten generic security primitives (). Forms: exact-body (byte-hash + exact include-consumers + required security tests) and reviewed-generator (closure hash + DISTINCT anchored-region hash + closed typed parameter surface + independent output verifier; acceptance entries carry a machine-checked signature-level revokeCoupling, -REVOKE entries a revokeSignatureMarker). resolver pins (target, finalizedKind) -> implementation with exact-one cardinality. status=draft-pre-tier2-final MAY carry pendingClassification; a tier2-final registry MUST NOT, and its trackedToZero absenceProbes must be demonstrably absent.",
+  "type": "object",
+  "required": [
+    "kind",
+    "schemaVersion",
+    "status",
+    "issue",
+    "defaultDeny",
+    "scopeRule",
+    "entries",
+    "resolver",
+    "pendingClassification",
+    "trackedToZero",
+    "prohibitions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "neutrino.security-primitive-carveout-registry"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "draft-pre-tier2-final",
+        "tier2-final"
+      ]
+    },
+    "statusNote": {
+      "type": "string"
+    },
+    "issue": {
+      "type": "string",
+      "minLength": 1
+    },
+    "defaultDeny": {
+      "const": true
+    },
+    "scopeRule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "form",
+          "backend",
+          "artifact",
+          "purpose",
+          "threatBoundary",
+          "whyNotDeclarative",
+          "allowedConsumers",
+          "approvingDecision"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)*$"
+          },
+          "form": {
+            "enum": [
+              "exact-body",
+              "reviewed-generator"
+            ]
+          },
+          "backend": {
+            "enum": [
+              "solidity",
+              "postgres"
+            ]
+          },
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identitySha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "closureFiles": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "description": "MECHANICALLY DERIVED: the recursive backend-local include closure + same-stem source partners; the gate re-derives and requires exact equality (core Neutrino headers are the upstream -governed waist, outside the carve-out trust boundary)."
+          },
+          "closureSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "parameterSurface": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "threatBoundary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "whyNotDeclarative": {
+            "type": "string",
+            "minLength": 1
+          },
+          "allowedConsumers": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredSecurityTests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "invocation"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Executable verifier under an output-verification root (test/, lib/backends/, examples/oracle-reference/); never a governance gate."
+                },
+                "invocation": {
+                  "type": "object",
+                  "required": [
+                    "surface",
+                    "marker"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "surface": {
+                      "type": "string"
+                    },
+                    "marker": {
+                      "type": "string",
+                      "minLength": 4
+                    },
+                    "via": {
+                      "type": "object",
+                      "required": [
+                        "surface",
+                        "mustContain"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "surface": {
+                          "type": "string"
+                        },
+                        "mustContain": {
+                          "type": "string",
+                          "minLength": 4
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "outputVerifier": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "path",
+                "invocation"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Executable verifier under an output-verification root (test/, lib/backends/, examples/oracle-reference/); never a governance gate."
+                },
+                "invocation": {
+                  "type": "object",
+                  "required": [
+                    "surface",
+                    "marker"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "surface": {
+                      "type": "string"
+                    },
+                    "marker": {
+                      "type": "string",
+                      "minLength": 4
+                    },
+                    "via": {
+                      "type": "object",
+                      "required": [
+                        "surface",
+                        "mustContain"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "surface": {
+                          "type": "string"
+                        },
+                        "mustContain": {
+                          "type": "string",
+                          "minLength": 4
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Pinned registered invocations that demonstrably consume the verifier; content must reference this primitive's derived output identity.",
+            "minItems": 1
+          },
+          "mandatoryDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "couplingRule": {
+            "type": "string"
+          },
+          "approvingDecision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "anchor": {
+            "type": "string",
+            "minLength": 8,
+            "description": "Unique implementation-site anchor (exact symbol text); must match exactly once in the closure."
+          },
+          "regionSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "sha256 of the anchored implementation region \u2014 the entry's DISTINCT identity."
+          },
+          "finalizedKind": {
+            "type": "string",
+            "pattern": "^[A-Za-z]+\\.[A-Za-z]+$"
+          },
+          "revokeSignatureMarker": {
+            "type": "string",
+            "minLength": 8
+          },
+          "revokeCoupling": {
+            "type": "object",
+            "required": [
+              "dependency",
+              "signatureMarker"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "dependency": {
+                "type": "string"
+              },
+              "signatureMarker": {
+                "type": "string",
+                "minLength": 8
+              }
+            }
+          },
+          "entryPoint": {
+            "type": "string",
+            "minLength": 2,
+            "description": "The generated function-name prefix this acceptance generator emits (e.g. accept_)."
+          },
+          "revokeFunctionPrefix": {
+            "type": "string",
+            "minLength": 12,
+            "description": "The complete revoked-function identity prefix (REVOKE EXECUTE ON FUNCTION <entryPoint>); must equal the coupled acceptance entryPoint and appear (literal-joined) in the region."
+          },
+          "dynamicNameOperand": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The operand the emitted guard name concatenates after entryPoint; both the guard construction and the REVOKE target must use exactly '<entryPoint>' + this operand."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "form": {
+                  "const": "exact-body"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "identitySha256",
+                "requiredSecurityTests"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "form": {
+                  "const": "reviewed-generator"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "closureFiles",
+                "closureSha256",
+                "anchor",
+                "regionSha256",
+                "parameterSurface",
+                "outputVerifier"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "pendingClassification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "artifact",
+          "identitySha256",
+          "consumers",
+          "question"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "identitySha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "consumers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "trackedToZero": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "artifact",
+          "disposition",
+          "issueRef"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "disposition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issueRef": {
+            "type": "string",
+            "minLength": 1
+          },
+          "absenceProbes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Identifying symbols that must be ABSENT from lib/backends in a tier2-final registry."
+          }
+        }
+      }
+    },
+    "prohibitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "resolver": {
+      "type": "array",
+      "minItems": 1,
+      "description": "(governedTarget, finalizedKind) -> implementation; exactly one row per pair; never a -REVOKE trailer; machine-checked cardinality (zero/duplicate/wrong-variant fail).",
+      "items": {
+        "type": "object",
+        "required": [
+          "target",
+          "finalizedKind",
+          "implementation"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "target": {
+            "enum": [
+              "solidity",
+              "postgres"
+            ]
+          },
+          "finalizedKind": {
+            "type": "string",
+            "pattern": "^[A-Za-z]+\\.[A-Za-z]+$"
+          },
+          "implementation": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

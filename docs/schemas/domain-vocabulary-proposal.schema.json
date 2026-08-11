@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-vocabulary-proposal/v1",
+  "title": "Neutrino Domain Vocabulary Proposal",
+  "description": "Proposal-only output of AI-assisted dataset analysis: candidate domain terms + candidate mapping-graph edges, each cited and classified, never trusted by the compiler until human review promotes them into a neutrino.domain-dialect. Fail-closed (additionalProperties:false). status is always 'proposed' — a proposal may not claim accepted dialect status. Validated by scripts/corpus/validate_domain_proposal.py. See docs/domains/DOMAIN_PROPOSAL.md and Phase 22A.",
+  "type": "object",
+  "required": ["kind", "domain", "proposalVersion", "status", "corpusRef", "candidateTerms"],
+  "additionalProperties": false,
+  "$defs": {
+    "layer": { "enum": ["L1", "L2", "L3", "L4"] },
+    "lossiness": { "enum": ["lossless", "lossy-preserved-in-extensionData", "unsupported"] },
+    "citation": {
+      "type": "object",
+      "required": ["source"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "minLength": 1, "description": "A corpus source id, standard, document path, or excerpt that motivates the candidate." },
+        "standardVersion": { "type": "string", "minLength": 1 },
+        "excerptHash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "candidateTerm": {
+      "type": "object",
+      "required": ["term", "layer", "confidence", "reviewStatus", "citations"],
+      "additionalProperties": false,
+      "properties": {
+        "term": { "type": "string", "minLength": 1 },
+        "layer": { "$ref": "#/$defs/layer" },
+        "confidence": { "enum": ["low", "medium", "high"] },
+        "reviewStatus": { "const": "proposed", "description": "A proposal candidate is always 'proposed' — it may not self-promote to accepted." },
+        "citations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/citation" },
+          "description": "At least one citation — uncited candidate terms are rejected."
+        },
+        "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "mapsToCore": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "sourceNodes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "unresolvedQuestions": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "candidateEdge": {
+      "type": "object",
+      "required": ["id", "type", "from", "to", "lossiness", "provenance"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["cites", "expandsTo", "lowersTo", "liftsFrom", "preservesAs", "rejects"] },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["expand", "lower", "lift", "preserve", "reject"] },
+        "lossiness": { "$ref": "#/$defs/lossiness" },
+        "provenance": {
+          "type": "object",
+          "required": ["source", "status"],
+          "additionalProperties": false,
+          "properties": {
+            "source": { "type": "string", "minLength": 1 },
+            "status": { "const": "proposed" }
+          }
+        }
+      }
+    },
+    "extensionDataCandidate": {
+      "type": "object",
+      "required": ["field", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "properties": {
+    "kind": { "const": "neutrino.domain-vocabulary-proposal" },
+    "domain": { "type": "string", "minLength": 1 },
+    "proposalVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "status": { "const": "proposed", "description": "A proposal is never 'accepted' — only a reviewed neutrino.domain-dialect is." },
+    "corpusRef": { "type": "string", "minLength": 1, "description": "corpusId of the corpus manifest the candidates were drawn from." },
+    "runRef": { "type": "string", "minLength": 1, "description": "runId of the analysis-run manifest, when available." },
+    "candidateTerms": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/candidateTerm" } },
+    "candidateEdges": { "type": "array", "items": { "$ref": "#/$defs/candidateEdge" } },
+    "extensionDataCandidates": { "type": "array", "items": { "$ref": "#/$defs/extensionDataCandidate" } }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "scenario": "oracle_multi_attest_happy_path",
+  "procedure": "oracle_multi_attest",
+  "inputs": {
+    "order_id": "order-001",
+    "buyer_id": "buyer-001",
+    "seller_id": "seller-001",
+    "amount": 500,
+    "currency": "USD",
+    "delivery_proof": "sha256:aa",
+    "audit_proof": "sha256:bb"
+  },
+  "expect": { "computed": {}, "ledger": { "buyer.escrow": -500, "seller.proceeds": 500 }, "invariants": ["replay_safe", "balanced"] }
+}

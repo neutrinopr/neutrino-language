@@ -1,0 +1,18 @@
+{
+  "kind": "neutrino.slot-compensation",
+  "capability": "coordinate.core_scheme_settlement",
+  "compensable": {
+    "COMMIT": {
+      "how": "post the inverse of each committed leg",
+      "reverses": [
+        { "entry": "scheme_principal", "ledger": "scheme.net_payable", "inverseOf": "debit" },
+        { "entry": "bank_principal", "ledger": "bank.settlement_account", "inverseOf": "credit" },
+        { "entry": "scheme_fee", "ledger": "scheme.fee_payable", "inverseOf": "debit" },
+        { "entry": "treasury_fee", "ledger": "treasury.fee_income", "inverseOf": "credit" }
+      ],
+      "idempotency": "core_scheme_settlement:<idempotency_key>:compensation"
+    }
+  },
+  "nonCompensable": ["OPEN", "NEGOTIATE", "PROPOSE", "REJECT", "CLOSE"],
+  "invariantAfterCompensation": "balanced"
+}

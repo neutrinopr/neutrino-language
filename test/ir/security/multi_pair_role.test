@@ -1,0 +1,7 @@
+// [30] per-pair scoping: an org constrained to a DIFFERENT role by two pairs must not be falsely
+// rejected — the valid core_multi_pair_role capability passes (role check scoped to the pair).
+//
+// DEFINE: %{mp} = %test/ir/security/Inputs/core_multi_pair_role
+// RUN: %neutrino-gen --target=security --scenario=%{mp}/scenario/core_multi_pair_role_happy_path.json %{mp}/source/core_multi_pair_role.neu -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+// CHECK: "ok": true

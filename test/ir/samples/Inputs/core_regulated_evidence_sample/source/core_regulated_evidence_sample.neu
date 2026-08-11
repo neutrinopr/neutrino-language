@@ -1,0 +1,83 @@
+// M3 sample (strategy ), third shape: clinical evidence verification — regulated evidence
+// chain with consent, provenance, and audit concerns.
+//
+// L1 carries the balanced settlement: an EvidenceConsumer pays a verified-access fee to the
+// DataController, keyed by the EVIDENCE ARTIFACT it settles against — `evidence_ref : evidence`
+// is a first-class L1 value (a hashable reference, WP7 ), so the access-fee posting is
+// idempotent per evidence artifact and `value_category:evidence` is a real spec primitive, not
+// finance-only decoration. The deeper regulated concerns — consent policy, the actual evidence
+// verification, provenance/lineage, and audit — are still NOT L1: they are declared at L2
+// (evidence requirements + concepts/invariants/failureModes) and bound at L3. Concern names such as
+// verification/policy/lineage/logging "dialects" are proposal-level concern-profile METADATA
+// for this slice, NOT implemented MLIR dialects. M4 owns runtime consent/evidence/provenance
+// verification and audit delivery. No pseudo capability/domain_semantics/lifecycle/mlir_modeling
+// source syntax. The Verifier slot is to_be_bound so an L3 Binding Manifest binds it.
+
+procedure core_regulated_evidence_sample {
+    trigger evidence_access_requested
+    version "1.0.0"
+
+    participant Patient {
+        role = "patient"
+        org  = "patientorg"
+    }
+    participant DataController {
+        role = "controller"
+        org  = "controllerco"
+    }
+    participant Verifier {
+        role               = "verifier"
+        org                = "verifierco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    participant EvidenceConsumer {
+        role = "consumer"
+        org  = "consumerco"
+    }
+    allow "consumerco" with "controllerco" {
+        "consumerco" as "consumer"
+        "controllerco" as "controller"
+    }
+    allow "patientorg" with "controllerco" {
+        "patientorg" as "patient"
+    }
+    allow "controllerco" with "verifierco" {
+        "verifierco" as "verifier"
+    }
+    allow "patientorg" with "verifierco" {
+    }
+    allow "patientorg" with "consumerco" {
+    }
+    allow "verifierco" with "consumerco" {
+    }
+
+    input evidence_ref : evidence
+    input consumer_id  : party
+    input controller_id : party
+    input fee          : money
+    input currency     : currency
+
+    debit consumer_access_fee {
+        ledger          = "consumer.access_fee"
+        owner           = "consumer"
+        participant     = "EvidenceConsumer"
+        party           = %consumer_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %evidence_ref
+    }
+
+    credit controller_evidence_revenue {
+        ledger          = "controller.evidence_revenue"
+        owner           = "controller"
+        participant     = "DataController"
+        party           = %controller_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %evidence_ref
+    }
+
+    assert balanced
+}

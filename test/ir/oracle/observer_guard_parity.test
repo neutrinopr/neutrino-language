@@ -1,0 +1,69 @@
+// M5 oracle S7 (): observer↔guard parity gate — the off-chain analogue of cross-backend
+// equivalence (). Proves the rendered serverless observers (S4, ) and the vetted on-chain
+// acceptance guard (ThresholdQuorumAcceptance.sol, /) are single-sourced: they agree on the
+// EIP-712 signing scheme, the domain, the quorum threshold, the observer-set identity, and the
+// canonical claim shape. Deterministic; no live feeds; the mismatch cases prove the gate is non-vacuous.
+//
+// DEFINE: %{ob} = %examples/observation-binding
+// DEFINE: %{guard} = %examples/oracle-reference/threshold-quorum/src/ThresholdQuorumAcceptance.sol
+// DEFINE: %{par} = %scripts/gates/check_observer_guard_parity.py
+//
+// HAPPY PATH: the domain-bound observer signs exactly the guard's EIP-712 claimDigest → parity holds.
+// RUN: rm -rf %t.g
+// RUN: %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json -o %t.g
+// RUN: python3 %{par} --observers %t.g --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json
+//
+// NON-VACUOUS  — the NAKED observer (no bound guard domain, S4 default) signs keccak256(encode(c)),
+// not the domain-separated digest, so its signatures never verify on chain → parity FAILS. This is the
+// preimage gap slice 7 closes.
+// RUN: rm -rf %t.n
+// RUN: %neutrino-gen --target=oracle-observer --from-spec %{ob}/capability-spec.json --binding %{ob}/binding.json -o %t.n
+// RUN: %not python3 %{par} --observers %t.n --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding.json 2>&1 | %FileCheck %s --check-prefix=NAKED
+// NAKED: parity.preimage
+//
+// NON-VACUOUS  — a quorum THRESHOLD mismatch fails (tamper the aggregator's M).
+// RUN: cp -r %t.g %t.thr && sed -i.bak 's/const THRESHOLD = 2/const THRESHOLD = 3/' %t.thr/observers/delivery_oracles/aggregate.js
+// RUN: %not python3 %{par} --observers %t.thr --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=THR
+// THR: parity.threshold
+//
+// NON-VACUOUS  — an OBSERVER-SET identity mismatch fails.
+// RUN: cp -r %t.g %t.os && sed -i.bak 's/const OBSERVER_SET = "delivery_oracles"/const OBSERVER_SET = "wrong_set"/' %t.os/observers/delivery_oracles/obs-alpha.js
+// RUN: %not python3 %{par} --observers %t.os --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=OSET
+// OSET: parity.observer_set
+//
+// NON-VACUOUS  — a canonical CLAIM-FIELD mismatch fails (observer would sign a different claim).
+// RUN: cp -r %t.g %t.cf && sed -i.bak 's/const CLAIM_FIELD = "delivered"/const CLAIM_FIELD = "tampered"/' %t.cf/observers/delivery_oracles/obs-alpha.js
+// RUN: %not python3 %{par} --observers %t.cf --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=CLAIM
+// CLAIM: parity.claim_field
+//
+// NON-VACUOUS  — an EIP-712 type-string divergence (signing-scheme drift) fails.
+// RUN: cp -r %t.g %t.sc && sed -i.bak 's/QuorumClaim(bytes32 claimId/QuorumClaim(bytes32 wrongId/' %t.sc/observers/delivery_oracles/obs-alpha.js
+// RUN: %not python3 %{par} --observers %t.sc --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=SCHEME
+// SCHEME: parity.claim_typehash
+//
+// NON-VACUOUS  — a wrong claimDigest RECIPE BODY fails, even though the type strings + the
+// `claimDigest` call are unchanged (swap the struct fields claimId <-> canonicalClaimHash). This is
+// what mechanically closes the preimage gap: the recipe is pinned, not just the presence of a call.
+// RUN: cp -r %t.g %t.rc && sed -i.bak 's/_word(claimId), _word(canonicalClaimHash)/_word(canonicalClaimHash), _word(claimId)/' %t.rc/observers/delivery_oracles/obs-alpha.js
+// RUN: %not python3 %{par} --observers %t.rc --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=RECIPE
+// RECIPE: parity.digest_recipe
+//
+// NON-VACUOUS  — a NON-FIRST observer module drifting fails (tamper obs-gamma, not obs-alpha): every
+// observer is checked, so a per-signer drift can't hide behind a valid first module.
+// RUN: cp -r %t.g %t.nf && sed -i.bak 's/const OBSERVER_SET = "delivery_oracles"/const OBSERVER_SET = "sneaky"/' %t.nf/observers/delivery_oracles/obs-gamma.js
+// RUN: %not python3 %{par} --observers %t.nf --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=NONFIRST
+// NONFIRST: obs-gamma.js observerSet 'sneaky'
+//
+// NON-VACUOUS  — the recipe is TWO-SIDED: a GUARD-side change is caught too (the gate derives the
+// recipe from ThresholdQuorumAcceptance.sol itself, not a hardcoded copy). Swap the guard's struct
+// fields and, with a VALID observer, parity still fails.
+// RUN: cp %{guard} %t.guard.sol && sed -i.bak 's/abi.encode(CLAIM_TYPEHASH, claimId, canonicalClaimHash, executionClaim)/abi.encode(CLAIM_TYPEHASH, canonicalClaimHash, claimId, executionClaim)/' %t.guard.sol
+// RUN: %not python3 %{par} --observers %t.g --guard %t.guard.sol --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=GUARDSIDE
+// GUARDSIDE: parity.digest_recipe
+//
+// NON-VACUOUS  () — the co-signed executionClaim is part of the pinned recipe: dropping it from
+// the OBSERVER's struct (so it no longer co-signs the execution binding) breaks parity even though the
+// evidence fields are untouched. Proves the executionClaim is authenticated, not decorative.
+// RUN: cp -r %t.g %t.ec && sed -i.bak 's/_word(canonicalClaimHash), _word(executionClaim)/_word(canonicalClaimHash)/' %t.ec/observers/delivery_oracles/obs-alpha.js
+// RUN: %not python3 %{par} --observers %t.ec --guard %{guard} --spec %{ob}/capability-spec.json --binding %{ob}/binding-guard.json 2>&1 | %FileCheck %s --check-prefix=EXECCLAIM
+// EXECCLAIM: parity.digest_recipe

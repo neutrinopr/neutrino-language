@@ -1,0 +1,23 @@
+{
+  "scenario": "oracle_delivery_happy_path",
+  "procedure": "oracle_delivery",
+  "inputs": {
+    "order_id": "order-001",
+    "buyer_id": "buyer-001",
+    "seller_id": "seller-001",
+    "amount": 500,
+    "currency": "USD",
+    "delivery_proof": "sha256:11223344556677889900aabbccddeeff00112233445566778899aabbccddeeff"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "buyer.escrow": -500,
+      "seller.proceeds": 500
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

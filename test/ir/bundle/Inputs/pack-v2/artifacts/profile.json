@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "kind": "neutrino.target-profile",
+  "profileId": "target.postgres.v1",
+  "profileVersion": 1,
+  "target": "postgres",
+  "runtimeFamily": "relational",
+  "executionMode": "simulated",
+  "supportedFeatures": [
+    "attestation:quorum",
+    "binding:flexible",
+    "effect:credit",
+    "effect:debit",
+    "guard:conditional",
+    "invariant:balanced",
+    "topology:org_coordination",
+    "topology:participants",
+    "value_category:currency",
+    "value_category:decimal",
+    "value_category:evidence",
+    "value_category:money",
+    "value_category:party",
+    "value_category:string"
+  ],
+  "unsupportedConstructs": [],
+  "fallbackPolicy": "fail_closed",
+  "capabilitySpecVersion": "v1",
+  "semanticProfile": {
+    "features": [
+      "attestation:quorum",
+      "authorization:explicit",
+      "coordination:evidence_acceptance",
+      "effect:credit",
+      "effect:debit",
+      "guard:conditional",
+      "identity:explicit_instance_key",
+      "invariant:balanced",
+      "replay:idempotent",
+      "terminal:aborted",
+      "terminal:success",
+      "time:explicit_input"
+    ],
+    "limits": {
+      "maxAttestations": 32,
+      "maxComputes": 128,
+      "maxEffectGroups": 64,
+      "maxEffects": 256,
+      "maxExpressionDepth": 32,
+      "maxOperationSteps": 1024
+    },
+    "version": 3
+  }
+}

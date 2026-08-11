@@ -1,0 +1,66 @@
+// M5 token S5 (): MINT on the approved supply-as-a-ledger model (decision ,
+// docs/process/SUPPLY_LEDGER_DECISION.md). Mint is the one place a token creates circulating value, and
+// modeling it as a bare credit with NO counterparty would break `assert balanced`. So supply is an
+// explicit ledger (`token.supply`) and mint is an ordinary BALANCED debit/credit pair:
+//   mint = debit token.supply (the reserve) / credit token.balance (the holder).
+// `assert balanced` holds BY CONSTRUCTION — every unit credited to a holder is debited from the
+// supply reserve, so debits equal credits per transaction. This is feature-by-balanced-composition
+// over the existing effect model (like compliance  / freeze  / memo ), NOT a new token
+// primitive: `token.supply` is a reserved LEDGER-NAME convention, not new schema.
+//
+// AUTHORITY (fail-closed): mint is gated on a SupplyAuthority via the existing  conditional
+// guard `when supply_approved == 1` on BOTH legs (the  guarded-balance verifier refuses split
+// guards, keeping the pair atomic). Any value other than exactly 1 — a denial 0 or an out-of-range
+// 2 — suppresses BOTH legs, so unauthorized/invalid mint moves no value (SUPPRESSION, not abort;
+// the coordination reconciles as a no-op). The model is inherently CAPPED: mint transfers FROM the
+// reserve, so you can only mint what `token.supply` holds (uncapped mint-at-will is the deferred
+// boundary in ). Renders the same spec to Solidity AND PostgreSQL byte-goldens.
+
+procedure token_mint {
+    trigger mint_requested
+    version "1.0.0"
+
+    participant SupplyAuthority {
+        role = "supply_authority"
+        org  = "issuerco"
+    }
+    participant Holder {
+        role = "holder"
+        org  = "walletco"
+    }
+    allow "issuerco" with "walletco" {
+        "issuerco" as "supply_authority"
+        "walletco" as "holder"
+    }
+
+    input mint_id         : string
+    input supply_id       : party
+    input holder_id       : party
+    input amount          : money
+    input currency        : currency
+    input supply_approved : number
+
+    // debit the supply reserve — the counterparty that keeps mint balanced (and caps it).
+    debit supply_debit {
+        ledger          = "token.supply"
+        owner           = "supply"
+        participant     = "SupplyAuthority"
+        party           = %supply_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %mint_id
+        when            = supply_approved == 1
+    }
+    // credit the holder's balance — the newly circulating units.
+    credit holder_credit {
+        ledger          = "token.balance"
+        owner           = "holder"
+        participant     = "Holder"
+        party           = %holder_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %mint_id
+        when            = supply_approved == 1
+    }
+    assert balanced
+}

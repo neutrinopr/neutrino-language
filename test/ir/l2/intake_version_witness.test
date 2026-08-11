@@ -1,0 +1,12 @@
+//  DRIFT WITNESS. A freshly emitted v3 sidecar's intakeVersioning is stamped
+// from the compiler constants (kSemanticProfileVersion / kReductionSemanticsVersion,
+// VersionInfo.h). Those constants MUST agree with the M7 intake profile pins + the
+// closed vocabulary — otherwise a just-emitted v3 would be rejected by
+// classify_m7_intake (intake.stale_vocabulary / intake.stale_reducer) and refused
+// at the C++ reduction trust seam. This witnesses that the compiler constants and
+// the JSON pins cannot drift independently: if either side is bumped without the
+// other, this test fails.
+//
+// RUN: %neutrino-emit --kind=domain-semantics %S/Inputs/reingest_domain.mlir > %t.v3.json
+// RUN: python3 -c "import json,sys; iv=json.load(open(sys.argv[1]))['intakeVersioning']; voc=json.load(open(sys.argv[2])); prof=json.load(open(sys.argv[3])); assert iv['semanticProfileVersion']==voc['semanticProfileVersion'], ('vocabulary drift: emitted %r vs vocabulary %r' % (iv['semanticProfileVersion'], voc['semanticProfileVersion'])); assert iv['reductionSemanticsVersion']==prof['reductionSemantics']['version'], ('reducer drift: emitted %r vs profile pin %r' % (iv['reductionSemanticsVersion'], prof['reductionSemantics']['version'])); print('INTAKE-VERSION-WITNESS-OK')" %t.v3.json %scripts/../docs/semantic-feature-vocabulary.json %scripts/../docs/m7-intake-profile.json | %FileCheck %s
+// CHECK: INTAKE-VERSION-WITNESS-OK

@@ -1,0 +1,11 @@
+{
+  "scenario": "quoted_names",
+  "procedure": "quoted_names",
+  "inputs": { "txn": "t1", "amt": 500, "p": "party-1" },
+  "expect": {
+    "computed": {},
+    "events": ["ProcedureInvoked", "OutDebited", "IncCredited", "QuotedNamesReconciled"],
+    "ledger": { "acq's.balance": -500, "iss's.balance": 500 },
+    "invariants": ["balanced"]
+  }
+}

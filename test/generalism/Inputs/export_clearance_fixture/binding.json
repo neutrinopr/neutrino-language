@@ -1,0 +1,30 @@
+{
+  "kind": "neutrino.observation-binding",
+  "schemaVersion": 1,
+  "observerSets": [
+    {
+      "ref": "customs_oracles",
+      "assurance": "A3",
+      "independence": "independent",
+      "source": {
+        "type": "mock",
+        "id": "customs_events",
+        "claimField": "exported"
+      },
+      "members": [
+        {
+          "id": "il-customs-api",
+          "publicKey": "0xce01"
+        },
+        {
+          "id": "it-dogana-api",
+          "publicKey": "0xce02"
+        },
+        {
+          "id": "bill-of-lading-ocr",
+          "publicKey": "0xce03"
+        }
+      ]
+    }
+  ]
+}

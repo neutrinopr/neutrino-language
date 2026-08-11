@@ -1,0 +1,6 @@
+// [20] capability fork: fork_capability.py --bump minor scaffolds a new .neu (0.1.0 -> 0.2.0) that
+// translates and whose slot capability carries 0.2.0 + a neutrino.capability-fork provenance manifest; a
+// non-semver current version is a usage error caught before any write (exit 2, no output). See
+// check_capability_fork.py.
+//
+// RUN: python3 %S/check_capability_fork.py %neutrino-gen %neutrino-translate %scripts/generators/fork_capability.py %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

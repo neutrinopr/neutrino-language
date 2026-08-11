@@ -1,0 +1,7 @@
+// [58] M3 L2 domain-semantics validator (): the valid bnpl_payment_lifecycle L2 artifact is accepted
+// with the documented machine-readable envelope (ok:true, no diagnostics); every negative fixture
+// (traceability / branch / parameter / expression / reference / shape) fails closed with coded
+// diagnostics. Non-vacuous floor (>=6 negatives). See check_l2_validator.py.
+//
+// RUN: python3 %S/check_l2_validator.py %scripts/domain/validate_l2_domain_semantics.py \
+// RUN:   %examples/l2-domain-semantics

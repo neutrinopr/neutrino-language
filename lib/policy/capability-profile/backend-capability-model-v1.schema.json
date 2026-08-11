@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/backend-capability-model/v1",
+  "title": "Neutrino Backend Capability Model v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "catalogIdentity",
+    "kind",
+    "modelVersion",
+    "package",
+    "semanticProfile",
+    "sourceCapabilityWitness",
+    "supportedFeatures",
+    "target",
+    "targetProfile",
+    "unsupportedConstructs"
+  ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "strings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "properties": {
+    "catalogIdentity": { "$ref": "#/$defs/digest" },
+    "kind": { "const": "neutrino.backend-capability-model" },
+    "modelVersion": { "const": "1.0.0" },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executionMode", "fallbackPolicy", "runtimeFamily"],
+      "properties": {
+        "executionMode": { "enum": ["deterministic", "simulated", "real"] },
+        "fallbackPolicy": { "enum": ["fail_closed", "advisory"] },
+        "runtimeFamily": { "enum": ["on_chain", "relational", "off_chain"] }
+      }
+    },
+    "semanticProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["features", "limits", "version"],
+      "properties": {
+        "features": { "$ref": "#/$defs/strings" },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maxAttestations",
+            "maxComputes",
+            "maxEffectGroups",
+            "maxEffects",
+            "maxExpressionDepth",
+            "maxOperationSteps"
+          ],
+          "properties": {
+            "maxAttestations": { "$ref": "#/$defs/limit" },
+            "maxComputes": { "$ref": "#/$defs/limit" },
+            "maxEffectGroups": { "$ref": "#/$defs/limit" },
+            "maxEffects": { "$ref": "#/$defs/limit" },
+            "maxExpressionDepth": { "$ref": "#/$defs/limit" },
+            "maxOperationSteps": { "$ref": "#/$defs/limit" }
+          }
+        },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "sourceCapabilityWitness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capabilityHash", "procedure", "specVersion"],
+      "properties": {
+        "capabilityHash": { "type": "string", "minLength": 1 },
+        "procedure": { "type": "string", "minLength": 1 },
+        "specVersion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "supportedFeatures": { "$ref": "#/$defs/strings" },
+    "target": { "type": "string", "minLength": 1 },
+    "targetProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "identity", "version"],
+      "properties": {
+        "digest": { "$ref": "#/$defs/digest" },
+        "identity": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "unsupportedConstructs": { "$ref": "#/$defs/strings" }
+  }
+}

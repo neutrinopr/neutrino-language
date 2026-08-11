@@ -1,0 +1,6 @@
+// [64] M3 L2 branch-boundary compatibility (): the compatible issuer+merchant pair is accepted;
+// each negative is a VALID single sidecar but cross-incompatible, failing with exactly its L2X code
+// (evidence-schema L2X-2002 / outcome-kind L2X-2003 / value-type L2X-2004 / wrong-capability L2X-2001).
+// See check_branch_compat.py.
+//
+// RUN: python3 %S/check_branch_compat.py %scripts %examples

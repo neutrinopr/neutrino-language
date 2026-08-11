@@ -1,0 +1,15 @@
+// [29] agreement sugar: 'agreement NAME between A and B' desugars to the explicit form — both parties
+// are auto-declared with default roles, the org-pair policy is auto-emitted, the security report is
+// byte-identical to the explicit form's committed golden (a true desugaring), and it lowers.
+//
+// DEFINE: %{sso} = %test/ir/security/Inputs/core_secured_offer
+// DEFINE: %{ascn} = %{sso}/scenario/core_secured_offer_happy_path.json
+// DEFINE: %{asrc} = %{sso}/source/agreement_secured_offer.neu
+// RUN: %neutrino-translate %{asrc} -o %t.mlir
+// RUN: %FileCheck %s < %t.mlir
+// RUN: %neutrino-gen --target=security --scenario=%{ascn} %{asrc} -o %t.d
+// RUN: diff %t.d/security.json %{sso}/generated/security/security.json
+// RUN: %neutrino-gen --target=solidity --scenario=%{ascn} %{asrc} -o %t.sol
+// CHECK: role = "sponsor"{{.*}}sym_name = "Sponsor"
+// CHECK: role = "merchant"{{.*}}sym_name = "Merchant"
+// CHECK: allow_orgs{{.*}}org_a = "sponsorco"{{.*}}org_b = "acme"

@@ -1,0 +1,9 @@
+// [79] M5 WP2 (): the test-realization companion is folded once, byte-stable, and OUTSIDE the
+// capabilityHash — every committed realization fixture (nr>=10) regenerates byte-identically from
+// (source, scenario), validates, and hash-cross-checks its domain's spec; it carries every input/compute/
+// event/ledger case the backends derive; its capabilityHash is INVARIANT under a scenario-only change and
+// equals the spec's source-alone capabilityHash; eventChain is the IR-derived choreography even without
+// expect.events; and the validator fails closed on a tampered reference (realization.hash_mismatch) and an
+// unknown field (realization.unknown_field). See check_test_realization.py.
+//
+// RUN: python3 %S/check_test_realization.py %neutrino-gen %examples

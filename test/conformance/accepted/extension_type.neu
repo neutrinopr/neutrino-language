@@ -1,0 +1,30 @@
+// Conformance: the input type vocabulary is intentionally OPEN (see
+// docs/language/NEU_LANGUAGE_SPEC.md "input"). A type name outside the recognized
+// value-model set (here `memo`) is accepted and stored verbatim — it just carries
+// no type-specific validation/lowering semantics. This fixture pins that current
+// behavior; it is NOT an endorsement of `memo` as a governed type.
+procedure conformance_extension_type {
+    trigger t
+    input note   : memo
+    input amount : money
+    input cur    : currency
+    input who    : party
+    input k      : string
+    debit d {
+        ledger          = "a"
+        owner           = "o"
+        party           = %who
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %k
+    }
+    credit c {
+        ledger          = "b"
+        owner           = "o"
+        party           = %who
+        amount          = %amount
+        currency        = %cur
+        idempotency_key = %k
+    }
+    assert balanced
+}

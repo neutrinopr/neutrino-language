@@ -1,0 +1,37 @@
+{
+  "kind": "neutrino.capability-security",
+  "schemaVersion": "0.1.0",
+  "procedure": "core_scheme_settlement",
+  "dslVersion": "1.0.0",
+  "ok": true,
+  "categories": [
+    {
+      "category": "authorization",
+      "status": "pass",
+      "findings": ["3 participant(s) declared; every value-moving leg bound to a declared participant", "leg 'scheme_principal' (debit scheme.net_payable) authorized by participant 'Scheme' (role 'scheme')", "leg 'bank_principal' (credit bank.settlement_account) authorized by participant 'SettlementBank' (role 'settlement_bank')", "leg 'scheme_fee' (debit scheme.fee_payable) authorized by participant 'Scheme' (role 'scheme')", "leg 'treasury_fee' (credit treasury.fee_income) authorized by participant 'Treasury' (role 'treasury')"]
+    },
+    {
+      "category": "value",
+      "status": "pass",
+      "findings": ["balanced invariant asserted; debits conserve credits"]
+    },
+    {
+      "category": "topology",
+      "status": "pass",
+      "findings": ["no inter-capability invocations declared; composition trivially satisfied", "cross-organization coordination permitted by declared policy (3 allowed pair(s))"]
+    },
+    {
+      "category": "trustBoundary",
+      "status": "advisory",
+      "findings": ["every ledger leg carries an idempotency_key (replay-safe)", "0 evidence/attestation input(s) declared", "participant 'SettlementBank' binding requires assurance A2, above the A1 that static generation attests; satisfied at realization/runtime (fabric/agent-owned), not by the translator"]
+    },
+    {
+      "category": "state",
+      "status": "n/a",
+      "findings": ["no explicit state-machine construct in the current DSL (L2)"]
+    }
+  ],
+  "advisories": 1,
+  "violations": 0,
+  "resultCode": 0
+}

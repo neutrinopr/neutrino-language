@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/domain-pack/v2",
+  "title": "Domain Pack Manifest v2",
+  "description": "A complete external domain-pack manifest. Its ordered payload inventory binds every package file by stable role, normalized relative path, media type, and SHA-256; an optional bundled semantic contract adds JSON schema validation without changing opaque byte-integrity semantics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "packId", "packDigest", "targetsBundle", "payloads"],
+  "properties": {
+    "kind": { "const": "neutrino.domain-pack" },
+    "schemaVersion": { "const": 2 },
+    "packId": { "type": "string", "minLength": 1 },
+    "packDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "targetsBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundleId", "bundleVersion", "bundleDigest"],
+      "properties": {
+        "bundleId": { "type": "string", "minLength": 1 },
+        "bundleVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+        "bundleDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "translatorPins": {
+      "type": "object",
+      "additionalProperties": { "type": ["string", "integer"] }
+    },
+    "requiredContracts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "optionalContracts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "payloads": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "path", "mediaType", "sha256"],
+        "properties": {
+          "role": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:[-.][a-z0-9]+)*$" },
+          "path": { "type": "string", "minLength": 1 },
+          "mediaType": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.+-]*/[A-Za-z0-9][A-Za-z0-9.+-]*$" },
+          "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "contract": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

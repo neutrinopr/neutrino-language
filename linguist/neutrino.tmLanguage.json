@@ -1,0 +1,102 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Neutrino",
+  "scopeName": "source.neutrino",
+  "fileTypes": [
+    "neu"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#references"
+    },
+    {
+      "include": "#keywords-connector"
+    },
+    {
+      "include": "#keywords-field"
+    },
+    {
+      "include": "#keywords-statement"
+    },
+    {
+      "include": "#value-types"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#operators-binary"
+    },
+    {
+      "include": "#operators-comparison"
+    },
+    {
+      "include": "#numbers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.neutrino",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.line.number-sign.neutrino",
+          "match": "\\#.*$"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.neutrino",
+          "begin": "\"",
+          "end": "\""
+        }
+      ]
+    },
+    "references": {
+      "name": "variable.other.reference.neutrino",
+      "match": "%[A-Za-z_][A-Za-z0-9_]*"
+    },
+    "keywords-connector": {
+      "name": "keyword.operator.word.neutrino",
+      "match": "\\b(balanced|between|with|and|as)\\b"
+    },
+    "keywords-field": {
+      "name": "variable.other.property.neutrino",
+      "match": "\\b(bind_min_assurance|canonicalization|idempotency_key|bind_runtimes|observer_role|capabilities|independence|observer_set|assurance|tolerance|currency|fallback|binding|timeout|amount|ledger|quorum|owner|party|memo|role|when|org)\\b"
+    },
+    "keywords-statement": {
+      "name": "keyword.control.neutrino",
+      "match": "\\b(instance_key|participant|agreement|procedure|compute|trigger|version|assert|attest|credit|allow|debit|input)\\b"
+    },
+    "value-types": {
+      "name": "storage.type.neutrino",
+      "match": "\\b(currency|evidence|decimal|string|money|party)\\b"
+    },
+    "functions": {
+      "name": "support.function.neutrino",
+      "match": "\\b(round)\\b"
+    },
+    "operators-binary": {
+      "name": "keyword.operator.arithmetic.neutrino",
+      "match": "(\\*|\\+|\\-|/)"
+    },
+    "operators-comparison": {
+      "name": "keyword.operator.comparison.neutrino",
+      "match": "(!=|<=|==|>=|<|>)"
+    },
+    "numbers": {
+      "name": "constant.numeric.neutrino",
+      "match": "\\b[0-9]+\\b"
+    }
+  }
+}

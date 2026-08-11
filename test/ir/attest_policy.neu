@@ -1,0 +1,89 @@
+// Positive (M5 oracle S1, ): a source that declares an M-of-N attestation policy on an
+// `evidence` input renders it into the canonical capability-spec `attestations` section — the frozen
+// contract everything in  renders from. FileCheck pins the surfaced shape: the threshold M, the
+// observer-set REFERENCE, the canonicalization mode, and the fallback. The portable spec must NOT
+// carry the concrete N or the observer members (those are binding-level, ) — CHECK-NOT pins that.
+//
+// (llvm::json pretty-prints object keys alphabetically, so the CHECK order below is stable.)
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.d
+// RUN: %FileCheck %s < %t.d/capability-spec.json
+//
+// CHECK: "attestations": [
+// CHECK:   "canonicalization": {
+// CHECK:     "mode": "exact"
+// CHECK:   "fallback": "abort"
+// CHECK:   "input": "delivery_proof"
+// CHECK:   "observerSet": {
+// CHECK:     "ref": "delivery_oracles"
+// CHECK:   "quorum": {
+// CHECK:     "threshold": 2
+// CHECK-NOT: "members"
+// CHECK-NOT: "n":
+//
+// The policy is a target-support requirement: an attested spec REQUIRES
+// `attestation:quorum`. The published solidity/postgres profiles now advertise it (the guard-render
+// slice /S2 landed via / — see examples/domains/cross_border_* / ), so the legality
+// gate must still fail closed against a profile that does NOT — a target CANNOT silently drop the
+// policy and render as if unattested. A synthetic non-advertising profile pins that fail-closed edge,
+// and no artifact is written.
+// RUN: %FileCheck %s --check-prefix=REQ < %t.d/capability-spec.json
+// REQ: "feature": "attestation:quorum"
+// Solidity is an EXTERNAL target: a caller-supplied profile is refused outright, so this
+// negative control now asserts the refusal boundary rather than a profile-gated legality
+// verdict (M7_BACKEND_PACKAGE_BOUNDARY_ADR section 9, 2026-07-31).
+// RUN: %not %neutrino-gen --target=solidity --from-spec --profile %S/no_attestation.target-profile.json %t.d/capability-spec.json -o %t.sol 2>&1 | %FileCheck %s --check-prefix=LEGALITY
+// LEGALITY: bound to its verified package profile
+// RUN: test ! -e %t.sol/OracleDelivery.sol
+procedure oracle_delivery {
+    trigger delivery_reported
+    version "1.0.0"
+
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

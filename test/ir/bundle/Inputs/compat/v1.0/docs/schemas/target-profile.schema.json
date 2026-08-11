@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://neutrino/contracts/target-profile/v1",
+  "title": "Neutrino Target Profile",
+  "description": "A machine-readable declaration of which semantic primitives a rendering target supports (M5 WP4, ). The canonical spec's targetRequirements are matched against a profile's supportedFeatures BEFORE rendering; an unsupported feature fails closed with a legality diagnostic naming the feature, the originating primitive, and its source line ( taxonomy). Profiles key on semantic FEATURES (value_category:*, effect:*, invariant:*, binding:*, topology:*) — the same strings the spec emits — never on domain/contract labels. Fail-closed (additionalProperties:false). Validated by scripts/validators/validate_target_profile.py; the matcher is scripts/gates/check_spec_legality.py. Versioning per M5 addendum AD3. See docs/backends/TARGET_PROFILES.md.",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "profileId", "profileVersion", "target",
+               "runtimeFamily", "executionMode", "supportedFeatures", "unsupportedConstructs",
+               "fallbackPolicy"],
+  "additionalProperties": false,
+  "$defs": {
+    "feature": {
+      "type": "string",
+      "description": "A semantic feature string as emitted in the spec's targetRequirements: <dimension>:<value> (e.g. value_category:money, effect:debit, topology:org_coordination).",
+      "pattern": "^[a-z][a-z_]*:[a-z][a-z0-9_]*$"
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "A non-negative numeric cap on a parameterized coordination-plan metric."
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "neutrino.target-profile" },
+    "profileId": {
+      "type": "string",
+      "description": "<family>.<name>.v<major>; its v<major> must equal profileVersion. Stable shape identifier used for matching (AD3).",
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+\\.v([0-9]+)$"
+    },
+    "profileVersion": { "type": "integer", "minimum": 1 },
+    "target": {
+      "type": "string",
+      "description": "The generation target this profile governs (e.g. solidity, postgres).",
+      "minLength": 1
+    },
+    "runtimeFamily": {
+      "description": "WHERE the rendered artifact runs — the runtime-family axis (distinct from executionMode). Matches the binding policy's allowed runtime family.",
+      "enum": ["on_chain", "relational", "off_chain"]
+    },
+    "executionMode": {
+      "description": "The assurance-relevant execution mode (): deterministic (compiler-attested, replayable, no external state) / simulated (validated in a test/sim harness, not production custody) / real (production runtime with real custody). A simulated backend must not be treated as carrying real-money assurance.",
+      "enum": ["deterministic", "simulated", "real"]
+    },
+    "supportedFeatures": {
+      "type": "array",
+      "description": "The semantic features this target can render. A spec requirement whose feature is absent here fails closed (unless it is optional and fallbackPolicy permits).",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/feature" }
+    },
+    "unsupportedConstructs": {
+      "type": "array",
+      "description": "Features explicitly declared unsupported — a hard, documented denial (yields a distinct diagnostic from a merely-absent feature). Must be disjoint from supportedFeatures.",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/feature" }
+    },
+    "fallbackPolicy": {
+      "description": "What to do when an OPTIONAL spec requirement is unmet: fail_closed (treat like a required violation) or advisory (record, allow).",
+      "enum": ["fail_closed", "advisory"]
+    },
+    "capabilitySpecVersion": {
+      "type": "string",
+      "pattern": "^v[0-9]+$",
+      "description": "The capability-spec CONTRACT version this profile was authored against, pinning the translator's emitted kCapabilitySpecVersion. Enforced fail-closed by scripts/gates/check_artifact_pins.py (R3/): a mismatch with the core's emitted contract version is rejected. Distinct from profileVersion (this profile's own revision)."
+    },
+    "semanticProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The semantic realization capability (): the normalized-transition semantic features + parameterized limits this target realizes, matched against a verified CoordinationPlan's requirements BEFORE evaluator/lowering dispatch (the plan-legality gate). `version` pins the DISTINCT semantic-profile contract (VersionInfo.h kSemanticProfileVersion) — NOT schemaVersion or profileVersion; a missing/unknown version fails closed. `features` are the supported closed-registry semantic requirements (authorization:*, effect:*, guard:*, invariant:*, attestation:*, terminal:* shapes, replay:*); a required feature absent here is refused. `limits` bound parameterized plan metrics (expression depth, effect/group/attestation/compute counts) — a plan exceeding a cap is refused.",
+      "required": ["version", "features", "limits"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "features": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/feature" }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maxExpressionDepth", "maxEffects", "maxEffectGroups", "maxAttestations", "maxComputes", "maxOperationSteps"],
+          "properties": {
+            "maxExpressionDepth": { "$ref": "#/$defs/limit" },
+            "maxEffects": { "$ref": "#/$defs/limit" },
+            "maxEffectGroups": { "$ref": "#/$defs/limit" },
+            "maxAttestations": { "$ref": "#/$defs/limit" },
+            "maxComputes": { "$ref": "#/$defs/limit" },
+            "maxOperationSteps": { "$ref": "#/$defs/limit" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+
+# NeutrinoBackendPostgres package config ( skeleton).
+# Downstream consumers: find_package(NeutrinoBackendPostgres CONFIG REQUIRED).
+#
+# The package depends on an installed public core (). Under the
+# boundary the runtime dependency is the serialized finalized-projection
+# artifact + subprocess protocol; the C++ link edge (the three shared leaves)
+# applies only to a statically-composed internal dev build.
+include(CMakeFindDependencyMacro)
+if(NOT DEFINED NeutrinoBackendPostgres_SKIP_CORE_DEP)
+  find_dependency(NeutrinoCore CONFIG)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/NeutrinoBackendPostgresTargets.cmake")
+
+check_required_components(NeutrinoBackendPostgres)

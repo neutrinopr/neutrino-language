@@ -1,0 +1,22 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "channel_verified_payout",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "7f932bb267df5cfc5981346f5c8a5d8aeef2bb72fae47349569526a19cabbe87", "specVersion": "1.0.0" },
+  "participant": { "name": "Payer", "role": "payer", "org": "payerco", "slotId": "coordinate.channel_verified_payout#Payer" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "payout_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 35, "column": 1 } },
+    { "name": "payer_id", "type": "party", "specPath": "inputs[1]", "source": { "line": 36, "column": 1 } },
+    { "name": "amount", "type": "money", "specPath": "inputs[3]", "source": { "line": 38, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[4]", "source": { "line": 39, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "recipientco", "role": "recipient" }
+  ],
+  "evidenceObligations": [
+    { "leg": "payer_funding", "kind": "debit", "ledger": "payer.funding", "specPath": "effects[0]", "source": { "line": 41, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

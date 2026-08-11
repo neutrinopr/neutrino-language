@@ -1,0 +1,41 @@
+// Frontend NEGATIVE ( slice 1): the accepted(<input>) guard predicate
+// requires an `evidence` input. Here it targets `amount` (money) — a type error
+// caught when the guard is typed. neutrino-gen must fail closed, no spec written.
+//
+// RUN: %not %neutrino-gen --target=capability-spec %s -o %t.d 2>&1 | %FileCheck %s
+// RUN: test ! -e %t.d/capability-spec.json
+// CHECK: [expr.type] accepted() requires an `evidence` input, but 'amount' is a money value
+procedure neg_accepted_non_evidence {
+    input flow_id  : string
+    input amount   : money
+    input currency : currency
+    input payer    : party
+    input proof    : evidence
+
+    attest proof {
+        quorum           = 2
+        observer_set     = "oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+
+    debit d {
+        ledger          = "a.src"
+        owner           = "a"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = accepted(amount)
+    }
+    credit c {
+        ledger          = "b.dst"
+        owner           = "b"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+        when            = accepted(amount)
+    }
+    assert balanced
+}

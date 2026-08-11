@@ -1,0 +1,29 @@
+{
+  "capabilityHash": "7f932bb267df5cfc5981346f5c8a5d8aeef2bb72fae47349569526a19cabbe87",
+  "computed": {},
+  "eventChain": [
+    "PayoutAuthorized",
+    "PayerFundingDebited",
+    "RecipientSettlementCredited",
+    "ChannelVerifiedPayoutReconciled"
+  ],
+  "inputs": {
+    "amount": 100,
+    "currency": "EUR",
+    "payer_id": "payer-001",
+    "payout_id": "pay-001",
+    "recipient_id": "recipient-001"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "payer.funding": -100,
+    "recipient.settlement": 100
+  },
+  "procedure": "channel_verified_payout",
+  "scenario": "channel_verified_payout_happy_path",
+  "schemaVersion": 1
+}

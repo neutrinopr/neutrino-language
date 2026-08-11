@@ -1,0 +1,6 @@
+// [95] M5  S1 (): C++ policy ratchet gate — dynamic_cast hard-zero + throw/shared_ptr per-file
+// ceilings, fail-closed. scripts/gates/check_cpp_policy.py --selftest is the gate (clean tree at/below
+// baseline passes; empty/missing/malformed baseline + an introduced throw / string-hidden dynamic_cast /
+// raw new all fail closed).
+//
+// RUN: python3 %scripts/gates/check_cpp_policy.py --selftest

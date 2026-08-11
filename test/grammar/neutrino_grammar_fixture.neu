@@ -1,0 +1,63 @@
+// Grammar fixture for the generated .neu TextMate grammar ().
+// It is NOT a compiled example — it deliberately exercises every highlightable
+// token kind / metadata category so the drift gate (scripts/generators/generate_tmgrammar.py
+// --check) can prove the fixture never rots away from the compiler vocabulary.
+# Both line-comment markers appear (// above, # here).
+
+procedure grammar_fixture {
+    trigger sample_event
+    version "1.0.0"
+
+    // value types (statement keyword `input`, field-less type positions after `:`)
+    input transaction_id : string
+    input principal      : money
+    input subsidy_pct    : decimal
+    input merchant_id    : party
+    input currency       : currency
+    input proof          : evidence
+
+    // compute: the `round` function, binary operators (+ - * /), %references, numbers
+    compute subsidy = round(principal * subsidy_pct / 100 - 0 + 1, 2)
+
+    participant Merchant {
+        role               = "merchant"
+        org                = "merchantco"
+        capabilities       = ["pay"]
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+
+    // attestation statement (`attest`) + its field keywords (): quorum is numeric, the rest
+    // are string literals. All nine attest fields appear so the fixture highlights each.
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        observer_role    = "notary"
+        assurance        = "A3"
+        independence     = "independent"
+        canonicalization = "exact"
+        tolerance        = "0.01"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+
+    // connector keywords: between / with / and / as / balanced
+    agreement between "merchantco" and "schemeco"
+    allow "merchantco" with "schemeco" {
+        "merchantco" as "merchant"
+    }
+
+    // field keywords + %references + a `when` guard using comparison operators
+    debit merchant_subsidy {
+        ledger          = "merchant.subsidy"
+        owner           = "merchantco"
+        party           = %merchant_id
+        amount          = %subsidy
+        currency        = %currency
+        idempotency_key = %transaction_id
+        when            = %subsidy >= 1 and %subsidy <= 100 or %principal != 0 or %principal == 0 or %principal < 5 or %principal > 2
+    }
+
+    assert balanced
+}

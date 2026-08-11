@@ -1,0 +1,84 @@
+{
+  "packId": "token_mint",
+  "requiredContracts": [
+    "capability-spec",
+    "participant-view",
+    "test-realization"
+  ],
+  "payloads": [
+    {
+      "role": "capability-spec",
+      "path": "generated/capability-spec/capability-spec.json",
+      "mediaType": "application/json",
+      "contract": "capability-spec"
+    },
+    {
+      "role": "postgres-procedure",
+      "path": "generated/postgres/procedure.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "postgres-reconciliation",
+      "path": "generated/postgres/reconciliation.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "postgres-test-helper",
+      "path": "generated/postgres/run_db_test.sh",
+      "mediaType": "application/x-sh"
+    },
+    {
+      "role": "postgres-schema",
+      "path": "generated/postgres/schema.sql",
+      "mediaType": "application/sql"
+    },
+    {
+      "role": "security-report",
+      "path": "generated/security/security.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "solidity-config",
+      "path": "generated/solidity/foundry.toml",
+      "mediaType": "application/toml"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/src/TokenMint.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "solidity-source",
+      "path": "generated/solidity/test/TokenMint.t.sol",
+      "mediaType": "text/x-solidity"
+    },
+    {
+      "role": "test-realization",
+      "path": "generated/test-realization/test-realization.json",
+      "mediaType": "application/json",
+      "contract": "test-realization"
+    },
+    {
+      "role": "participant-view",
+      "path": "generated/views/Holder.json",
+      "mediaType": "application/json",
+      "contract": "participant-view"
+    },
+    {
+      "role": "participant-view",
+      "path": "generated/views/SupplyAuthority.json",
+      "mediaType": "application/json",
+      "contract": "participant-view"
+    },
+    {
+      "role": "scenario",
+      "path": "scenario/token_mint_happy_path.json",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "source",
+      "path": "source/token_mint.neu",
+      "mediaType": "text/x-neutrino"
+    }
+  ]
+}

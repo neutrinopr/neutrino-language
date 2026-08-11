@@ -1,0 +1,4 @@
+domain synthetic_external_pack
+
+participant Sender
+participant Receiver

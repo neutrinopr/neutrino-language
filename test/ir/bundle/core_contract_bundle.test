@@ -1,0 +1,142 @@
+// Core-contract-bundle conformance (): an EXTERNAL domain pack validates its
+// manifest + artifacts against the published bundle using ONLY the bundle + the
+// released verifier (standard library) — no translator headers/modules/source.
+// The pack fixture is SYNTHETIC (a minimal binding-policy), not production domain
+// content. %examples/.. is the repository root (the bundle path authority).
+//
+// DEFINE: %{bundle} = %examples/../docs/core-contract-bundle.json
+// DEFINE: %{verify} = python3 %scripts/validators/verify_domain_pack.py
+// DEFINE: %{pack} = %S/Inputs/pack
+
+// --- external-consumer proof: stage a released bundle dir (bundle.json + only
+//     the referenced contract schemas — NO translator source) and validate. ---
+// RUN: rm -rf %t.d && mkdir -p %t.d/docs/schemas
+// RUN: cp %examples/../docs/core-contract-bundle.json %t.d/
+// RUN: cp %examples/../docs/schemas/binding-policy.schema.json %t.d/docs/schemas/
+// RUN: cp %examples/../docs/schemas/domain-pack.schema.json %t.d/docs/schemas/
+// RUN: cp %examples/../docs/schemas/target-profile.schema.json %t.d/docs/schemas/
+// RUN: cp %examples/../docs/schemas/semantic-feature-vocabulary.schema.json %t.d/docs/schemas/
+// RUN: cp %examples/../docs/schemas/semantic-capability-registry.schema.json %t.d/docs/schemas/
+// RUN: cp %examples/../docs/semantic-feature-vocabulary.json %t.d/docs/
+// RUN: cp %examples/../docs/semantic-capability-registry.json %t.d/docs/
+// RUN: %{verify} --bundle %t.d/core-contract-bundle.json --bundle-root %t.d --pack %{pack}/pack.json --pack-root %{pack} | %FileCheck %s --check-prefix=OK
+// OK: domain-pack conformance: OK
+
+// --- registry tamper witness: a package-only verifier rejects a mutated published
+//     capability registry (its bytes no longer match the bundle's pinned digest). ---
+// RUN: rm -rf %t.reg.d && cp -R %t.d %t.reg.d
+// RUN: python3 -c "import json,sys; p=sys.argv[1]; o=json.load(open(p)); c=o['capabilities'][0]; c['category']='obligation' if c['category']=='primitive' else 'primitive'; json.dump(o,open(p,'w'))" %t.reg.d/docs/semantic-capability-registry.json
+// RUN: %not %{verify} --bundle %t.reg.d/core-contract-bundle.json --bundle-root %t.reg.d --pack %{pack}/pack.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=REGTAMPER
+// REGTAMPER: [pack.digest] semantic capability registry {{.*}} fails its bundle digest pin
+
+// --- fail-closed mutations, each a STABLE diagnostic code ---
+// bundle-pin mismatch (mlirDialectVersion):
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['translatorPins']['mlirDialectVersion']='9.9.9'; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.pin.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.pin.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=PIN
+// PIN: [pack.pin_mismatch] mlirDialectVersion pin '9.9.9' != bundle '0.1.0'
+
+// unknown version axis (fail-closed on an axis the bundle does not publish):
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['translatorPins']['bogusAxis']='1'; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.axis.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.axis.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=AXIS
+// AXIS: [pack.unknown_version] pins unknown axis 'bogusAxis'
+
+// wrong bundle identity:
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['targetsBundle']['bundleId']='other.bundle'; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.bid.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.bid.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=BID
+// BID: [pack.bundle_mismatch] pack targets bundleId 'other.bundle'
+
+// EXACT-bundle pin: a pack that pins a stale bundleDigest is rejected even at the
+// same bundleVersion (the pinned bundle was re-published with other contents).
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['targetsBundle']['bundleDigest']='sha256:'+'0'*64; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.dig.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.dig.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=PACKPIN
+// PACKPIN: [pack.digest] pack pins bundleDigest {{.*}} != this bundle's
+
+// required contract not published by the bundle:
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['requiredContracts']=['no-such-contract']; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.req.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.req.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=REQ
+// REQ: [pack.missing_required] required contract 'no-such-contract' is not in the bundle
+
+// OPTIONAL contract negotiation: a typo'd optional name is NOT graceful
+// degradation — it is rejected.
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['optionalContracts']=['typo-no-such']; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.opt.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.opt.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=OPT
+// OPT: [pack.unknown_contract] optional contract 'typo-no-such' is not a bundle contract
+
+// artifact references a contract not in the bundle:
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['artifacts'][0]['contract']='no-such-contract'; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.unk.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.unk.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=UNK
+// UNK: [pack.unknown_contract] artifacts[0] references contract 'no-such-contract'
+
+// MALFORMED manifest is fail-closed (a non-object artifact yields pack.schema,
+// NOT an uncaught traceback):
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['artifacts']=[7]; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.mal.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.mal.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=MAL
+// MAL: [pack.schema] pack.artifacts[0] must be of type object
+
+// PATH containment: a '..' artifact path is rejected (no escaping pack-root):
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['artifacts'][0]['path']='../../../etc/passwd'; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.esc.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.esc.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=ESC
+// ESC: [pack.path] artifact '../../../etc/passwd' must be a relative in-tree path
+
+// COMPLETE schema validation: the architect's counterexample — a target-profile
+// with profileVersion: -1 (violates `minimum`) and supportedFeatures: [123]
+// (violates the `$ref`'d feature schema) is REJECTED (the validator resolves
+// $ref/$defs and enforces minimum, not just a subset).
+// RUN: rm -rf %t.tp && cp -r %{pack} %t.tp
+// RUN: python3 -c "import json,sys; json.dump({'schemaVersion':1,'kind':'neutrino.target-profile','profileId':'p','profileVersion':-1,'target':'x','runtimeFamily':'on_chain','executionMode':'deterministic','supportedFeatures':[123],'unsupportedConstructs':[],'fallbackPolicy':'x'}, open(sys.argv[1],'w'))" %t.tp/artifacts/tp.json
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['requiredContracts']=['target-profile']; o['artifacts']=[{'contract':'target-profile','path':'artifacts/tp.json'}]; json.dump(o,open(sys.argv[1],'w'))" %t.tp/pack.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.tp/pack.json --pack-root %t.tp 2>&1 | %FileCheck %s --check-prefix=DEEP
+// DEEP: [pack.schema] target-profile.profileVersion is less than the minimum 1
+
+// SEMVER pin discipline: a SemVer axis pinned to a truncated 'major.minor'
+// string (or a non-string) is rejected — '0.2' is NOT a version, so it can
+// never satisfy an exact 'major.minor.patch' pin (the architect's counterexample).
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['translatorPins']['toolVersion']='0.2'; json.dump(o,open(sys.argv[2],'w'))" %{pack}/pack.json %t.sv.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.sv.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=SEMVER
+// SEMVER: [pack.pin_mismatch] toolVersion pin '0.2' must be an exact MAJOR.MINOR.PATCH SemVer string
+
+// CLOSED semantic-feature vocabulary ( slice 2): a target-profile artifact
+// whose semanticProfile declares a feature outside the bundle's published
+// vocabulary fails closed — the released verifier matches the SAME closed set the
+// translator enforces, not a hand-maintained copy.
+// RUN: rm -rf %t.v && cp -r %{pack} %t.v
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['semanticProfile']['features'].append('bogus:feature'); json.dump(o,open(sys.argv[1],'w'))" %t.v/artifacts/profile.json
+// RUN: %not %{verify} --bundle %{bundle} --bundle-root %examples/.. --pack %t.v/pack.json --pack-root %t.v 2>&1 | %FileCheck %s --check-prefix=VOCAB
+// VOCAB: [pack.unknown_semantic_feature] artifacts[{{[0-9]+}}] semantic-profile feature 'bogus:feature' is not in the bundle's closed semantic-feature vocabulary
+
+// tampered PUBLISHED vocabulary: mutating the bundle-root vocabulary artifact so
+// it no longer matches its pinned digest fails closed.
+// RUN: rm -rf %t.vd && mkdir -p %t.vd/docs/schemas
+// RUN: cp %examples/../docs/core-contract-bundle.json %t.vd/
+// RUN: cp %examples/../docs/schemas/binding-policy.schema.json %examples/../docs/schemas/domain-pack.schema.json %examples/../docs/schemas/target-profile.schema.json %t.vd/docs/schemas/
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['features'].append('x:tampered'); json.dump(o,open(sys.argv[2],'w'))" %examples/../docs/semantic-feature-vocabulary.json %t.vd/docs/semantic-feature-vocabulary.json
+// RUN: %not %{verify} --bundle %t.vd/core-contract-bundle.json --bundle-root %t.vd --pack %{pack}/pack.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=VOCABDIGEST
+// VOCABDIGEST: [pack.digest] semantic vocabulary {{.*}} fails its bundle digest pin
+
+// INTERNAL vocabulary version drift (the architect's counterexample): re-sign the
+// artifact + bundle self-digest + pack pin after changing ONLY the artifact's
+// semanticProfileVersion. Every digest is self-consistent, but the artifact
+// version (999) drifts from the bundle metadata/versions (3) — the verifier
+// rejects it, so a re-signed drift is caught, not just stale bytes.
+// RUN: rm -rf %t.vdr && mkdir -p %t.vdr/docs/schemas
+// RUN: cp %examples/../docs/schemas/binding-policy.schema.json %examples/../docs/schemas/domain-pack.schema.json %examples/../docs/schemas/target-profile.schema.json %examples/../docs/schemas/semantic-feature-vocabulary.schema.json %t.vdr/docs/schemas/
+// RUN: cp -r %{pack}/artifacts %t.vdr/artifacts
+// RUN: python3 %S/resign_vocab_drift.py %examples/.. %t.vdr %{pack}/pack.json
+// RUN: %not %{verify} --bundle %t.vdr/core-contract-bundle.json --bundle-root %t.vdr --pack %t.vdr/pack.json --pack-root %t.vdr 2>&1 | %FileCheck %s --check-prefix=VOCABDRIFT
+// VOCABDRIFT: [pack.pin_mismatch] semantic vocabulary version drift: artifact 999 {{.*}} must all agree
+// A published-but-rejected vocabulary must NOT also be reported as absent (the
+// diagnostic cascade is factually distinct: present-but-invalid != absent).
+// VOCABDRIFT-NOT: publishes no vocabulary to match them
+
+// tampered bundle self-digest:
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['bundleVersion']='9.9.9'; json.dump(o,open(sys.argv[2],'w'))" %{bundle} %t.badbundle.json
+// RUN: %not %{verify} --bundle %t.badbundle.json --bundle-root %examples/.. --pack %{pack}/pack.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=DIGEST
+// DIGEST: [pack.digest] bundle self-digest {{.*}} != recomputed
+
+// tampered bundled schema (bundle-root schema no longer matches its pinned digest):
+// RUN: rm -rf %t.t && mkdir -p %t.t/docs/schemas
+// RUN: cp %examples/../docs/core-contract-bundle.json %t.t/
+// RUN: cp %examples/../docs/schemas/domain-pack.schema.json %t.t/docs/schemas/
+// RUN: python3 -c "import json,sys; o=json.load(open(sys.argv[1])); o['description']='TAMPERED'; json.dump(o,open(sys.argv[2],'w'))" %examples/../docs/schemas/binding-policy.schema.json %t.t/docs/schemas/binding-policy.schema.json
+// RUN: %not %{verify} --bundle %t.t/core-contract-bundle.json --bundle-root %t.t --pack %{pack}/pack.json --pack-root %{pack} 2>&1 | %FileCheck %s --check-prefix=SCHEMADIGEST
+// SCHEMADIGEST: [pack.digest] bundled schema 'docs/schemas/binding-policy.schema.json' fails its bundle digest pin

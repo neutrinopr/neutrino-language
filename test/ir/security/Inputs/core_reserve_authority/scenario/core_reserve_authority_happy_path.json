@@ -1,0 +1,24 @@
+{
+  "scenario": "core_reserve_payout",
+  "procedure": "core_reserve_authority",
+  "inputs": {
+    "shipment_id": "shipment-il-it-001",
+    "claim_id": "claim-il-it-001",
+    "insurer_id": "insurer-001",
+    "customer_id": "customer-il-001",
+    "amount": 300,
+    "currency": "EUR",
+    "damage_proof": "sha256:99887766554433221100ffeeddccbbaa99887766554433221100ffeeddccbbaa"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "insurance.reserve": -300,
+      "customer.indemnity": 300
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

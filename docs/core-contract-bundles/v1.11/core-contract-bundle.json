@@ -1,0 +1,227 @@
+{
+  "bundleDigest": "sha256:bbc5c645891cb15724c7c488a437b7f509ebaabf75a786069ec15199434ace11",
+  "bundleId": "neutrino.core-contract-bundle",
+  "bundleVersion": "1.11.0",
+  "canonicalization": {
+    "bundleDigest": "sha256 over the compact canonical bundle (sort_keys, separators=(',',':')) with the bundleDigest field removed",
+    "digest": "lowercase sha256, 'sha256:' prefixed",
+    "json": "UTF-8, object keys sorted, no insignificant whitespace"
+  },
+  "contracts": [
+    {
+      "contractId": "https://neutrino/contracts/capability-spec/v1",
+      "family": "capability-spec",
+      "name": "capability-spec",
+      "path": "docs/schemas/capability-spec.schema.json",
+      "sha256": "sha256:79dae967ce31057cc70d86c94a7ac90a5300fc288ed938c18c3c645b425f3d41"
+    },
+    {
+      "contractId": "https://neutrino/contracts/capability-spec/v2",
+      "family": "capability-spec",
+      "name": "capability-spec-v2",
+      "path": "docs/schemas/capability-spec-v2.schema.json",
+      "sha256": "sha256:b1eddbf4020b03b9a56ea2fee2594addab719703afcf3fe360ea6f80520e80d2"
+    },
+    {
+      "contractId": "https://neutrino/contracts/capability-spec-validation/v1",
+      "family": "capability-spec",
+      "name": "capability-spec-validation",
+      "path": "docs/schemas/capability-spec-validation.schema.json",
+      "sha256": "sha256:9efdc07cdc759c6fe3acdd38ec5af8d602ec20bbc079a5e0eb299635ca836a5a"
+    },
+    {
+      "contractId": "https://neutrino/contracts/l2-domain-semantics/v2",
+      "family": "l2-domain",
+      "name": "l2-domain-semantics-v2",
+      "path": "docs/schemas/l2-domain-semantics-v2.schema.json",
+      "sha256": "sha256:51b778b89348010110d0123965e0de7d68d7512f218b5f9bcdbc89e8940ab0e9"
+    },
+    {
+      "contractId": "https://neutrino/contracts/l2-domain-semantics/v3",
+      "family": "l2-domain",
+      "name": "l2-domain-semantics-v3",
+      "path": "docs/schemas/l2-domain-semantics-v3.schema.json",
+      "sha256": "sha256:bb87a60fdd52f61a0c2213ebe7275714a70dc21cb7b4a0c0b49bc12d66defd7c"
+    },
+    {
+      "contractId": "https://neutrino/contracts/domain-dialect/v1",
+      "family": "l2-domain",
+      "name": "domain-dialect",
+      "path": "docs/schemas/domain-dialect.schema.json",
+      "sha256": "sha256:6a7819a577d18a40e6fa1dc511ffa799f3680e276801cf2ab206f77cee609628"
+    },
+    {
+      "contractId": "https://neutrino/contracts/domain-observation-set/v1",
+      "family": "l2-domain",
+      "name": "domain-observation-set",
+      "path": "docs/schemas/domain-observation-set.schema.json",
+      "sha256": "sha256:cb608136e417a8823c8d59a43cf2d937e14072c6030c947bac49d57693849545"
+    },
+    {
+      "contractId": "https://neutrino/contracts/target-profile/v1",
+      "family": "profile",
+      "name": "target-profile",
+      "path": "docs/schemas/target-profile.schema.json",
+      "sha256": "sha256:c44c60aab104c43cad04035b7e93d391ab8085e6de96cb6da6fc77cb882c068f"
+    },
+    {
+      "contractId": "https://neutrino/contracts/semantic-feature-vocabulary/v1",
+      "family": "semantic",
+      "name": "semantic-feature-vocabulary",
+      "path": "docs/schemas/semantic-feature-vocabulary.schema.json",
+      "sha256": "sha256:61c83655a78bb221fb766055795b66019af7c1ceeac8314a553d9b07304dc075"
+    },
+    {
+      "contractId": "https://neutrino/contracts/semantic-capability-registry/v1",
+      "family": "semantic",
+      "name": "semantic-capability-registry",
+      "path": "docs/schemas/semantic-capability-registry.schema.json",
+      "sha256": "sha256:2ab83d0e2fa0106e6377fd85ce46a042f43546af3f24ddda051d28dbbd2fda4a"
+    },
+    {
+      "contractId": "https://neutrino/contracts/semantic-requirements/v1",
+      "family": "semantic",
+      "name": "semantic-requirements",
+      "path": "docs/schemas/semantic-requirements.schema.json",
+      "sha256": "sha256:808f3d0f7dbc95e001c4be8f977bfb68f49e6e80a42702a08879129d9781fe13"
+    },
+    {
+      "contractId": "https://neutrino.dev/schemas/finalized-projection-v1.schema.json",
+      "family": "semantic",
+      "name": "finalized-projection-v1",
+      "path": "docs/schemas/finalized-projection-v1.schema.json",
+      "sha256": "sha256:97e5e29b87fa08990f276a33eedbb249e5afc247dc9a56e66c540dbea9f13e32"
+    },
+    {
+      "contractId": "https://neutrino/contracts/binding-manifest/v2",
+      "family": "binding",
+      "name": "binding-manifest",
+      "path": "docs/schemas/binding-manifest.schema.json",
+      "sha256": "sha256:4384030206174c6bf910eb8ffb406cc83aade404e6b6d628529e2ab2f76cd523"
+    },
+    {
+      "contractId": "https://neutrino/contracts/binding-policy/v1",
+      "family": "binding",
+      "name": "binding-policy",
+      "path": "docs/schemas/binding-policy.schema.json",
+      "sha256": "sha256:2ccd234f2eb00fd91727df0f8cae5a1b5368bff7f719f54c1cd68a5ce3ec9d02"
+    },
+    {
+      "contractId": "https://neutrino/contracts/binding-receipt/v1",
+      "family": "binding",
+      "name": "binding-receipt",
+      "path": "docs/schemas/binding-receipt.schema.json",
+      "sha256": "sha256:7282db0cb7bb80140923f55379af606c8f143e3acc1884d2d850aee340b74cc9"
+    },
+    {
+      "contractId": "https://neutrino/contracts/slot-binding-topology/v1",
+      "family": "binding",
+      "name": "slot-binding-topology",
+      "path": "docs/schemas/slot-binding-topology.schema.json",
+      "sha256": "sha256:bdfaade1525bef1a882ed6520bcce1c46bf1b8817127d3266cc320f3979e678f"
+    },
+    {
+      "contractId": "https://neutrino/contracts/runtime-evidence-envelope/v1",
+      "family": "binding",
+      "name": "runtime-evidence-envelope",
+      "path": "docs/schemas/runtime-evidence-envelope.schema.json",
+      "sha256": "sha256:3bea98f470da6cefe79f9ba0503c9724846db4e5fabf55773f0c511240c51a56"
+    },
+    {
+      "contractId": "https://neutrino/contracts/test-realization/v1",
+      "family": "scenario-result",
+      "name": "test-realization",
+      "path": "docs/schemas/test-realization.schema.json",
+      "sha256": "sha256:81bbf4e8f9537ed5cb32fb3abaaa3cd660c12f3d6cbf1dc5e2eaafb1b0be0305"
+    },
+    {
+      "contractId": "https://neutrino-lang.dev/schemas/generalism-result.schema.json",
+      "family": "scenario-result",
+      "name": "generalism-result",
+      "path": "docs/schemas/generalism-result.schema.json",
+      "sha256": "sha256:a7296543ffec485eabe799bda4a716fc0c48c9cb6de3c59ad05443d588c42ffe"
+    },
+    {
+      "contractId": "https://neutrino/contracts/participant-view/v0.2",
+      "family": "scenario-result",
+      "name": "participant-view",
+      "path": "docs/schemas/participant-view.schema.json",
+      "sha256": "sha256:6fbc64830674f04fef04b00ed27693224191c8ed05fec6c0c14469bc1d1767bb"
+    },
+    {
+      "contractId": "https://neutrino/contracts/domain-pack/v1",
+      "family": "conformance",
+      "name": "domain-pack",
+      "path": "docs/schemas/domain-pack.schema.json",
+      "sha256": "sha256:e76e1e02284079df51205d30d436e947ed56ec10362ba7eccc5edf9920ce061c"
+    },
+    {
+      "contractId": "https://neutrino/contracts/domain-pack/v2",
+      "family": "conformance",
+      "name": "domain-pack-v2",
+      "path": "docs/schemas/domain-pack-v2.schema.json",
+      "sha256": "sha256:3e752b98478751f588ae1048562df0ac4ae4db5586103aaa1a5cb8779d8f3dca"
+    }
+  ],
+  "diagnosticTaxonomy": {
+    "categories": [
+      "frontend",
+      "kernel",
+      "value",
+      "expr",
+      "scenario",
+      "security",
+      "generate",
+      "equivalence",
+      "classification",
+      "spec",
+      "profile",
+      "legality",
+      "realization",
+      "view",
+      "observation",
+      "domain"
+    ],
+    "path": "docs/diagnostic-taxonomy.json",
+    "sha256": "sha256:b3e8adc432a9ddac4b9b76485bd7f3022167c78ccbd721dab67b472138eb6a3c"
+  },
+  "kind": "neutrino.core-contract-bundle",
+  "schemaVersion": 1,
+  "semanticCapabilityRegistry": {
+    "path": "docs/semantic-capability-registry.json",
+    "semanticProfileVersion": 3,
+    "sha256": "sha256:3e4dbce7ff19d9f0edfe95aeab4451ec7b7f1c4f206a128101c89cddb3521b7c"
+  },
+  "semanticVocabulary": {
+    "path": "docs/semantic-feature-vocabulary.json",
+    "semanticProfileVersion": 3,
+    "sha256": "sha256:aa22b03daf73fbba232c8bb6a780653c6f5ef14437c738d2b009f4ca926cee68"
+  },
+  "translatorCompatibility": {
+    "policy": {
+      "capabilitySpecVersion": "exact",
+      "compatibilityManifestVersion": "exact",
+      "conformanceVectorVersion": "exact",
+      "mlirDialectVersion": "exact",
+      "schemaBundleVersion": "exact",
+      "semanticProfileVersion": "exact",
+      "toolVersion": "semver: same MAJOR and translator >= bundle"
+    },
+    "toolVersion": "0.2.0"
+  },
+  "versions": {
+    "capabilitySpecVersion": "v1",
+    "compatibilityManifestVersion": "v1",
+    "conformanceVectorVersion": "envelope-v1",
+    "mlirDialectVersion": "0.1.0",
+    "schemaBundleVersion": "v1",
+    "schemas": {
+      "bindingPolicy": "v1",
+      "bindingReceipt": "v1",
+      "runtimeEvidence": "v1"
+    },
+    "semanticLanguageVersion": "0.1.0",
+    "semanticProfileVersion": 3,
+    "toolVersion": "0.2.0"
+  }
+}

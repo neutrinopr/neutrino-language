@@ -1,0 +1,22 @@
+{
+  "scenario": "core_regulated_evidence_sample_happy_path",
+  "procedure": "core_regulated_evidence_sample",
+  "inputs": {
+    "evidence_ref": "sha256:9f2c1a7e6d4b2f0c8a1e5d3b7f9c2a4e6d8b0f1a3c5e7d9b1f3a5c7e9d0b2f4a",
+    "consumer_id": "consumer-001",
+    "controller_id": "controller-001",
+    "fee": 250,
+    "currency": "EUR"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "consumer.access_fee": -250,
+      "controller.evidence_revenue": 250
+    },
+    "invariants": [
+      "replay_safe",
+      "balanced"
+    ]
+  }
+}

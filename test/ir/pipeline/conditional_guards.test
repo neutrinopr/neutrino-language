@@ -1,0 +1,7 @@
+// [92] M5 WP7 (): conditional guards end-to-end — core_document_escrow's spec `when` guard lowers to
+// SQL IF...THEN + Solidity if(...) with a guard-aware harness count; a predicate anywhere but a guard
+// (comparison-in-compute / non-comparison / non-numeric / ill-typed-ingested / undeclared-var) fails
+// closed with no SQL; events + count are scenario-aware on both branches; a guarded spec is
+// schemaVersion 2. See check_conditional_guards.py.
+//
+// RUN: python3 %S/check_conditional_guards.py %neutrino-gen %examples

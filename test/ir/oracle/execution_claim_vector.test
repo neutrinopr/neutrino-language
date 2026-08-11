@@ -1,0 +1,36 @@
+// [] VALUE-CONSISTENCY ratchet for the execution-claim cross-implementation vector: one digest
+// (f08e38…632325) must be identical across every rail, so none can silently drift to a stand-in. The
+// legs are EXECUTED elsewhere — the observer co-signs it (observer_runtime_api.test, run under node),
+// the guard persists it (examples/oracle-reference/threshold-quorum Forge suite), and the on-chain
+// envelope ALGORITHM recomputes it (examples/oracle-reference/coordination-envelope Forge suite,
+// CoordinationEnvelope.claim == the vector). A GENERATED coordination contract that calls that algorithm
+// and compares it to acceptedExecutionClaim() before commit is the ACTIVATION follow-up (), not
+// this prerequisite. THIS test pins that every rail references the SAME value.
+//
+// The authoritative C++ recompute pins EXACTLY this digest for the vector inputs.
+// RUN: %FileCheck %s --check-prefix=CPP < %S/../../../unittests/CoordinationEvalTest.cpp
+// CPP: executionClaimHash("coord-id", "F-1", in)
+// CPP: f08e38690b06cf6770ea204af8ce6039c6b990aca51d6702e0df119e35632325
+//
+// The committed vector artifact carries the same digest + its inputs.
+// RUN: %FileCheck %s --check-prefix=VEC < %S/../../../examples/oracle-reference/threshold-quorum/execution-claim-vector.json
+// VEC: "executionClaim": "0xf08e38690b06cf6770ea204af8ce6039c6b990aca51d6702e0df119e35632325"
+//
+// The guard's Forge suite co-signs + persists the same value (not a stand-in).
+// RUN: %FileCheck %s --check-prefix=GUARD < %S/../../../examples/oracle-reference/threshold-quorum/test/ThresholdQuorumAcceptance.t.sol
+// GUARD: EXEC_CLAIM = 0xf08e38690b06cf6770ea204af8ce6039c6b990aca51d6702e0df119e35632325;
+//
+// The coordination-recompute Forge suite pins CoordinationEnvelope.claim to the same value.
+// RUN: %FileCheck %s --check-prefix=ENV < %S/../../../examples/oracle-reference/coordination-envelope/test/CoordinationEnvelope.t.sol
+// ENV: got == 0xf08e38690b06cf6770ea204af8ce6039c6b990aca51d6702e0df119e35632325
+//
+// The observer runtime harness co-signs the same value.
+// RUN: %FileCheck %s --check-prefix=OBS < %S/observer_runtime_harness.js
+// OBS: VEC = '0xf08e38690b06cf6770ea204af8ce6039c6b990aca51d6702e0df119e35632325'
+//
+// The PostgreSQL rail's in-database envelope (neu_execution_claim, ) reproduces the same digest for
+// the same vector inputs — EXECUTED under docker by the `postgres-temporal` acceptance leg
+// (test/backend-guard/execution_claim_vector/pg_claim_vector_db_test.sh), the SQL twin of the on-chain
+// CoordinationEnvelope.claim recompute. This test pins that the expected value both legs assert is the one.
+// RUN: %FileCheck %s --check-prefix=PG < %S/../../backend-guard/execution_claim_vector/pg_claim_vector_db_test.sh
+// PG: VEC=f08e38690b06cf6770ea204af8ce6039c6b990aca51d6702e0df119e35632325

@@ -1,0 +1,8 @@
+// [25] a malformed 'allow' (typoed connective) is rejected at the frontend, not parsed into a policy.
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: 'allow' policy must be: allow "A" with "B"
+
+procedure p {
+    trigger t
+    allow "acme" banana "bankco"
+}

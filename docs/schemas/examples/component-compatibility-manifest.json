@@ -1,0 +1,22 @@
+{
+  "kind": "neutrino.component-compatibility-manifest",
+  "dslVersion": "1.0.0",
+  "mlirDialectVersion": "0.1.0",
+  "translator": {
+    "toolVersion": "0.1.0",
+    "imageDigest": "sha256:3c2f80c0e1a2b3c4d5e6f7081920314253647586970a1b2c3d4e5f60718293a4",
+    "wrapperVersion": "0.1.0-SNAPSHOT"
+  },
+  "agents": { "sdkVersion": "0.1.0-SNAPSHOT" },
+  "network": {
+    "jvmSdkVersion": "0.1.0-SNAPSHOT",
+    "tsSdkVersion": "0.1.0",
+    "wasmCoreDigest": "sha256:abcd1234ef567890abcd1234ef567890abcd1234ef567890abcd1234ef567890"
+  },
+  "schemas": {
+    "bindingPolicy": "v1",
+    "bindingReceipt": "v1",
+    "runtimeEvidence": "v1"
+  },
+  "conformanceVectorVersion": "envelope-v1"
+}

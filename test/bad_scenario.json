@@ -1,0 +1,12 @@
+{
+  "scenario": "bad_missing_principal",
+  "procedure": "core_sample_installment",
+  "inputs": {
+    "transaction_id": "txn-001",
+    "merchant_id": "merchant-001",
+    "issuer_id": "issuer-001",
+    "currency": "EUR",
+    "subsidy_pct": 10
+  },
+  "expect": {}
+}

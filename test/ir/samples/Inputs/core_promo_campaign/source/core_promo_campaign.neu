@@ -1,0 +1,100 @@
+// M5 forward sample (strategy ) — CorePromoCampaign for the multi-party
+// pharmacy-aggregator use case, in the REAL procedure-oriented L1 language.
+//
+// LAYERING. L1 carries ONLY the value movement of one settled redemption: the
+// Sponsor's promo pool funds a Promoter commission and a Fulfiller reimbursement,
+// balanced and replay-safe. Everything else is higher-layer and lives at L2/L3/M4,
+// NOT in L1:
+//   - the Coordinator/Aggregator role (ingests redemption events, drives the
+//     Setup -> Active -> Settlement lifecycle) — an L2 coordination role, no ledger leg;
+//   - budget cap, exactly-one attribution, no-double-redemption — L2 guards/invariants;
+//   - valid promo code / delivery confirmation / reconciliation report — L2 evidence
+//     requirements (M4 owns runtime admission).
+// The Sponsor slot is `to_be_bound` so an L3 Binding Manifest binds the on-chain
+// promo pool (EVM) at realization. "Reimbursement integrity" IS enforced in L1 as
+// `assert balanced`: the pool is debited by exactly the commission and reimbursement
+// it pays out, so a mismatch fails closed at the translator (see the negative source).
+
+procedure core_promo_campaign {
+    trigger promo_redemption_reported
+    version "1.0.0"
+
+    participant Sponsor {
+        role               = "sponsor"
+        org                = "sponsorco"
+        binding            = "to_be_bound"
+        bind_runtimes      = ["evm"]
+        bind_min_assurance = "A2"
+    }
+    participant Promoter {
+        role = "promoter"
+        org  = "promoterco"
+    }
+    participant Fulfiller {
+        role = "fulfiller"
+        org  = "fulfillerco"
+    }
+
+    allow "sponsorco" with "promoterco" {
+        "sponsorco" as "sponsor"
+        "promoterco" as "promoter"
+    }
+    allow "sponsorco" with "fulfillerco" {
+        "sponsorco" as "sponsor"
+        "fulfillerco" as "fulfiller"
+    }
+    allow "promoterco" with "fulfillerco" {
+        "promoterco" as "promoter"
+        "fulfillerco" as "fulfiller"
+    }
+
+    input redemption_id : string
+    input sponsor_id    : party
+    input promoter_id   : party
+    input fulfiller_id  : party
+    input commission    : money
+    input reimbursement : money
+    input currency      : currency
+
+    debit sponsor_commission_funding {
+        ledger          = "sponsor.promo_pool"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %commission
+        currency        = %currency
+        idempotency_key = %redemption_id
+    }
+
+    credit promoter_commission {
+        ledger          = "promoter.commission"
+        owner           = "promoter"
+        participant     = "Promoter"
+        party           = %promoter_id
+        amount          = %commission
+        currency        = %currency
+        idempotency_key = %redemption_id
+    }
+
+    debit sponsor_reimbursement_funding {
+        ledger          = "sponsor.promo_pool"
+        owner           = "sponsor"
+        participant     = "Sponsor"
+        party           = %sponsor_id
+        amount          = %reimbursement
+        currency        = %currency
+        idempotency_key = %redemption_id
+    }
+
+    credit fulfiller_reimbursement {
+        ledger          = "fulfiller.reimbursement"
+        owner           = "fulfiller"
+        participant     = "Fulfiller"
+        party           = %fulfiller_id
+        amount          = %reimbursement
+        currency        = %currency
+        idempotency_key = %redemption_id
+    }
+
+    assert balanced
+}

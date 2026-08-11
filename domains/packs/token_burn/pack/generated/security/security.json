@@ -1,0 +1,37 @@
+{
+  "kind": "neutrino.capability-security",
+  "schemaVersion": "0.1.0",
+  "procedure": "token_burn",
+  "dslVersion": "1.0.0",
+  "ok": true,
+  "categories": [
+    {
+      "category": "authorization",
+      "status": "pass",
+      "findings": ["2 participant(s) declared; every value-moving leg bound to a declared participant", "leg 'holder_debit' (debit token.balance) authorized by participant 'Holder' (role 'holder')", "leg 'supply_credit' (credit token.supply) authorized by participant 'SupplyAuthority' (role 'supply_authority')"]
+    },
+    {
+      "category": "value",
+      "status": "pass",
+      "findings": ["balanced invariant asserted; debits conserve credits"]
+    },
+    {
+      "category": "topology",
+      "status": "pass",
+      "findings": ["no inter-capability invocations declared; composition trivially satisfied", "cross-organization coordination permitted by declared policy (1 allowed pair(s))"]
+    },
+    {
+      "category": "trustBoundary",
+      "status": "pass",
+      "findings": ["every ledger leg carries an idempotency_key (replay-safe)", "0 evidence/attestation input(s) declared", "value-moving leg 'holder_debit' is gated by a compliance guard `supply_approved == 1` — value moves only when the condition holds; a denied or malformed input suppresses the leg (fail-closed)", "value-moving leg 'supply_credit' is gated by a compliance guard `supply_approved == 1` — value moves only when the condition holds; a denied or malformed input suppresses the leg (fail-closed)", "value-moving leg 'supply_credit' posts to the reserved supply ledger `token.supply` — the token's supply/audit surface, where circulating value is destroyed (burn: holder → supply); this supply movement is authority-gated (see the guard above), so unauthorized supply change is suppressed fail-closed"]
+    },
+    {
+      "category": "state",
+      "status": "n/a",
+      "findings": ["no explicit state-machine construct in the current DSL (L2)"]
+    }
+  ],
+  "advisories": 0,
+  "violations": 0,
+  "resultCode": 0
+}

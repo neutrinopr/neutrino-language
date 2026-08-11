@@ -1,0 +1,447 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "principal"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "installment_id"
+      },
+      "kind": "debit",
+      "ledger": "issuer.funding",
+      "name": "issuer_funding",
+      "owner": "issuer",
+      "participant": "Issuer",
+      "party": {
+        "kind": "ref",
+        "value": "issuer_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "principal"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "installment_id"
+      },
+      "kind": "credit",
+      "ledger": "merchant.settlement",
+      "name": "merchant_settlement",
+      "owner": "merchant",
+      "participant": "Merchant",
+      "party": {
+        "kind": "ref",
+        "value": "merchant_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "72c456fe941a3aa7224157606fbfccec4a1b7e79e6970e19a28e8fa769c6bb17",
+    "specHash": "8a2d8f2f10cd99b8f82f1215812240660c8f7af4f49bb5c8648968d156ef1212"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "installment_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "issuer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "merchant_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "principal",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "installment_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "evm"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "Issuer",
+      "org": "bankco",
+      "role": "issuer"
+    },
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Merchant",
+      "org": "acme",
+      "role": "merchant"
+    }
+  ],
+  "procedure": "core_installment_fulfillment",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input installment_id",
+      "source": {
+        "column": 1,
+        "line": 31
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input issuer_id",
+      "source": {
+        "column": 1,
+        "line": 32
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input merchant_id",
+      "source": {
+        "column": 1,
+        "line": 33
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input principal",
+      "source": {
+        "column": 1,
+        "line": 34
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 35
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "debit issuer_funding",
+      "source": {
+        "column": 1,
+        "line": 37
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit merchant_settlement",
+      "source": {
+        "column": 1,
+        "line": 47
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "participant Issuer",
+      "source": {
+        "column": 1,
+        "line": 15
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Merchant",
+      "source": {
+        "column": 1,
+        "line": 22
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "allow bankco with acme",
+      "source": {
+        "column": 1,
+        "line": 26
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 57
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input installment_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 31
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input issuer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 32
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input principal",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 34
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 35
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit issuer_funding",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 37
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit merchant_settlement",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 47
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 57
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant Issuer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 15
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Issuer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 15
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow bankco with acme",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 26
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "bankco",
+        "orgB": "acme",
+        "roleA": "issuer",
+        "roleB": "merchant"
+      }
+    ]
+  },
+  "trigger": "installment_purchase_financed"
+}

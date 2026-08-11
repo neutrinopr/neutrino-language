@@ -1,0 +1,7 @@
+// [51] cross-rail fixture catalog (): the committed catalog's paths + capability/slot-policy/
+// Binding-Manifest identity match the generated artifacts, and its compatibility surface is pinned to
+// VersionInfo.h; a wrong-org manifest, a drifted compatibility surface, a per-contract schema bump, an
+// L2 sidecar with an invented l1 anchor, and a drifted capabilityVersion all fail closed. See
+// check_cross_rail_catalog.py.
+//
+// RUN: python3 %S/check_cross_rail_catalog.py %scripts/validators/validate_cross_rail_catalog.py %examples

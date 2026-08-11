@@ -1,0 +1,8 @@
+// [60] M3 L2 example tied to core_dual_offer (): the committed L2 sidecar is accepted; each required
+// fail-closed case rejects with EXACTLY its targeted code (single mutation — no-trace L2-1003 /
+// undeclared-parameter L2-1008 / bad-evidence-shape L2-1001 / branch-mismatch L2-1004 /
+// implements-divergence L2-1002); and the cross-rail catalog cites the sidecar tied to the same
+// capability (implements == fixture capabilityId). See check_l2_core_dual_offer.py.
+//
+// RUN: python3 %S/check_l2_core_dual_offer.py %scripts/domain/validate_l2_domain_semantics.py \
+// RUN:   %examples/l2-domain-semantics %examples

@@ -1,0 +1,91 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_multi_pair_role",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "6bb49b59150451a18306909d87f5cddac9df775ac4de1cb0c292d3ad412d424b",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "Auditor",
+    "role": "reviewer",
+    "org": "auditorco",
+    "slotId": "coordinate.core_multi_pair_role#Auditor"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [
+    {
+      "name": "workflow_key",
+      "type": "string",
+      "specPath": "inputs[0]",
+      "source": {
+        "line": 44,
+        "column": 1
+      }
+    },
+    {
+      "name": "auditor_id",
+      "type": "party",
+      "specPath": "inputs[4]",
+      "source": {
+        "line": 48,
+        "column": 1
+      }
+    },
+    {
+      "name": "amount",
+      "type": "money",
+      "specPath": "inputs[5]",
+      "source": {
+        "line": 49,
+        "column": 1
+      }
+    },
+    {
+      "name": "currency",
+      "type": "currency",
+      "specPath": "inputs[6]",
+      "source": {
+        "line": 50,
+        "column": 1
+      }
+    }
+  ],
+  "permittedCounterparties": [
+    {
+      "org": "acme",
+      "role": "auditor"
+    },
+    {
+      "org": "bankco"
+    }
+  ],
+  "evidenceObligations": [
+    {
+      "leg": "audit_in",
+      "kind": "credit",
+      "ledger": "auditorco.audit_in",
+      "specPath": "effects[3]",
+      "source": {
+        "line": 79,
+        "column": 1
+      }
+    }
+  ],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

@@ -1,0 +1,10 @@
+// [77] M5 WP4 (): target profiles + a fail-closed spec-legality gate. The stdlib profile validator
+// mirrors the normative target-profile.schema.json; both real profiles (solidity + postgres) validate
+// clean while 7 committed negatives hit their exact profile.* codes; every committed sample spec
+// (len(specs)>=10) is legal against BOTH real profiles; a profile missing a needed feature fails closed
+// with a diagnostic naming the feature, its originating primitive, and its source; advisory vs fail_closed
+// fallback behaves on an optional unmet feature; and a malformed profile/spec fails closed with structured
+// legality.bad_input JSON (in-process and via the check_spec_legality.py CLI), never a crash. See
+// check_target_profiles.py.
+//
+// RUN: python3 %S/check_target_profiles.py %examples

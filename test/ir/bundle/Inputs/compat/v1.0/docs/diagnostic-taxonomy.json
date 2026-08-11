@@ -1,0 +1,1144 @@
+{
+  "categories": [
+    "frontend",
+    "kernel",
+    "value",
+    "expr",
+    "scenario",
+    "security",
+    "generate",
+    "equivalence",
+    "classification",
+    "spec",
+    "profile",
+    "legality",
+    "realization",
+    "view",
+    "observation",
+    "domain"
+  ],
+  "codes": [
+    {
+      "category": "frontend",
+      "code": "source.io",
+      "emitter": "cpp",
+      "precedence": 10,
+      "status": "active",
+      "summary": "the source/scenario file could not be read"
+    },
+    {
+      "category": "frontend",
+      "code": "source.parse",
+      "emitter": "cpp",
+      "precedence": 11,
+      "status": "active",
+      "summary": "the .neu source could not be lowered to valid IR"
+    },
+    {
+      "category": "frontend",
+      "code": "ir.parse",
+      "emitter": "cpp",
+      "precedence": 12,
+      "status": "active",
+      "summary": "the .mlir input could not be parsed"
+    },
+    {
+      "category": "frontend",
+      "code": "ir.verify",
+      "emitter": "cpp",
+      "precedence": 13,
+      "status": "active",
+      "summary": "the input IR failed verification"
+    },
+    {
+      "category": "frontend",
+      "code": "input.io",
+      "emitter": "cpp",
+      "precedence": 14,
+      "status": "active",
+      "summary": "the input file could not be read (neutrino-equiv)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.version.invalid",
+      "emitter": "cpp",
+      "precedence": 20,
+      "status": "active",
+      "summary": "the declared procedure version is not a semantic version"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.balance.assert_missing",
+      "emitter": "cpp",
+      "precedence": 21,
+      "status": "active",
+      "summary": "a value-moving procedure does not declare assert_balanced"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.balance.not_balanceable",
+      "emitter": "cpp",
+      "precedence": 22,
+      "status": "active",
+      "summary": "assert_balanced is declared but there is no debit/credit to balance"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.balance.unbalanced",
+      "emitter": "cpp",
+      "precedence": 23,
+      "status": "active",
+      "summary": "debits and credits do not move the same (amount, currency)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.binding.invalid_mode",
+      "emitter": "cpp",
+      "precedence": 24,
+      "status": "active",
+      "summary": "a participant binding mode is set to something other than to_be_bound"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.binding.policy_without_flag",
+      "emitter": "cpp",
+      "precedence": 25,
+      "status": "active",
+      "summary": "a bind policy is set on a participant that is not to_be_bound"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.binding.missing_binder",
+      "emitter": "cpp",
+      "precedence": 26,
+      "status": "active",
+      "summary": "a to_be_bound participant declares no authorized binder (org)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.binding.missing_runtimes",
+      "emitter": "cpp",
+      "precedence": 27,
+      "status": "active",
+      "summary": "a to_be_bound participant declares no bind_runtimes allow-list"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.binding.empty_runtime",
+      "emitter": "cpp",
+      "precedence": 28,
+      "status": "active",
+      "summary": "a bind_runtimes allow-list contains an empty runtime family"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.binding.invalid_assurance",
+      "emitter": "cpp",
+      "precedence": 29,
+      "status": "active",
+      "summary": "bind_min_assurance is not one of A1/A2/A3/A4"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.attest.invalid_quorum",
+      "emitter": "cpp",
+      "precedence": 30,
+      "status": "active",
+      "summary": "an attestation quorum is not a positive integer (M-of-N threshold)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.attest.missing_observer_set",
+      "emitter": "cpp",
+      "precedence": 31,
+      "status": "active",
+      "summary": "an attestation policy declares no observer-set reference"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.attest.invalid_canonicalization",
+      "emitter": "cpp",
+      "precedence": 32,
+      "status": "active",
+      "summary": "an attestation canonicalization mode is missing or unsupported (expected exact/median)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.attest.invalid_fallback",
+      "emitter": "cpp",
+      "precedence": 33,
+      "status": "active",
+      "summary": "an attestation quorum-timeout fallback is unsupported (expected abort/escalate)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.attest.invalid_assurance",
+      "emitter": "cpp",
+      "precedence": 34,
+      "status": "active",
+      "summary": "a declared observer-set assurance tier is unsupported (expected A1/A2/A3/A4)"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.attest.invalid_independence",
+      "emitter": "cpp",
+      "precedence": 35,
+      "status": "active",
+      "summary": "a declared observer-set independence posture is unsupported (expected independent/correlated)"
+    },
+    {
+      "category": "value",
+      "code": "value_type.mismatch",
+      "emitter": "cpp",
+      "precedence": 36,
+      "status": "active",
+      "summary": "an entry operand carries the wrong value category for its role"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.identity.instance_key",
+      "emitter": "cpp",
+      "precedence": 37,
+      "status": "active",
+      "summary": "an explicit coordination instance key is undeclared, non-string, or ambiguous"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.identity.evidence_only",
+      "emitter": "cpp",
+      "precedence": 38,
+      "status": "active",
+      "summary": "an effectless coordination is not a valid evidence-acceptance action (no explicit key / no attestation)"
+    },
+    {
+      "category": "expr",
+      "code": "expr.unsupported",
+      "emitter": "cpp",
+      "precedence": 40,
+      "status": "active",
+      "summary": "a compute expression uses an unsupported function or call shape"
+    },
+    {
+      "category": "expr",
+      "code": "expr.type",
+      "emitter": "cpp",
+      "precedence": 41,
+      "status": "active",
+      "summary": "a compute expression uses a governed non-numeric value where a number is required"
+    },
+    {
+      "category": "expr",
+      "code": "expr.invalid",
+      "emitter": "cpp",
+      "precedence": 42,
+      "status": "active",
+      "summary": "a compute expression is malformed (family/fallback code)"
+    },
+    {
+      "category": "expr",
+      "code": "expr.internal",
+      "emitter": "cpp",
+      "precedence": 43,
+      "status": "active",
+      "summary": "an internal error while typing a compute expression"
+    },
+    {
+      "category": "scenario",
+      "code": "scenario.io",
+      "emitter": "cpp",
+      "precedence": 50,
+      "status": "active",
+      "summary": "the scenario file could not be read"
+    },
+    {
+      "category": "scenario",
+      "code": "scenario.json",
+      "emitter": "cpp",
+      "precedence": 51,
+      "status": "active",
+      "summary": "the scenario is not well-formed JSON"
+    },
+    {
+      "category": "scenario",
+      "code": "scenario.parse",
+      "emitter": "cpp",
+      "precedence": 52,
+      "status": "active",
+      "summary": "the scenario could not be parsed into the scenario model"
+    },
+    {
+      "category": "scenario",
+      "code": "scenario.schema",
+      "emitter": "cpp",
+      "precedence": 53,
+      "status": "active",
+      "summary": "the scenario violates the scenario schema shape"
+    },
+    {
+      "category": "scenario",
+      "code": "scenario.procedure",
+      "emitter": "cpp",
+      "precedence": 54,
+      "status": "active",
+      "summary": "the scenario names a procedure not present in the IR"
+    },
+    {
+      "category": "scenario",
+      "code": "scenario.invalid",
+      "emitter": "cpp",
+      "precedence": 55,
+      "status": "active",
+      "summary": "the scenario is invalid for the procedure (inputs/values)"
+    },
+    {
+      "category": "security",
+      "code": "security.gate",
+      "emitter": "cpp",
+      "precedence": 60,
+      "status": "active",
+      "summary": "lowering refused: the capability security pass found hard violations"
+    },
+    {
+      "category": "security",
+      "code": "security.violation",
+      "emitter": "cpp",
+      "precedence": 61,
+      "status": "active",
+      "summary": "the capability security pass found hard violations"
+    },
+    {
+      "category": "generate",
+      "code": "usage.target",
+      "emitter": "cpp",
+      "precedence": 70,
+      "status": "active",
+      "summary": "an unknown generation target was requested"
+    },
+    {
+      "category": "generate",
+      "code": "generate.security",
+      "emitter": "cpp",
+      "precedence": 71,
+      "status": "active",
+      "summary": "generation was blocked by the security gate"
+    },
+    {
+      "category": "generate",
+      "code": "generator.aborted",
+      "emitter": "cpp",
+      "precedence": 72,
+      "status": "active",
+      "summary": "a generator subprocess aborted (crash/signal) before completing"
+    },
+    {
+      "category": "generate",
+      "code": "internal",
+      "emitter": "cpp",
+      "precedence": 78,
+      "status": "active",
+      "summary": "an unclassified internal fault (fallback)"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.reference_mismatch",
+      "emitter": "cpp",
+      "precedence": 80,
+      "status": "active",
+      "summary": "a backend disagreed with the reference evaluator"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.backend_failed",
+      "emitter": "cpp",
+      "precedence": 81,
+      "status": "active",
+      "summary": "a backend toolchain failed to run (neutrino-equiv)"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.backend_skipped",
+      "emitter": "cpp",
+      "precedence": 82,
+      "status": "active",
+      "summary": "a backend was skipped because its toolchain was unavailable (neutrino-equiv)"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.spec_artifact_mismatch",
+      "emitter": "cpp",
+      "precedence": 83,
+      "status": "active",
+      "summary": "a rendered backend artifact does not structurally reflect the canonical spec it was generated from (neutrino-equiv, WP8/)"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.trace_divergence",
+      "emitter": "cpp",
+      "precedence": 84,
+      "status": "active",
+      "summary": "a realization's normalized observation trace diverged from the reference evaluator"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.profile_incompatible",
+      "emitter": "cpp",
+      "precedence": 85,
+      "status": "active",
+      "summary": "a realization was refused (not compared) because the coordination plan is illegal for its declared profile"
+    },
+    {
+      "category": "equivalence",
+      "code": "equivalence.no_cases",
+      "emitter": "cpp",
+      "precedence": 86,
+      "status": "active",
+      "summary": "the equivalence gate executed zero comparison cases (empty trace / all refused) — fails closed"
+    },
+    {
+      "category": "classification",
+      "code": "classification.io",
+      "emitter": "validator",
+      "precedence": 90,
+      "status": "active",
+      "summary": "a classification input file could not be read"
+    },
+    {
+      "category": "classification",
+      "code": "classification.schema",
+      "emitter": "validator",
+      "precedence": 92,
+      "status": "active",
+      "summary": "the classification profile violates its schema shape"
+    },
+    {
+      "category": "classification",
+      "code": "classification.schema_version",
+      "emitter": "validator",
+      "precedence": 93,
+      "status": "active",
+      "summary": "an unsupported classification schema version"
+    },
+    {
+      "category": "classification",
+      "code": "classification.missing_field",
+      "emitter": "validator",
+      "precedence": 94,
+      "status": "active",
+      "summary": "a required classification field is missing"
+    },
+    {
+      "category": "classification",
+      "code": "classification.unknown_field",
+      "emitter": "validator",
+      "precedence": 95,
+      "status": "active",
+      "summary": "an unknown classification field is present"
+    },
+    {
+      "category": "classification",
+      "code": "classification.bad_profile_id",
+      "emitter": "validator",
+      "precedence": 96,
+      "status": "active",
+      "summary": "a classification profile id is malformed"
+    },
+    {
+      "category": "classification",
+      "code": "classification.duplicate_profile_id",
+      "emitter": "validator",
+      "precedence": 97,
+      "status": "active",
+      "summary": "two classification profiles share an id"
+    },
+    {
+      "category": "classification",
+      "code": "classification.profile_version_mismatch",
+      "emitter": "validator",
+      "precedence": 98,
+      "status": "active",
+      "summary": "a classification profile version mismatch"
+    },
+    {
+      "category": "classification",
+      "code": "classification.missing_dimension",
+      "emitter": "validator",
+      "precedence": 99,
+      "status": "active",
+      "summary": "a required classification dimension is missing"
+    },
+    {
+      "category": "classification",
+      "code": "classification.unknown_dimension",
+      "emitter": "validator",
+      "precedence": 100,
+      "status": "active",
+      "summary": "an unknown classification dimension is present"
+    },
+    {
+      "category": "classification",
+      "code": "classification.unknown_dimension_value",
+      "emitter": "validator",
+      "precedence": 101,
+      "status": "active",
+      "summary": "an unknown value for a classification dimension"
+    },
+    {
+      "category": "classification",
+      "code": "classification.duplicate_contract",
+      "emitter": "validator",
+      "precedence": 102,
+      "status": "active",
+      "summary": "two classification entries share a contract"
+    },
+    {
+      "category": "classification",
+      "code": "classification.source_contract_mismatch",
+      "emitter": "validator",
+      "precedence": 103,
+      "status": "active",
+      "summary": "a classified contract does not match its source"
+    },
+    {
+      "category": "spec",
+      "code": "spec.io",
+      "emitter": "validator",
+      "precedence": 110,
+      "status": "active",
+      "summary": "a capability-spec input file could not be read"
+    },
+    {
+      "category": "spec",
+      "code": "spec.ast",
+      "emitter": "cpp",
+      "precedence": 111,
+      "status": "active",
+      "summary": "an ingested capability-spec's serialized AST or structure is malformed"
+    },
+    {
+      "category": "spec",
+      "code": "spec.schema",
+      "emitter": "validator",
+      "precedence": 112,
+      "status": "active",
+      "summary": "the capability-spec violates its schema shape"
+    },
+    {
+      "category": "spec",
+      "code": "spec.schema_version",
+      "emitter": "validator",
+      "precedence": 113,
+      "status": "active",
+      "summary": "an unsupported capability-spec schema version"
+    },
+    {
+      "category": "spec",
+      "code": "spec.missing_field",
+      "emitter": "validator",
+      "precedence": 114,
+      "status": "active",
+      "summary": "a required capability-spec field is missing"
+    },
+    {
+      "category": "spec",
+      "code": "spec.unknown_field",
+      "emitter": "validator",
+      "precedence": 115,
+      "status": "active",
+      "summary": "an unknown capability-spec field is present"
+    },
+    {
+      "category": "spec",
+      "code": "spec.bad_category",
+      "emitter": "validator",
+      "precedence": 116,
+      "status": "active",
+      "summary": "a capability-spec value carries an invalid category"
+    },
+    {
+      "category": "spec",
+      "code": "spec.bad_transition",
+      "emitter": "validator",
+      "precedence": 117,
+      "status": "active",
+      "summary": "a capability-spec state transition is malformed"
+    },
+    {
+      "category": "spec",
+      "code": "spec.bad_initial_state",
+      "emitter": "validator",
+      "precedence": 118,
+      "status": "active",
+      "summary": "a capability-spec declares an invalid initial state"
+    },
+    {
+      "category": "spec",
+      "code": "spec.bad_terminal_state",
+      "emitter": "validator",
+      "precedence": 119,
+      "status": "active",
+      "summary": "a capability-spec declares an invalid terminal state"
+    },
+    {
+      "category": "spec",
+      "code": "spec.dead_end_state",
+      "emitter": "validator",
+      "precedence": 120,
+      "status": "active",
+      "summary": "a capability-spec state has no outgoing transition and is not terminal"
+    },
+    {
+      "category": "spec",
+      "code": "spec.unresolved_ref",
+      "emitter": "validator",
+      "precedence": 121,
+      "status": "active",
+      "summary": "a capability-spec reference does not resolve"
+    },
+    {
+      "category": "spec",
+      "code": "spec.unresolved_dep",
+      "emitter": "validator",
+      "precedence": 122,
+      "status": "active",
+      "summary": "a capability-spec compute dependency does not resolve"
+    },
+    {
+      "category": "spec",
+      "code": "spec.unresolved_participant",
+      "emitter": "validator",
+      "precedence": 123,
+      "status": "active",
+      "summary": "a capability-spec participant reference does not resolve"
+    },
+    {
+      "category": "spec",
+      "code": "spec.bad_hash",
+      "emitter": "validator",
+      "precedence": 124,
+      "status": "active",
+      "summary": "a capability-spec carries a malformed capability hash"
+    },
+    {
+      "category": "spec",
+      "code": "spec.hash_mismatch",
+      "emitter": "validator",
+      "precedence": 125,
+      "status": "active",
+      "summary": "a capability-spec capability hash does not match its content"
+    },
+    {
+      "category": "profile",
+      "code": "profile.io",
+      "emitter": "validator",
+      "precedence": 130,
+      "status": "active",
+      "summary": "a target-profile file could not be read"
+    },
+    {
+      "category": "profile",
+      "code": "profile.schema",
+      "emitter": "validator",
+      "precedence": 131,
+      "status": "active",
+      "summary": "the target profile violates its schema shape"
+    },
+    {
+      "category": "profile",
+      "code": "profile.schema_version",
+      "emitter": "validator",
+      "precedence": 132,
+      "status": "active",
+      "summary": "an unsupported target-profile schema version"
+    },
+    {
+      "category": "profile",
+      "code": "profile.missing_field",
+      "emitter": "validator",
+      "precedence": 133,
+      "status": "active",
+      "summary": "a required target-profile field is missing"
+    },
+    {
+      "category": "profile",
+      "code": "profile.unknown_field",
+      "emitter": "validator",
+      "precedence": 134,
+      "status": "active",
+      "summary": "an unknown target-profile field is present"
+    },
+    {
+      "category": "profile",
+      "code": "profile.bad_profile_id",
+      "emitter": "validator",
+      "precedence": 135,
+      "status": "active",
+      "summary": "a target-profile id is malformed"
+    },
+    {
+      "category": "profile",
+      "code": "profile.profile_version_mismatch",
+      "emitter": "validator",
+      "precedence": 136,
+      "status": "active",
+      "summary": "a target-profile version mismatch"
+    },
+    {
+      "category": "profile",
+      "code": "profile.bad_feature",
+      "emitter": "validator",
+      "precedence": 137,
+      "status": "active",
+      "summary": "a target profile declares an invalid feature"
+    },
+    {
+      "category": "profile",
+      "code": "profile.conflicting_feature",
+      "emitter": "validator",
+      "precedence": 138,
+      "status": "active",
+      "summary": "a target profile declares conflicting features"
+    },
+    {
+      "category": "profile",
+      "code": "profile.unknown_semantic_feature",
+      "emitter": "validator",
+      "precedence": 139,
+      "status": "active",
+      "summary": "a target profile advertises a semanticProfile feature outside the closed  registry"
+    },
+    {
+      "category": "legality",
+      "code": "legality.io",
+      "emitter": "both",
+      "precedence": 140,
+      "status": "active",
+      "summary": "a legality-gate input file could not be read"
+    },
+    {
+      "category": "legality",
+      "code": "legality.bad_input",
+      "emitter": "both",
+      "precedence": 141,
+      "status": "active",
+      "summary": "the legality gate received malformed input"
+    },
+    {
+      "category": "legality",
+      "code": "legality.target_mismatch",
+      "emitter": "both",
+      "precedence": 142,
+      "status": "active",
+      "summary": "a spec targets a profile it does not match"
+    },
+    {
+      "category": "legality",
+      "code": "legality.unsupported_feature",
+      "emitter": "both",
+      "precedence": 143,
+      "status": "active",
+      "summary": "a spec requires a feature the target profile does not support"
+    },
+    {
+      "category": "legality",
+      "code": "legality.advisory",
+      "emitter": "both",
+      "precedence": 144,
+      "status": "active",
+      "summary": "a non-blocking legality advisory"
+    },
+    {
+      "category": "legality",
+      "code": "legality.unknown_profile_version",
+      "emitter": "cpp",
+      "precedence": 145,
+      "status": "active",
+      "summary": "a semantic profile declares a missing or unknown contract version"
+    },
+    {
+      "category": "legality",
+      "code": "legality.unknown_requirement",
+      "emitter": "cpp",
+      "precedence": 146,
+      "status": "active",
+      "summary": "a coordination plan requires a semantic feature outside the closed requirement registry"
+    },
+    {
+      "category": "legality",
+      "code": "legality.limit_exceeded",
+      "emitter": "cpp",
+      "precedence": 147,
+      "status": "active",
+      "summary": "a coordination plan exceeds a numeric/resource limit the target profile bounds"
+    },
+    {
+      "category": "realization",
+      "code": "realization.io",
+      "emitter": "validator",
+      "precedence": 150,
+      "status": "active",
+      "summary": "a test-realization input file could not be read"
+    },
+    {
+      "category": "realization",
+      "code": "realization.json",
+      "emitter": "validator",
+      "precedence": 151,
+      "status": "active",
+      "summary": "the test-realization is not well-formed JSON"
+    },
+    {
+      "category": "realization",
+      "code": "realization.schema",
+      "emitter": "validator",
+      "precedence": 152,
+      "status": "active",
+      "summary": "the test-realization violates its schema shape"
+    },
+    {
+      "category": "realization",
+      "code": "realization.schema_version",
+      "emitter": "validator",
+      "precedence": 153,
+      "status": "active",
+      "summary": "an unsupported test-realization schema version"
+    },
+    {
+      "category": "realization",
+      "code": "realization.missing_field",
+      "emitter": "validator",
+      "precedence": 154,
+      "status": "active",
+      "summary": "a required test-realization field is missing"
+    },
+    {
+      "category": "realization",
+      "code": "realization.unknown_field",
+      "emitter": "validator",
+      "precedence": 155,
+      "status": "active",
+      "summary": "an unknown test-realization field is present"
+    },
+    {
+      "category": "realization",
+      "code": "realization.bad_hash",
+      "emitter": "validator",
+      "precedence": 156,
+      "status": "active",
+      "summary": "the test-realization capabilityHash is malformed"
+    },
+    {
+      "category": "realization",
+      "code": "realization.hash_mismatch",
+      "emitter": "validator",
+      "precedence": 157,
+      "status": "active",
+      "summary": "the test-realization capabilityHash does not match the referenced spec"
+    },
+    {
+      "category": "view",
+      "code": "view.io",
+      "emitter": "validator",
+      "precedence": 160,
+      "status": "active",
+      "summary": "a participant-view input file could not be read"
+    },
+    {
+      "category": "view",
+      "code": "view.json",
+      "emitter": "validator",
+      "precedence": 161,
+      "status": "active",
+      "summary": "the participant view is not well-formed JSON"
+    },
+    {
+      "category": "view",
+      "code": "view.schema",
+      "emitter": "validator",
+      "precedence": 162,
+      "status": "active",
+      "summary": "the participant view violates its schema shape"
+    },
+    {
+      "category": "view",
+      "code": "view.schema_version",
+      "emitter": "validator",
+      "precedence": 163,
+      "status": "active",
+      "summary": "an unsupported participant-view schema version"
+    },
+    {
+      "category": "view",
+      "code": "view.missing_field",
+      "emitter": "validator",
+      "precedence": 164,
+      "status": "active",
+      "summary": "a required participant-view field is missing"
+    },
+    {
+      "category": "view",
+      "code": "view.unknown_field",
+      "emitter": "validator",
+      "precedence": 165,
+      "status": "active",
+      "summary": "an unknown participant-view field is present"
+    },
+    {
+      "category": "view",
+      "code": "view.bad_hash",
+      "emitter": "validator",
+      "precedence": 166,
+      "status": "active",
+      "summary": "the participant-view capabilityHash is malformed"
+    },
+    {
+      "category": "view",
+      "code": "view.hash_mismatch",
+      "emitter": "validator",
+      "precedence": 167,
+      "status": "active",
+      "summary": "the participant-view capabilityHash does not match the referenced spec"
+    },
+    {
+      "category": "view",
+      "code": "view.contract_mismatch",
+      "emitter": "validator",
+      "precedence": 168,
+      "status": "active",
+      "summary": "the participant view disagrees with the referenced spec's contract/ops"
+    },
+    {
+      "category": "view",
+      "code": "view.unresolved_path",
+      "emitter": "validator",
+      "precedence": 169,
+      "status": "active",
+      "summary": "a participant-view specPath/source does not resolve in the capability-spec"
+    },
+    {
+      "category": "observation",
+      "code": "observation.io",
+      "emitter": "validator",
+      "precedence": 170,
+      "status": "active",
+      "summary": "a domain-observation-set input file could not be read"
+    },
+    {
+      "category": "observation",
+      "code": "observation.schema",
+      "emitter": "validator",
+      "precedence": 171,
+      "status": "active",
+      "summary": "the domain-observation-set violates its schema shape"
+    },
+    {
+      "category": "observation",
+      "code": "observation.schema_version",
+      "emitter": "validator",
+      "precedence": 172,
+      "status": "active",
+      "summary": "an unsupported domain-observation-set schema version"
+    },
+    {
+      "category": "observation",
+      "code": "observation.bad_kind",
+      "emitter": "validator",
+      "precedence": 173,
+      "status": "active",
+      "summary": "the document kind is not neutrino.domain-observation-set"
+    },
+    {
+      "category": "observation",
+      "code": "observation.missing_field",
+      "emitter": "validator",
+      "precedence": 174,
+      "status": "active",
+      "summary": "a required domain-observation-set field is missing"
+    },
+    {
+      "category": "observation",
+      "code": "observation.unknown_field",
+      "emitter": "validator",
+      "precedence": 175,
+      "status": "active",
+      "summary": "an unknown domain-observation-set field is present"
+    },
+    {
+      "category": "observation",
+      "code": "observation.ai_field_forbidden",
+      "emitter": "validator",
+      "precedence": 176,
+      "status": "active",
+      "summary": "an AI-trust field (confidence/reviewStatus/model/prompt/temperature/citations) is present — observations are deterministic facts"
+    },
+    {
+      "category": "observation",
+      "code": "observation.bad_hash",
+      "emitter": "validator",
+      "precedence": 177,
+      "status": "active",
+      "summary": "corpusRef.contentHash is not a well-formed sha256 content binding"
+    },
+    {
+      "category": "observation",
+      "code": "observation.unknown_dimension",
+      "emitter": "validator",
+      "precedence": 178,
+      "status": "active",
+      "summary": "an observation references a dimension not declared in dimensions"
+    },
+    {
+      "category": "observation",
+      "code": "observation.unknown_dimension_value",
+      "emitter": "validator",
+      "precedence": 179,
+      "status": "active",
+      "summary": "an observation value is not in its dimension's controlled vocabulary"
+    },
+    {
+      "category": "observation",
+      "code": "observation.duplicate_id",
+      "emitter": "validator",
+      "precedence": 180,
+      "status": "active",
+      "summary": "two observations share the same id"
+    },
+    {
+      "category": "observation",
+      "code": "observation.span_inverted",
+      "emitter": "validator",
+      "precedence": 181,
+      "status": "active",
+      "summary": "a provenance span has startLine > endLine"
+    },
+    {
+      "category": "domain",
+      "code": "domain.import.dangling",
+      "emitter": "cpp",
+      "precedence": 190,
+      "status": "active",
+      "summary": "an l2.import resolves to no capability in the registry"
+    },
+    {
+      "category": "domain",
+      "code": "domain.import.unknown",
+      "emitter": "cpp",
+      "precedence": 191,
+      "status": "active",
+      "summary": "an l2.import names a registered capability but not at the imported version"
+    },
+    {
+      "category": "domain",
+      "code": "domain.import.ambiguous",
+      "emitter": "cpp",
+      "precedence": 192,
+      "status": "active",
+      "summary": "an l2.import resolves to more than one registry entry"
+    },
+    {
+      "category": "domain",
+      "code": "domain.import.cyclic",
+      "emitter": "cpp",
+      "precedence": 193,
+      "status": "active",
+      "summary": "the transitive l2.import graph contains a cycle"
+    },
+    {
+      "category": "domain",
+      "code": "domain.import.ungoverned",
+      "emitter": "cpp",
+      "precedence": 194,
+      "status": "active",
+      "summary": "an l2.import's registry entry has no governed v2 sidecar, or that sidecar is invalid or fails its hash / identity pin"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.state.guard_undeclared_state",
+      "emitter": "cpp",
+      "precedence": 210,
+      "status": "reserved",
+      "summary": "a guard references a state that is not declared"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.state.nonterminal_success",
+      "emitter": "cpp",
+      "precedence": 211,
+      "status": "reserved",
+      "summary": "a non-terminal state is treated as a successful exit"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.effect.unreachable",
+      "emitter": "cpp",
+      "precedence": 212,
+      "status": "reserved",
+      "summary": "an effect is not reachable through any transition"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.effect.abort_value_effect",
+      "emitter": "cpp",
+      "precedence": 213,
+      "status": "reserved",
+      "summary": "an abort/contested transition performs a non-compensating value effect"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.compensation.not_inverse",
+      "emitter": "cpp",
+      "precedence": 214,
+      "status": "reserved",
+      "summary": "a compensation does not invert the committed effect"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.reservation.not_conserved",
+      "emitter": "cpp",
+      "precedence": 215,
+      "status": "reserved",
+      "summary": "a reserved value is neither consumed, released, nor explicitly outstanding"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.idempotency.inconsistent",
+      "emitter": "cpp",
+      "precedence": 216,
+      "status": "reserved",
+      "summary": "idempotency policy is inconsistent with the instance key / transitions"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.ordering.undeclared_scope",
+      "emitter": "cpp",
+      "precedence": 217,
+      "status": "reserved",
+      "summary": "a guard depends on an ordering scope / time source not declared first"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.participant.guard_undeclared",
+      "emitter": "cpp",
+      "precedence": 218,
+      "status": "reserved",
+      "summary": "a participant guard references an undeclared participant/role/slot"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.target.requirement_unbacked",
+      "emitter": "cpp",
+      "precedence": 219,
+      "status": "reserved",
+      "summary": "a target feature requirement does not trace to a source-backed primitive"
+    },
+    {
+      "category": "kernel",
+      "code": "kernel.evidence.gate_unsatisfiable",
+      "emitter": "cpp",
+      "precedence": 220,
+      "status": "reserved",
+      "summary": "an evidence requirement / admission gate cannot be satisfied"
+    }
+  ],
+  "kind": "neutrino.diagnostic-taxonomy",
+  "schemaVersion": 1
+}

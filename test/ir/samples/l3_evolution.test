@@ -1,0 +1,7 @@
+// [59] L3 binding-manifest evolution (): the schemaVersion-2 L3 manifest binds validated L2
+// parameters to a backend profile and reports a machine-readable status — a v1 manifest stays ok=true
+// with no 'status' key (byte-stable v1 shape); the L3 positive validates with status 'complete'; each L3
+// negative produces its NEU code with status 'invalid'; and a missing backend-profile catalog fails
+// closed (NEU-3002/invalid). See check_l3_evolution.py.
+//
+// RUN: python3 %S/check_l3_evolution.py %scripts/validators/validate_binding_manifest.py %examples

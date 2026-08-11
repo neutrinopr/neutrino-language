@@ -1,0 +1,8 @@
+// [50] M2 promotion: core_scheme_settlement (participant/org/allow/leg-participant) — the upgraded
+// scheme source translates; its slot / security / postgres artifacts are byte-stable against the
+// committed goldens; exactly one slot is to_be_bound (SettlementBank); security is ok=true (A2 binding is
+// a trustBoundary advisory, not a hard violation); and the binding manifest validates against the
+// generated topology. See check_m2_promotion.py.
+//
+// RUN: python3 %S/check_m2_promotion.py %neutrino-translate %neutrino-gen \
+// RUN:   %scripts/validators/validate_binding_manifest.py %examples

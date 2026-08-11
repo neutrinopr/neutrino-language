@@ -1,0 +1,9 @@
+// [62] backend registry routing (): every target from --list-targets (>=7) routes through the
+// TargetRegistry to a real emit whose manifest.json records that target; an unregistered target is
+// refused with an error whose usage list derives from the registry (names solidity + views). See
+// check_registry_routing.py.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: python3 %S/check_registry_routing.py %neutrino-gen \
+// RUN:   %{msi}/source/core_sample_installment.neu \
+// RUN:   %{msi}/scenario/core_sample_installment_happy_path.json

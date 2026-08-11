@@ -1,0 +1,5 @@
+// [16b]  (M5  B3): the coverage report is derived from the frozen, scenario-free capability-spec
+// (GenCoverageSpec reads the spec JSON, not a ProcedureView) — coverage.json is byte-identical when only
+// scenario data (expect.events) is mutated. See check_spec_derived.py.
+//
+// RUN: python3 %S/check_spec_derived.py %neutrino-gen coverage coverage.json %test/ir/pipeline/Inputs/core_sample_installment/source/core_sample_installment.neu %test/ir/pipeline/Inputs/core_sample_installment/scenario/core_sample_installment_happy_path.json

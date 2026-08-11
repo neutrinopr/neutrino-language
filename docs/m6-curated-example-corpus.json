@@ -1,0 +1,81 @@
+{
+  "description": "Public M6/Web3 curated example corpus and dialect-variance pairs. Membership is structural only \u2014 it does not compute same-waist semantics, generate goldens, or wire a release gate.",
+  "examples": [
+    "token_mint",
+    "token_burn",
+    "channel_verified_payout",
+    "sponsored_offer_agreement",
+    "dual_bound_offer",
+    "contested_evidence_resolution",
+    "deadline_guarded_transfer"
+  ],
+  "freeze": {
+    "documentId": "urn:neutrino:document:m6-curated-corpus-freeze-v2",
+    "title": "\u00a74 freeze \u2014 externalization stage 3 / core production-domain zero",
+    "url": "urn:neutrino:document:m6-curated-corpus-freeze-v2"
+  },
+  "kind": "neutrino.m6-curated-example-corpus",
+  "packs": {
+    "channel_verified_payout": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:bba74010871eba6dea5e83b7ec0953edb3106452d8163a3d7e611842c06c92c3",
+      "packPath": "domains/packs/channel_verified_payout/pack",
+      "receiptPath": "domains/packs/channel_verified_payout/publication-receipt.json"
+    },
+    "contested_evidence_resolution": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:fe91a701e8af29fbe7114fe51eba871bc90a149a74fc6d1ca95f367c04f9ab51",
+      "packPath": "domains/packs/contested_evidence_resolution/pack",
+      "receiptPath": "domains/packs/contested_evidence_resolution/publication-receipt.json"
+    },
+    "deadline_guarded_transfer": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:be1e7ca78fd6894f8faf4bce84db18d8f978808c84762ad674da9c7bc1f20b39",
+      "packPath": "domains/packs/deadline_guarded_transfer/pack",
+      "receiptPath": "domains/packs/deadline_guarded_transfer/publication-receipt.json"
+    },
+    "dual_bound_offer": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:361ff00370f3b946384c9d97a4c891257e42ba24406957d04cadfc50a0733221",
+      "packPath": "domains/packs/dual_bound_offer/pack",
+      "receiptPath": "domains/packs/dual_bound_offer/publication-receipt.json"
+    },
+    "sponsored_offer_agreement": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:cf10193c68593e3445dafe02104aa6ea23524e2698168af61377dcd8f6205856",
+      "packPath": "domains/packs/sponsored_offer_agreement/pack",
+      "receiptPath": "domains/packs/sponsored_offer_agreement/publication-receipt.json"
+    },
+    "token_burn": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:fed1470f34bf7a3f371d21aee2c44cf6dc166328f8490d4abfe330ddb7dea62f",
+      "packPath": "domains/packs/token_burn/pack",
+      "receiptPath": "domains/packs/token_burn/publication-receipt.json"
+    },
+    "token_mint": {
+      "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+      "packDigest": "sha256:476387fda9d8114bf206e635637c46e7695a10f035981693c09c33b662cbb645",
+      "packPath": "domains/packs/token_mint/pack",
+      "receiptPath": "domains/packs/token_mint/publication-receipt.json"
+    }
+  },
+  "parentIssue": "urn:neutrino:document:m6-curated-corpus-v2",
+  "schemaVersion": 2,
+  "variancePairs": [
+    {
+      "a": "token_mint",
+      "b": "token_burn",
+      "id": "pair-1"
+    },
+    {
+      "a": "channel_verified_payout",
+      "b": "sponsored_offer_agreement",
+      "id": "pair-2"
+    },
+    {
+      "a": "dual_bound_offer",
+      "b": "sponsored_offer_agreement",
+      "id": "pair-3"
+    }
+  ]
+}

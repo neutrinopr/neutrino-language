@@ -1,0 +1,23 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_promo_campaign",
+  "dslVersion": "1.0.0",
+  "capability": { "capabilityHash": "7438d20f5e41d9ffd3d3d32ed3d8d180cdcdfb9b022ddfcddb342b2029718239", "specVersion": "1.0.0" },
+  "participant": { "name": "Promoter", "role": "promoter", "org": "promoterco", "slotId": "coordinate.core_promo_campaign#Promoter" },
+  "visibleOperations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "requiredInputs": [
+    { "name": "redemption_id", "type": "string", "specPath": "inputs[0]", "source": { "line": 51, "column": 1 } },
+    { "name": "promoter_id", "type": "party", "specPath": "inputs[2]", "source": { "line": 53, "column": 1 } },
+    { "name": "commission", "type": "money", "specPath": "inputs[4]", "source": { "line": 55, "column": 1 } },
+    { "name": "currency", "type": "currency", "specPath": "inputs[6]", "source": { "line": 57, "column": 1 } }
+  ],
+  "permittedCounterparties": [
+    { "org": "sponsorco", "role": "sponsor" },
+    { "org": "fulfillerco", "role": "fulfiller" }
+  ],
+  "evidenceObligations": [
+    { "leg": "promoter_commission", "kind": "credit", "ledger": "promoter.commission", "specPath": "effects[1]", "source": { "line": 69, "column": 1 } }
+  ],
+  "provenance": { "derivedFrom": "capability-spec.json", "specContract": { "kind": "neutrino.capability-spec", "schemaVersion": 1 } }
+}

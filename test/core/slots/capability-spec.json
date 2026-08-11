@@ -1,0 +1,365 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "quantity"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "unit"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "operation_id"
+      },
+      "kind": "debit",
+      "ledger": "synthetic.left",
+      "name": "decrease",
+      "owner": "left",
+      "participant": null,
+      "party": {
+        "kind": "ref",
+        "value": "left_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "quantity"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "unit"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "operation_id"
+      },
+      "kind": "credit",
+      "ledger": "synthetic.right",
+      "name": "increase",
+      "owner": "right",
+      "participant": null,
+      "party": {
+        "kind": "ref",
+        "value": "right_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "73d8d0fd8da2bab2ce17fbc30b85ecac90843625e37627278ba36a6a0a301c9b",
+    "specHash": "6c8986c81a07da42722692130813d86d3ed3346eb3552ad2f9fb99534e9cf68f"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "operation_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "left_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "right_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "quantity",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "unit",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "operation_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [],
+  "procedure": "synthetic_slots",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input operation_id",
+      "source": {
+        "column": 1,
+        "line": 5
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input left_id",
+      "source": {
+        "column": 1,
+        "line": 6
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input right_id",
+      "source": {
+        "column": 1,
+        "line": 7
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input quantity",
+      "source": {
+        "column": 1,
+        "line": 8
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input unit",
+      "source": {
+        "column": 1,
+        "line": 9
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "debit decrease",
+      "source": {
+        "column": 1,
+        "line": 11
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit increase",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 28
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input operation_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 5
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input left_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 6
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input quantity",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 8
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input unit",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 9
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit decrease",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 11
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit increase",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 19
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 28
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": []
+  },
+  "trigger": "opened"
+}

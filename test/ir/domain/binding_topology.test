@@ -1,0 +1,6 @@
+// [38] D1b: slot binding-topology (org -> participant -> slot; excluded from capabilityHash) — slot gen
+// emits a binding-topology.json that byte-matches the committed fixture and validates fail-closed; it is
+// excluded from the capabilityHash scope; participant-free sources emit none (byte-stable incl.
+// output-dir reuse); and six structural mutations fail closed. See check_binding_topology.py.
+//
+// RUN: python3 %S/check_binding_topology.py %neutrino-gen %scripts/validators/validate_binding_topology.py %examples

@@ -1,0 +1,74 @@
+// M5 token S1 (): the flagship compliance-gated token transfer. A balanced token transfer
+// (debit sender / credit receiver on token.balance) posts ONLY when a COMPLIANCE AUTHORITY has
+// approved it — the compliance control is expressed with the existing  conditional-guard
+// machinery (guard-over-existing-model), NOT a new token/compliance primitive. This is the general
+// "allow-if-approved" centerpiece; the account-freeze transfer (token S2, ) is the DUAL
+// specialization ("deny-if-frozen").
+//
+// `compliance_approved` is a decision a ComplianceAuthority governs (the trust surface named in
+// security.json). Both legs must share ONE guard (the  guarded-balance verifier refuses split
+// guards), so the SAME `compliance_approved == 1` rule gates both. Because the gate is EXACT EQUALITY
+// on a single flag, it is inherently fail-closed: only an explicit approval (exactly 1) posts — a
+// denial (0), or any malformed/out-of-range value (2, -1, …), makes the guard false, so NEITHER leg
+// posts. (Unlike a multi-flag SUM there is nothing to cancel; the account-freeze sample needs its
+// sum-of-squares precisely because it combines two flags.) The semantics are SUPPRESSION, not abort:
+// an unapproved transfer moves no value but the coordination still reconciles as a no-op (there is no
+// abort primitive in guard-over-existing-model; a retry after approval uses a new transfer_id). The
+// one spec-level rule renders IDENTICALLY to both Solidity and PostgreSQL.
+
+procedure core_compliance_guard_fixture {
+    trigger transfer_requested
+    version "1.0.0"
+
+    participant Sender {
+        role = "sender"
+        org  = "walletco"
+    }
+    participant Receiver {
+        role = "receiver"
+        org  = "merchantco"
+    }
+    participant ComplianceAuthority {
+        role = "compliance_authority"
+        org  = "complianceco"
+    }
+    allow "walletco" with "merchantco" {
+        "walletco" as "sender"
+        "merchantco" as "receiver"
+    }
+    allow "walletco" with "complianceco" {
+        "complianceco" as "compliance_authority"
+    }
+    allow "merchantco" with "complianceco" {
+        "complianceco" as "compliance_authority"
+    }
+
+    input transfer_id        : string
+    input sender_id          : party
+    input receiver_id        : party
+    input amount             : money
+    input currency           : currency
+    input compliance_approved : number
+
+    debit sender_debit {
+        ledger          = "token.balance"
+        owner           = "sender"
+        participant     = "Sender"
+        party           = %sender_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %transfer_id
+        when            = compliance_approved == 1
+    }
+    credit receiver_credit {
+        ledger          = "token.balance"
+        owner           = "receiver"
+        participant     = "Receiver"
+        party           = %receiver_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %transfer_id
+        when            = compliance_approved == 1
+    }
+    assert balanced
+}

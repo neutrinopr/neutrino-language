@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neutrino/contracts/l2-domain-semantics/v2",
+  "title": "L2 Domain Semantics (v2 — executable reduction graph)",
+  "description": "The SETTLED domain-semantics contract, version 2: a deterministic, hashed executable reduction graph machine-emitted (neutrino-emit --kind=domain-semantics) from the verified generic l2 meta-model. RECONCILIATION (): this SUPERSEDES neutrino.l2-domain-semantics/v1 (the hand-authored descriptive form — concepts + concept-local traces + evidence/guards). Same kind, explicitly versioned: v1 is retained as the legacy descriptive artifact (validated by validate_l2_domain_semantics.py, schemaVersion 1) pending migration; v2 is the authoritative executable-graph artifact (validate_l2_domain_semantics_v2.py, schemaVersion 2). neutrino.domain-dialect/v1 is retained ONLY as the reviewed vocabulary/source artifact. No third overlapping semantic model is introduced. Bytes are byte-reproducible: sorted keys, records sorted by full canonical form, no timestamps. domainSemanticsHash = lowercase sha256 over the compact canonical JSON (sort_keys, separators=(',',':')) of this object with the hash field removed. A conforming consumer MUST additionally enforce the cross-record contract (identity uniqueness, endpoint resolution, per-concept supported traceability, descriptive/executable restriction, accepted provenance for behaviour-driving edges, provenance subject resolution, invariant failure-mode references) — see validate_l2_domain_semantics_v2.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schemaVersion", "domain", "version", "implements", "l1Features", "concepts", "reductions", "failureModes", "invariants", "provenance", "domainSemanticsHash"],
+  "properties": {
+    "kind": {"const": "neutrino.l2-domain-semantics"},
+    "schemaVersion": {"const": 2},
+    "domain": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "implements": {"type": "string", "minLength": 1},
+    "coverage": {"enum": ["full", "partial"]},
+    "l1Features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["primitive", "obligation"]}
+        }
+      }
+    },
+    "concepts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "classification"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["state", "action", "concept"]},
+          "classification": {"enum": ["executable", "descriptive"]}
+        }
+      }
+    },
+    "reductions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "from", "to", "relation", "lossiness"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "from": {"type": "string", "minLength": 1},
+          "to": {"type": "string", "minLength": 1},
+          "relation": {"enum": ["expands", "discharges", "protects", "failure"]},
+          "lossiness": {"enum": ["lossless", "lossy_preserved", "unsupported"]}
+        }
+      }
+    },
+    "failureModes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "compensation": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "predicate"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "predicate": {"type": "string", "minLength": 1},
+          "onFailure": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["subject", "source", "status"],
+        "properties": {
+          "subject": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "status": {"enum": ["proposed", "accepted", "rejected"]},
+          "standardVersion": {"type": "string", "minLength": 1},
+          "excerptHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "reviewer": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "imports": {
+      "type": "array",
+      "description": "Versioned imports of OTHER L2 domains (l2.import records): a foreign capability at a required version, resolved against a domain registry by the import resolver. Part of the hashed contract, so an import change bites domainSemanticsHash. A capability is imported at most once.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability", "version"],
+        "properties": {
+          "capability": {"type": "string", "minLength": 1},
+          "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}
+        }
+      }
+    },
+    "domainSemanticsHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

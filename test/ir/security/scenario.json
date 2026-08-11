@@ -1,0 +1,27 @@
+{
+  "scenario": "core_sample_installment_happy_path",
+  "procedure": "core_sample_installment",
+  "inputs": {
+    "transaction_id": "txn-001",
+    "merchant_id": "merchant-001",
+    "issuer_id": "issuer-001",
+    "principal": 100000,
+    "currency": "EUR",
+    "subsidy_pct": 10
+  },
+  "expect": {
+    "computed": { "subsidy": 10000 },
+    "events": [
+      "PurchaseFinanced",
+      "SubsidyComputed",
+      "MerchantSubsidyDebited",
+      "IssuerReceivableCredited",
+      "CoreSampleInstallmentReconciled"
+    ],
+    "ledger": {
+      "acquirer.merchant_balance": -10000,
+      "issuer.promotional_receivable": 10000
+    },
+    "invariants": ["replay_safe", "balanced"]
+  }
+}

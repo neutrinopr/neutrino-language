@@ -1,0 +1,75 @@
+{
+  "kind": "neutrino.slot-capability",
+  "capability": "coordinate.core_promo_campaign",
+  "capabilityVersion": "1.0.0",
+  "procedure": "core_promo_campaign",
+  "trigger": "promo_redemption_reported",
+  "parties": ["sponsor_id", "promoter_id", "fulfiller_id"],
+  "declaredParticipants": [
+    { "name": "Sponsor", "role": "sponsor", "org": "sponsorco", "capabilities": [], "binding": { "mode": "to_be_bound", "runtimes": ["evm"], "minAssurance": "A2", "authorizedBinder": "sponsorco" } },
+    { "name": "Promoter", "role": "promoter", "org": "promoterco", "capabilities": [] },
+    { "name": "Fulfiller", "role": "fulfiller", "org": "fulfillerco", "capabilities": [] }
+  ],
+  "topology": { "organizations": ["sponsorco", "promoterco", "fulfillerco"], "crossOrganization": true },
+  "ledgerOwners": ["sponsor", "promoter", "fulfiller"],
+  "operations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "computed": [],
+  "ledgers": ["sponsor.promo_pool", "promoter.commission", "fulfiller.reimbursement"],
+  "evidenceInputs": [],
+  "partyTypedInputs": ["sponsor_id", "promoter_id", "fulfiller_id"],
+  "typedInputs": [
+    { "name": "redemption_id", "type": "string" },
+    { "name": "sponsor_id", "type": "party" },
+    { "name": "promoter_id", "type": "party" },
+    { "name": "fulfiller_id", "type": "party" },
+    { "name": "commission", "type": "money" },
+    { "name": "reimbursement", "type": "money" },
+    { "name": "currency", "type": "currency" }
+  ],
+  "entries": [
+    {
+      "name": "sponsor_commission_funding",
+      "kind": "debit",
+      "ledger": "sponsor.promo_pool",
+      "owner": "sponsor",
+      "participant": "Sponsor",
+      "party": { "input": "sponsor_id" },
+      "amount": { "input": "commission" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "redemption_id" }
+    },
+    {
+      "name": "promoter_commission",
+      "kind": "credit",
+      "ledger": "promoter.commission",
+      "owner": "promoter",
+      "participant": "Promoter",
+      "party": { "input": "promoter_id" },
+      "amount": { "input": "commission" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "redemption_id" }
+    },
+    {
+      "name": "sponsor_reimbursement_funding",
+      "kind": "debit",
+      "ledger": "sponsor.promo_pool",
+      "owner": "sponsor",
+      "participant": "Sponsor",
+      "party": { "input": "sponsor_id" },
+      "amount": { "input": "reimbursement" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "redemption_id" }
+    },
+    {
+      "name": "fulfiller_reimbursement",
+      "kind": "credit",
+      "ledger": "fulfiller.reimbursement",
+      "owner": "fulfiller",
+      "participant": "Fulfiller",
+      "party": { "input": "fulfiller_id" },
+      "amount": { "input": "reimbursement" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "redemption_id" }
+    }
+  ]
+}

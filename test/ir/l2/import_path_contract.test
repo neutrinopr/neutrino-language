@@ -1,0 +1,24 @@
+// ONE path authority for `l2v2` ( review): the cross-rail catalog validator
+// and the C++ resolver must resolve a fixture's governed v2 sidecar to the SAME
+// bytes. Both treat `l2v2` as REPOSITORY-ROOT-RELATIVE, resolved against a
+// pinned root. This proves it POSITIVELY with a single, fully-valid catalog:
+// e2e/catalog.json reuses the committed core_promo_campaign fixture (real source /
+// scenario / generated / topology / manifest) and adds a governed v2 sidecar
+// (e2e/core_promo_campaign.l2v2.json, imports []) via a repo-root-relative `l2v2`.
+// The registry lives in a SUBDIRECTORY; %examples/.. is the repository root.
+//
+// Consumer 1 — the catalog validator ACCEPTS the whole catalog (exit 0):
+// RUN: python3 %scripts/validators/validate_cross_rail_catalog.py --catalog test/ir/l2/Inputs/imports/e2e/catalog.json --repo-root %examples/.. | %FileCheck %s --check-prefix=VALIDATOR
+// VALIDATOR: cross-rail catalog check: OK
+//
+// Consumer 2 — neutrino-emit reads the SAME catalog + governed sidecar and
+// resolves the import (exit 0):
+// RUN: %neutrino-emit --kind=domain-imports %S/Inputs/imports/e2e/importer.mlir --registry %S/Inputs/imports/e2e/catalog.json --registry-root %examples/.. | %FileCheck %s --check-prefix=RESOLVED
+// RESOLVED: "capability": "coordinate.core_promo_campaign"
+//
+// A `..` escape in `l2v2` is rejected by BOTH trust paths (the escape catalog is
+// otherwise identical/valid, so the escape is the sole failure):
+// RUN: %not %neutrino-emit --kind=domain-imports %S/Inputs/imports/e2e/importer.mlir --registry %S/Inputs/imports/e2e/catalog_escape.json --registry-root %examples/.. 2>&1 | %FileCheck %s --check-prefix=ESCAPE_CPP
+// ESCAPE_CPP: domain.import.ungoverned: governed v2 sidecar path {{.*}} must not escape the repository root
+// RUN: %not python3 %scripts/validators/validate_cross_rail_catalog.py --catalog test/ir/l2/Inputs/imports/e2e/catalog_escape.json --repo-root %examples/.. 2>&1 | %FileCheck %s --check-prefix=ESCAPE_PY
+// ESCAPE_PY: must be a repository-root-relative path with no '..' escape

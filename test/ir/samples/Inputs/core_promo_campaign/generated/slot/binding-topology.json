@@ -1,0 +1,65 @@
+{
+  "kind": "neutrino.slot-binding-topology",
+  "schemaVersion": 1,
+  "capability": "coordinate.core_promo_campaign",
+  "capabilityVersion": "1.0.0",
+  "procedure": "core_promo_campaign",
+  "organizations": [
+    {
+      "organizationId": "sponsorco",
+      "participants": [
+        {
+          "participantId": "Sponsor",
+          "role": "sponsor",
+          "slots": [
+            {
+              "slotId": "coordinate.core_promo_campaign#Sponsor",
+              "lateBindingMode": "to_be_bound",
+              "allowedRuntimes": ["evm"],
+              "minAssurance": "A2",
+              "evidenceProfile": null,
+              "authorizedBinder": "sponsorco"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organizationId": "promoterco",
+      "participants": [
+        {
+          "participantId": "Promoter",
+          "role": "promoter",
+          "slots": [
+            {
+              "slotId": "coordinate.core_promo_campaign#Promoter",
+              "lateBindingMode": "fixed",
+              "allowedRuntimes": [],
+              "minAssurance": "A1",
+              "evidenceProfile": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "organizationId": "fulfillerco",
+      "participants": [
+        {
+          "participantId": "Fulfiller",
+          "role": "fulfiller",
+          "slots": [
+            {
+              "slotId": "coordinate.core_promo_campaign#Fulfiller",
+              "lateBindingMode": "fixed",
+              "allowedRuntimes": [],
+              "minAssurance": "A1",
+              "evidenceProfile": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "crossOrganization": true
+}

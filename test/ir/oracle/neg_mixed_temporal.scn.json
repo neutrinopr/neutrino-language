@@ -1,0 +1,9 @@
+{
+  "scenario": "neg_mixed_temporal",
+  "procedure": "neg_mixed_temporal",
+  "inputs": {
+    "settlement_id": "s-1", "payer_id": "payer-a", "payee_id": "payee-b",
+    "amount": 1000, "fee": 10, "currency": "EUR", "alpha_proof": "sha256:00aa"
+  },
+  "expect": { "computed": {}, "ledger": {}, "invariants": ["balanced"] }
+}

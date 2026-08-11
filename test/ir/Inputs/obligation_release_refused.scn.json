@@ -1,0 +1,1 @@
+{"scenario":"release_refused","procedure":"core_document_escrow","inputs":{"amount":30,"agreed":50,"currency":"USD","payee":"seller-1","flow_id":"f2"},"expect":{}}

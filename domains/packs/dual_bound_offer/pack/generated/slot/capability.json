@@ -1,0 +1,51 @@
+{
+  "kind": "neutrino.slot-capability",
+  "capability": "coordinate.dual_bound_offer",
+  "capabilityVersion": "1.0.0",
+  "procedure": "dual_bound_offer",
+  "trigger": "sponsored_offer_proposed",
+  "parties": ["sponsor_id", "merchant_id"],
+  "declaredParticipants": [
+    { "name": "Sponsor", "role": "sponsor", "org": "sponsorco", "capabilities": [], "binding": { "mode": "to_be_bound", "runtimes": ["evm", "jvm"], "minAssurance": "A2", "authorizedBinder": "sponsorco" } },
+    { "name": "Merchant", "role": "merchant", "org": "acme", "capabilities": [], "binding": { "mode": "to_be_bound", "runtimes": ["evm"], "minAssurance": "A2", "authorizedBinder": "acme" } }
+  ],
+  "topology": { "organizations": ["sponsorco", "acme"], "crossOrganization": true },
+  "ledgerOwners": ["sponsor", "merchant"],
+  "operations": ["OPEN", "NEGOTIATE", "PROPOSE", "COMMIT", "REJECT", "COMPENSATE", "CLOSE"],
+  "backends": ["solidity", "postgres"],
+  "computed": [],
+  "ledgers": ["sponsor.commitment", "merchant.expected_contribution"],
+  "evidenceInputs": [],
+  "partyTypedInputs": ["sponsor_id", "merchant_id"],
+  "typedInputs": [
+    { "name": "offer_id", "type": "string" },
+    { "name": "sponsor_id", "type": "party" },
+    { "name": "merchant_id", "type": "party" },
+    { "name": "contribution", "type": "money" },
+    { "name": "currency", "type": "currency" }
+  ],
+  "entries": [
+    {
+      "name": "sponsor_commitment",
+      "kind": "debit",
+      "ledger": "sponsor.commitment",
+      "owner": "sponsor",
+      "participant": "Sponsor",
+      "party": { "input": "sponsor_id" },
+      "amount": { "input": "contribution" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "offer_id" }
+    },
+    {
+      "name": "merchant_expected_contribution",
+      "kind": "credit",
+      "ledger": "merchant.expected_contribution",
+      "owner": "merchant",
+      "participant": "Merchant",
+      "party": { "input": "merchant_id" },
+      "amount": { "input": "contribution" },
+      "currency": { "input": "currency" },
+      "idempotencyKey": { "input": "offer_id" }
+    }
+  ]
+}

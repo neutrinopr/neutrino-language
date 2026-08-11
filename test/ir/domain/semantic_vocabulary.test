@@ -1,0 +1,7 @@
+//  slice 2: the closed  semantic-feature vocabulary is compiler-owned and published as ONE
+// artifact. `--semantic-feature-vocabulary` byte-matches docs/semantic-feature-vocabulary.json; the
+// artifact's shape/versioning holds; and the Python target-profile validator's closed registry is
+// loaded from (and stays equal to) that artifact — no parallel hand-maintained table. See
+// check_semantic_vocabulary.py.
+//
+// RUN: python3 %S/check_semantic_vocabulary.py %neutrino-translate %docs/semantic-feature-vocabulary.json %scripts

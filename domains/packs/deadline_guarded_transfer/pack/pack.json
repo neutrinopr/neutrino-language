@@ -1,0 +1,41 @@
+{
+  "kind": "neutrino.domain-pack",
+  "packDigest": "sha256:be1e7ca78fd6894f8faf4bce84db18d8f978808c84762ad674da9c7bc1f20b39",
+  "packId": "deadline_guarded_transfer",
+  "payloads": [
+    {
+      "contract": "capability-spec",
+      "mediaType": "application/json",
+      "path": "generated/capability-spec/capability-spec.json",
+      "role": "capability-spec",
+      "sha256": "sha256:73502d9e5eb04485882de61679e9dc3896b892235cf3fc2f915da110662e5039"
+    },
+    {
+      "mediaType": "application/sql",
+      "path": "generated/postgres/procedure.sql",
+      "role": "postgres-procedure",
+      "sha256": "sha256:5bb566329466cf32de60492b960348fea981ae5a75e2c5a9fae91b12b37ed64e"
+    },
+    {
+      "mediaType": "text/x-solidity",
+      "path": "generated/solidity/src/DeadlineGuardedTransfer.sol",
+      "role": "solidity-source",
+      "sha256": "sha256:0a1422d31e7bf7b7e83fbe546ca0c8ff541ccfed7bfa8d05b57eaab267e63310"
+    },
+    {
+      "mediaType": "text/x-neutrino",
+      "path": "source/deadline_guarded_transfer.neu",
+      "role": "source",
+      "sha256": "sha256:904ea72d696fa266a836db6cfa28f1c55ab17e4c8361af6edadaab128a512895"
+    }
+  ],
+  "requiredContracts": [
+    "capability-spec"
+  ],
+  "schemaVersion": 2,
+  "targetsBundle": {
+    "bundleDigest": "sha256:af5b29b92b55586b6aea7d59b6d9c9d8aa510a39539e5c2e3a8afb18669087a2",
+    "bundleId": "neutrino.core-contract-bundle",
+    "bundleVersion": "1.10.0"
+  }
+}

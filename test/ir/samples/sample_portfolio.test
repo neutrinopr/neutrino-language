@@ -1,0 +1,6 @@
+// [67] M3 sample portfolio (): the coverage map validates against the committed fixtures and fails
+// closed on a missing artifact, a current-valid artifact without a  validation classification, and a
+// validation entry for a non-declared/stale path (the reverse-direction gate). Negatives run against a
+// mutated copy of the examples tree. See check_sample_portfolio.py.
+//
+// RUN: python3 %S/check_sample_portfolio.py %scripts/samples/validate_sample_portfolio.py %examples

@@ -1,0 +1,762 @@
+{
+  "$defs": {
+    "BalanceAssertion": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "BalancedEffectGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "comparisonGuardExpression": {
+          "type": "string"
+        },
+        "firstIndex": {
+          "type": "integer"
+        },
+        "gateMode": {
+          "enum": [
+            "None",
+            "AtomicRefuse",
+            "TemporalSuppress"
+          ],
+          "type": "string"
+        },
+        "gatePolicy": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "mustBalance": {
+          "type": "boolean"
+        },
+        "pairing": {
+          "type": "string"
+        },
+        "rollbackRequired": {
+          "type": "boolean"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "firstIndex",
+        "pairing",
+        "mustBalance",
+        "gateMode",
+        "gatePolicy",
+        "comparisonGuardExpression",
+        "rollbackRequired",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "CommitState": {
+      "additionalProperties": false,
+      "properties": {
+        "commitScope": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "idempotencyKey": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "idempotencyKey",
+        "commitScope",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "CompensationObligation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "mode",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "ComputeNode": {
+      "additionalProperties": false,
+      "properties": {
+        "bindingValue": {
+          "type": "string"
+        },
+        "dtype": {
+          "type": "string"
+        },
+        "exprKind": {
+          "type": "string"
+        },
+        "expression": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "ordinal": {
+          "type": "integer"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "bindingValue",
+        "ordinal",
+        "exprKind",
+        "dtype",
+        "expression",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "EvidenceAcceptance": {
+      "additionalProperties": false,
+      "properties": {
+        "admissibility": {
+          "type": "string"
+        },
+        "bindingValue": {
+          "type": "string"
+        },
+        "chained": {
+          "type": "boolean"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "style": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "bindingValue",
+        "style",
+        "chained",
+        "admissibility",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "ExecutionClaimInput": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "type": "object"
+    },
+    "ExecutionIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "claimInputs": {
+          "items": {
+            "$ref": "#/$defs/ExecutionClaimInput"
+          },
+          "type": "array"
+        },
+        "coordinationIdentity": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "instanceKey": {
+          "type": "string"
+        },
+        "invokedEvent": {
+          "type": "string"
+        },
+        "procedureNamespace": {
+          "type": "string"
+        },
+        "replayKey": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "procedureNamespace",
+        "instanceKey",
+        "replayKey",
+        "invokedEvent",
+        "coordinationIdentity",
+        "claimInputs",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "GuardObligation": {
+      "additionalProperties": false,
+      "properties": {
+        "applicationMode": {
+          "type": "string"
+        },
+        "conditionKind": {
+          "type": "string"
+        },
+        "guardKind": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "guardKind",
+        "conditionKind",
+        "applicationMode",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "LedgerPosting": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "effectIndex": {
+          "type": "integer"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "ledger": {
+          "type": "string"
+        },
+        "memo": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "party": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "effectIndex",
+        "direction",
+        "name",
+        "ledger",
+        "party",
+        "amount",
+        "currency",
+        "memo",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "LifecycleState": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "terminal": {
+          "type": "boolean"
+        },
+        "terminalKind": {
+          "enum": [
+            "None",
+            "Success",
+            "Aborted",
+            "Contested"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "terminal",
+        "terminalKind",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "PrimitiveObligation": {
+      "additionalProperties": false,
+      "properties": {
+        "finalizedKind": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "typedOperands": {
+          "items": {
+            "$ref": "#/$defs/nodeId"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "finalizedKind",
+        "typedOperands",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "ProjectedLifecycleRole": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "mode": {
+          "enum": [
+            "Evidence",
+            "Effectful",
+            "Temporal"
+          ],
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "Initial",
+            "AcceptedOrAttested",
+            "Success"
+          ],
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "mode",
+        "role",
+        "state",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "ProjectionEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "to": {
+          "$ref": "#/$defs/nodeId"
+        }
+      },
+      "required": [
+        "from",
+        "name",
+        "to",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "QuorumPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "canonicalization": {
+          "type": "string"
+        },
+        "fallback": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "threshold": {
+          "type": "integer"
+        },
+        "timeout": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "threshold",
+        "canonicalization",
+        "timeout",
+        "fallback",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "Reference": {
+      "additionalProperties": false,
+      "properties": {
+        "bindingValue": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "ref",
+        "role",
+        "bindingValue",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "Transition": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "TypedOperand": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "operandKind": {
+          "type": "string"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "operandKind",
+        "value",
+        "sourceRef"
+      ],
+      "type": "object"
+    },
+    "TypedParam": {
+      "additionalProperties": false,
+      "properties": {
+        "bindingValue": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "isInstanceKey": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ordinal": {
+          "type": "integer"
+        },
+        "sourceRef": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "bindingValue",
+        "ordinal",
+        "type",
+        "sourceRef",
+        "isInstanceKey"
+      ],
+      "type": "object"
+    },
+    "nodeId": {
+      "description": "A collision-proof projectionNodeId spelling.",
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "$id": "https://neutrino.dev/schemas/finalized-projection-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Lossless canonical-JSON wire form generated from BackendProjectionGraph. Derived projection views are excluded.",
+  "properties": {
+    "edges": {
+      "description": "Sorted lexicographically by (from, name, to).",
+      "items": {
+        "$ref": "#/$defs/ProjectionEdge"
+      },
+      "type": "array"
+    },
+    "kind": {
+      "const": "neutrino.finalized-projection/1"
+    },
+    "nodes": {
+      "additionalProperties": false,
+      "properties": {
+        "balanceAssertions": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/BalanceAssertion"
+          },
+          "type": "array"
+        },
+        "balancedEffectGroups": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/BalancedEffectGroup"
+          },
+          "type": "array"
+        },
+        "commitStates": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/CommitState"
+          },
+          "type": "array"
+        },
+        "compensationObligations": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/CompensationObligation"
+          },
+          "type": "array"
+        },
+        "computeNodes": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/ComputeNode"
+          },
+          "type": "array"
+        },
+        "evidenceAcceptances": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/EvidenceAcceptance"
+          },
+          "type": "array"
+        },
+        "executionIdentities": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/ExecutionIdentity"
+          },
+          "type": "array"
+        },
+        "guardObligations": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/GuardObligation"
+          },
+          "type": "array"
+        },
+        "ledgerPostings": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/LedgerPosting"
+          },
+          "type": "array"
+        },
+        "lifecycleStates": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/LifecycleState"
+          },
+          "type": "array"
+        },
+        "primitiveObligations": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/PrimitiveObligation"
+          },
+          "type": "array"
+        },
+        "projectedLifecycleRoles": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/ProjectedLifecycleRole"
+          },
+          "type": "array"
+        },
+        "quorumPolicies": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/QuorumPolicy"
+          },
+          "type": "array"
+        },
+        "references": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "type": "array"
+        },
+        "transitions": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/Transition"
+          },
+          "type": "array"
+        },
+        "typedOperands": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/TypedOperand"
+          },
+          "type": "array"
+        },
+        "typedParams": {
+          "description": "Deterministic source order: family/node-kind ordinal, then stable id.",
+          "items": {
+            "$ref": "#/$defs/TypedParam"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "executionIdentities",
+        "commitStates",
+        "lifecycleStates",
+        "transitions",
+        "projectedLifecycleRoles",
+        "quorumPolicies",
+        "guardObligations",
+        "evidenceAcceptances",
+        "primitiveObligations",
+        "balancedEffectGroups",
+        "ledgerPostings",
+        "balanceAssertions",
+        "compensationObligations",
+        "typedOperands",
+        "typedParams",
+        "references",
+        "computeNodes"
+      ],
+      "type": "object"
+    },
+    "schemaVersion": {
+      "const": 5,
+      "description": "BackendProjectionGraph representation version.",
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "kind",
+    "schemaVersion",
+    "nodes",
+    "edges"
+  ],
+  "title": "Neutrino finalized projection v1",
+  "type": "object"
+}

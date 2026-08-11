@@ -1,0 +1,419 @@
+{
+  "computes": [
+    {
+      "ast": {
+        "args": [
+          {
+            "dtype": "money",
+            "kind": "bin",
+            "lhs": {
+              "dtype": "money",
+              "kind": "bin",
+              "lhs": {
+                "dtype": "money",
+                "kind": "var",
+                "name": "principal"
+              },
+              "op": "*",
+              "rhs": {
+                "dtype": "decimal",
+                "kind": "var",
+                "name": "subsidy_pct"
+              }
+            },
+            "op": "/",
+            "rhs": {
+              "dtype": "decimal",
+              "kind": "num",
+              "num": 100
+            }
+          },
+          {
+            "dtype": "decimal",
+            "kind": "num",
+            "num": 2
+          }
+        ],
+        "dtype": "money",
+        "kind": "call",
+        "name": "round"
+      },
+      "category": "money",
+      "deps": [
+        "principal",
+        "subsidy_pct"
+      ],
+      "expr": "round(principal * subsidy_pct / 100, 2)",
+      "name": "subsidy"
+    }
+  ],
+  "effects": [
+    {
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "transaction_id"
+      },
+      "kind": "debit",
+      "ledger": "acquirer.merchant_balance",
+      "name": "merchant_subsidy",
+      "owner": "acquirer",
+      "participant": null,
+      "party": {
+        "kind": "ref",
+        "value": "merchant_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "subsidy"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "transaction_id"
+      },
+      "kind": "credit",
+      "ledger": "issuer.promotional_receivable",
+      "name": "issuer_receivable",
+      "owner": "issuer",
+      "participant": null,
+      "party": {
+        "kind": "ref",
+        "value": "issuer_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "2908429962da23d33a8004ea2c7a01b5e4cd279895b9860510bc3884c5eaf6aa",
+    "specHash": "f76e199dc169236bfc8b7b650ea94f06fbd9ac7eb6df28cc7e485dcc406cbe80"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "transaction_id",
+      "type": "string"
+    },
+    {
+      "category": "string",
+      "name": "merchant_id",
+      "type": "string"
+    },
+    {
+      "category": "string",
+      "name": "issuer_id",
+      "type": "string"
+    },
+    {
+      "category": "money",
+      "name": "principal",
+      "type": "money"
+    },
+    {
+      "category": "string",
+      "name": "currency",
+      "type": "string"
+    },
+    {
+      "category": "decimal",
+      "name": "subsidy_pct",
+      "type": "decimal"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "transaction_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [],
+  "procedure": "core_sample_installment",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input transaction_id",
+      "source": {
+        "column": 1,
+        "line": 15
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input merchant_id",
+      "source": {
+        "column": 1,
+        "line": 16
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input issuer_id",
+      "source": {
+        "column": 1,
+        "line": 17
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input principal",
+      "source": {
+        "column": 1,
+        "line": 18
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input subsidy_pct",
+      "source": {
+        "column": 1,
+        "line": 20
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "compute subsidy",
+      "source": {
+        "column": 1,
+        "line": 22
+      },
+      "specPath": "computes[0]"
+    },
+    {
+      "construct": "debit merchant_subsidy",
+      "source": {
+        "column": 1,
+        "line": 24
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit issuer_receivable",
+      "source": {
+        "column": 1,
+        "line": 33
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 42
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "0.1.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input transaction_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 15
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input principal",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 18
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:decimal",
+        "primitive": "input subsidy_pct",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 20
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit merchant_subsidy",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 24
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit issuer_receivable",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 33
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 42
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": []
+  },
+  "trigger": "purchase_financed"
+}

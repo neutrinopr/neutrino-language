@@ -1,0 +1,81 @@
+// Oracle quorum lifecycle (M5 oracle S3, ) — the ESCALATE fallback.
+//
+// Same quorum gate as lifecycle_quorum_abort.neu, but the policy declares `fallback = "escalate"`, so
+// the quorum-timeout takes a DISTINCT transition into a `contested` terminal (ESCALATED) rather than
+// the aborted one — the declared fallback is rendered from the policy. The guarded leg still never
+// posts on timeout. The `contested` terminal slot (reserved since ) is now populated.
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.d
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.d/capability-spec.json
+//
+// The contested terminal state exists and is declared as terminalKind "contested".
+// SPEC:      "name": "ESCALATED",
+// SPEC-NEXT:   "terminal": true,
+// SPEC-NEXT:   "terminalKind": "contested"
+// terminalStates.contested now names it (abort's stays null; see lifecycle_quorum_abort.neu).
+// SPEC:      "terminalStates": {
+// SPEC-NEXT:   "aborted": "REJECTED",
+// SPEC-NEXT:   "contested": "ESCALATED",
+// SPEC-NEXT:   "success": "CLOSED"
+// Quorum-timeout takes the declared `escalate` fallback into the contested terminal (not aborted).
+// SPEC:      "from": "QUORUM_TIMEOUT",
+// SPEC-NEXT:   "guards": [],
+// SPEC-NEXT:   "idempotency": "reject",
+// SPEC-NEXT:   "name": "ESCALATE",
+// SPEC-NEXT:   "to": "ESCALATED"
+//
+// WIRE CONTRACT: the projected envelope enum carries the declared `escalate` fallback (ESCALATE), in
+// machine order, and NOT the abort op — the escalate fallback path is covered at the envelope
+// boundary too (cf. the abort path in lifecycle_quorum_abort.neu).
+// RUN: %neutrino-gen --target=slot %s -o %t.slot
+// RUN: %FileCheck %s --check-prefix=ENV < %t.slot/envelope.schema.json
+// ENV: "operation": {"type": "string", "enum": ["OPEN", "NEGOTIATE", "PROPOSE", "REJECT", "AWAIT_QUORUM", "REACH_QUORUM", "TIMEOUT", "COMMIT", "ESCALATE", "COMPENSATE", "CLOSE"]}
+// ENV-NOT: "ABORT"
+procedure oracle_quorum_escalate {
+    trigger delivery_reported
+    version "1.0.0"
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "exact"
+        timeout          = "PT24H"
+        fallback         = "escalate"
+    }
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

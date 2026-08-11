@@ -1,0 +1,6 @@
+// [75d] M5 S3 (): evidence-anchor scorecard — the scorecard gate passes; HashAnchor +
+// MerkleEvidenceAnchor capability-specs regenerate byte-identically; and the value-less evidence-anchor
+// render gap fails closed with the scorecard's expectedGenError, emitting NO artifact for every
+// renderGap.target. See check_m5_scorecard.py.
+//
+// RUN: python3 %S/check_m5_scorecard.py %neutrino-gen %examples

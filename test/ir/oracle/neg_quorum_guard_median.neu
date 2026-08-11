@@ -1,0 +1,76 @@
+// Oracle S2c NEGATIVE (M5 ): the Solidity quorum-guard lowering FAILS CLOSED on a canonicalization
+// mode it has no REVIEWED on-chain acceptance guard for. `exact` (byte-equal discrete claim) lowers to
+// the vetted  reference; numeric `median`/`tolerance` aggregation is a DEFERRED profile () — so
+// rather than invent an unreviewed guard, the renderer refuses. This pins the reference-first invariant:
+// the backend only ever emits the reviewed pattern, never a second one. (S1 accepts `median` as a valid
+// policy; the fail-closed is at the S2 guard render, proving the two layers are distinct.)
+//
+// RUN: %neutrino-gen --target=capability-spec %s -o %t.d
+// A `median` policy is a VALID spec (S1, ) — it validates and carries schemaVersion 3.
+// RUN: %FileCheck %s --check-prefix=SPEC < %t.d/capability-spec.json
+// SPEC: "mode": "median"
+// SPEC: "schemaVersion": 3
+//
+// The Solidity render (S2c) refuses it fail-closed, writing no contract.
+// RUN: %not %neutrino-gen --target=solidity --scenario=%S/oracle_delivery_scenario.json %s -o %t.sol 2>&1 | %FileCheck %s --check-prefix=GUARD
+// RUN: test ! -e %t.sol/src/ThresholdQuorumAcceptance.sol
+// RUN: test ! -e %t.sol/src/OracleDelivery.sol
+// The refusal surface is the NORMATIVE coded diagnostic ( B1): since `6d4acee3`
+// the finalized projection sequence reports `diag:FinalizedProjectionSequence:<code>`
+// instead of prose. Unlike the two `execution-rail` rows in neg_multi_policy, this
+// code is specific to the reason asserted here — canonicalization 'median' has no
+// reviewed on-chain acceptance guard yet — so the row keeps its discriminating power.
+// GUARD: diag:FinalizedProjectionSequence:canonicalization-unsupported
+procedure oracle_delivery {
+    trigger delivery_reported
+    version "1.0.0"
+
+    participant Buyer {
+        role = "buyer"
+        org  = "buyerco"
+    }
+    participant Seller {
+        role = "seller"
+        org  = "sellerco"
+    }
+    allow "buyerco" with "sellerco" {
+        "buyerco" as "buyer"
+        "sellerco" as "seller"
+    }
+
+    input order_id       : string
+    input buyer_id       : party
+    input seller_id      : party
+    input amount         : money
+    input currency       : currency
+    input delivery_proof : evidence
+
+    attest delivery_proof {
+        quorum           = 2
+        observer_set     = "delivery_oracles"
+        canonicalization = "median"
+        tolerance        = "0.01"
+        timeout          = "PT24H"
+        fallback         = "abort"
+    }
+
+    debit buyer_pay {
+        ledger          = "buyer.escrow"
+        owner           = "buyer"
+        participant     = "Buyer"
+        party           = %buyer_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    credit seller_settle {
+        ledger          = "seller.proceeds"
+        owner           = "seller"
+        participant     = "Seller"
+        party           = %seller_id
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %order_id
+    }
+    assert balanced
+}

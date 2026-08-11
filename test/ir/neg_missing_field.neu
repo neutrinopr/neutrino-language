@@ -1,0 +1,31 @@
+// Negative fixture: an entry missing a required field (no idempotency_key on the
+// debit). The frontend must reject it ("missing required field: idempotency_key").
+procedure missing_field {
+    input amount : money
+
+    debit d {
+        ledger   = "a.b"
+        owner    = "o"
+        party    = "p"
+        amount   = %amount
+        currency = "EUR"
+    }
+
+    credit c {
+        ledger          = "a.b"
+        owner           = "o"
+        party           = "p"
+        amount          = %amount
+        currency        = "EUR"
+        idempotency_key = "k"
+    }
+
+    assert balanced
+}
+
+// Frontend parser/verifier NEGATIVE (S5/): neutrino-translate must REJECT this
+// malformed source. %not asserts the non-zero exit; FileCheck matches the diagnostic.
+// (RUN/CHECK are appended so the code's line numbers stay stable for the language-
+// intelligence tests that also consume this fixture.)
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: missing required field

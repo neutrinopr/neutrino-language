@@ -1,0 +1,24 @@
+{
+  "sessionId": "sess-offer-001",
+  "operationId": "op-commit-001",
+  "operation": "COMMIT",
+  "correlationId": "op-propose-001",
+  "capability": "coordinate.sponsored_offer_agreement",
+  "capabilityVersion": "0.1.0",
+  "participant": "sponsor:sponsor-001",
+  "counterparty": "merchant:merchant-001",
+  "payload": {
+    "procedure": "sponsored_offer_agreement",
+    "computed": {},
+    "postings": [
+      {"entry": "sponsor_commitment", "ledger": "sponsor.commitment", "delta": -5000, "currency": "EUR"},
+      {"entry": "merchant_expected_contribution", "ledger": "merchant.expected_contribution", "delta": 5000, "currency": "EUR"}
+    ],
+    "idempotencyKey": "offer-001"
+  },
+  "payloadHash": "sha256:11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+  "previousTranscriptHash": "sha256:00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
+  "signature": "ed25519-fixture:sponsor-001:1c0ffee",
+  "diagnostics": [],
+  "anchorRef": {"chain": "evm", "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3", "commitmentHash": "sha256:aabbccddeeff00112233445566778899aabbccddeeff001122334455667788"}
+}

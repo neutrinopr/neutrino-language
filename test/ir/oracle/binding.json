@@ -1,0 +1,28 @@
+{
+  "kind": "neutrino.observation-binding",
+  "schemaVersion": 1,
+  "observerSets": [
+    {
+      "ref": "delivery_oracles",
+      "source": {
+        "type": "mock",
+        "id": "delivery_events",
+        "claimField": "delivered"
+      },
+      "members": [
+        {
+          "id": "obs-alpha",
+          "publicKey": "0xaa01"
+        },
+        {
+          "id": "obs-beta",
+          "publicKey": "0xbb'02"
+        },
+        {
+          "id": "obs-gamma",
+          "publicKey": "0xcc03"
+        }
+      ]
+    }
+  ]
+}

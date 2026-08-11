@@ -1,0 +1,5 @@
+// [71] M3 samples cookbook (): docs/domains/M3_COOKBOOK.md covers every current-valid portfolio
+// sample (so it can't drift as samples are added/renamed) and advertises the real run commands
+// (make test-fast / make test / make native-build-gate). See check_cookbook.py.
+//
+// RUN: python3 %S/check_cookbook.py %examples

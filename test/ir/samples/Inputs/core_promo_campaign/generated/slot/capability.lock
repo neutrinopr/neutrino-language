@@ -1,0 +1,13 @@
+{
+  "kind": "neutrino.capability-lock",
+  "capability": "coordinate.core_promo_campaign",
+  "capabilityVersion": "1.0.0",
+  "method": "lowercase-hex sha256 of concat(sorted(basename + ':' + sha256(file) + newline)) over the wire-contract files (capability/operations/compensation/transcript; envelope.schema.json excluded); decode hex to 32 bytes for EnvelopeHeader.schema_hash",
+  "capabilityHash": "8bd0e5a2dea9529595c5d12c5ae37052745c4dace318edebbbae33e3b765511d",
+  "files": {
+    "capability.json": "c2c614155284348788edb39a946183a482b9bbe952978be670958146f1494a57",
+    "compensation.json": "567fa145ef109507eb81f272a00af6a557e3a976993cd32a93e95224360cd94b",
+    "operations.json": "33ac0bc9c12dd625dbb3aed5bdbc1db8c1ea58963db38adeb18cec998965dc27",
+    "transcript.json": "dd9329dbc021c9636e492850a129e5b3dcea39c98e05638e7653bcdaa52183f8"
+  }
+}

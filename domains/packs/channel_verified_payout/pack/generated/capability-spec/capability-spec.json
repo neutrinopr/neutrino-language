@@ -1,0 +1,447 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "payout_id"
+      },
+      "kind": "debit",
+      "ledger": "payer.funding",
+      "name": "payer_funding",
+      "owner": "payer",
+      "participant": "Payer",
+      "party": {
+        "kind": "ref",
+        "value": "payer_id"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "payout_id"
+      },
+      "kind": "credit",
+      "ledger": "recipient.settlement",
+      "name": "recipient_settlement",
+      "owner": "recipient",
+      "participant": "Recipient",
+      "party": {
+        "kind": "ref",
+        "value": "recipient_id"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "7f932bb267df5cfc5981346f5c8a5d8aeef2bb72fae47349569526a19cabbe87",
+    "specHash": "d770ab7f7b559f9e3e61e9a48211f9c02d3b40b12b1784b2cb4d3daf35b2acd0"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "payout_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "payer_id",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "recipient_id",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "fields": [
+        "payout_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [
+    {
+      "bindMinAssurance": "",
+      "bindRuntimes": [],
+      "binding": "fixed",
+      "capabilities": [],
+      "name": "Payer",
+      "org": "payerco",
+      "role": "payer"
+    },
+    {
+      "bindMinAssurance": "A2",
+      "bindRuntimes": [
+        "channel_verification.v1"
+      ],
+      "binding": "to_be_bound",
+      "capabilities": [],
+      "name": "Recipient",
+      "org": "recipientco",
+      "role": "recipient"
+    }
+  ],
+  "procedure": "channel_verified_payout",
+  "schemaVersion": 1,
+  "sourceMap": [
+    {
+      "construct": "input payout_id",
+      "source": {
+        "column": 1,
+        "line": 35
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input payer_id",
+      "source": {
+        "column": 1,
+        "line": 36
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input recipient_id",
+      "source": {
+        "column": 1,
+        "line": 37
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 39
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "debit payer_funding",
+      "source": {
+        "column": 1,
+        "line": 41
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit recipient_settlement",
+      "source": {
+        "column": 1,
+        "line": 51
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "participant Payer",
+      "source": {
+        "column": 1,
+        "line": 19
+      },
+      "specPath": "participants[0]"
+    },
+    {
+      "construct": "participant Recipient",
+      "source": {
+        "column": 1,
+        "line": 23
+      },
+      "specPath": "participants[1]"
+    },
+    {
+      "construct": "allow payerco with recipientco",
+      "source": {
+        "column": 1,
+        "line": 30
+      },
+      "specPath": "topology.allowedOrgPairs[0]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 61
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "1.0.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input payout_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 35
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input payer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 36
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 38
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 39
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit payer_funding",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 41
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit recipient_settlement",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 51
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 61
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "binding:flexible",
+        "primitive": "participant Recipient",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 23
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:participants",
+        "primitive": "participant Payer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 19
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "topology:org_coordination",
+        "primitive": "allow payerco with recipientco",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 30
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": [
+      {
+        "orgA": "payerco",
+        "orgB": "recipientco",
+        "roleA": "payer",
+        "roleB": "recipient"
+      }
+    ]
+  },
+  "trigger": "payout_authorized"
+}

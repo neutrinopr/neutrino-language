@@ -1,0 +1,33 @@
+// Negative fixture: an input name declared twice. The frontend must reject it
+// ("name '...' declared more than once") rather than silently shadowing.
+procedure dup_input {
+    input amount : money
+    input amount : money
+
+    debit d {
+        ledger          = "a.b"
+        owner           = "o"
+        party           = "p"
+        amount          = %amount
+        currency        = "EUR"
+        idempotency_key = "k"
+    }
+
+    credit c {
+        ledger          = "a.b"
+        owner           = "o"
+        party           = "p"
+        amount          = %amount
+        currency        = "EUR"
+        idempotency_key = "k"
+    }
+
+    assert balanced
+}
+
+// Frontend parser/verifier NEGATIVE (S5/): neutrino-translate must REJECT this
+// malformed source. %not asserts the non-zero exit; FileCheck matches the diagnostic.
+// (RUN/CHECK are appended so the code's line numbers stay stable for the language-
+// intelligence tests that also consume this fixture.)
+// RUN: %not %neutrino-translate %s -o %t 2>&1 | %FileCheck %s
+// CHECK: declared more than once

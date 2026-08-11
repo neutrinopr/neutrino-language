@@ -1,0 +1,19 @@
+{
+  "scenario": "core_evidence_only_milestone_happy_path",
+  "procedure": "core_evidence_only_milestone",
+  "inputs": {
+    "milestone_id": "ms-il-it-001-origin",
+    "shipment_id": "shipment-il-it-001",
+    "milestone_kind": "origin_carrier_handoff",
+    "custody_from": "shipper-il-001",
+    "custody_to": "carrier-il-001",
+    "milestone_evidence": "sha256:1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {},
+    "invariants": [
+      "replay_safe"
+    ]
+  }
+}

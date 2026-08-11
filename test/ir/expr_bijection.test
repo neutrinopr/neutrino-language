@@ -1,0 +1,42 @@
+//  direct-MLIR negatives: the structured #neutrino.expr var leaves are
+// SSA-slot-bound (amendments 1 & 2), and the op verifier proves the slot <->
+// dependency bijection — a var cannot reference a value absent from the op's
+// declared deps (compute deps / an entry's guard_deps), and no declared dep is
+// dead. The valid IR round-trips through the custom AttrDef printer/parser.
+//
+// RUN: %neutrino-translate %S/coordination_plan.neu > %t.mlir
+//
+// Valid structured IR verifies and round-trips (print/parse the recursive attr):
+// RUN: %neutrino-opt %t.mlir | %FileCheck %s --check-prefix=VALID
+// VALID: #neutrino.expr<cmp extension 0 -1 ">="
+//
+// A COMPUTE var leaf bound to a non-existent dependency slot is rejected — the
+// var references a value not among the op's SSA deps:
+// RUN: sed 's/<var money 0 0/<var money 0 9/' %t.mlir > %t.badcompute.mlir
+// RUN: %not %neutrino-opt %t.badcompute.mlir 2>&1 | %FileCheck %s --check-prefix=BADSLOT
+// BADSLOT: [expr.slot]{{.*}}references dep slot 9
+//
+// A GUARD var leaf with no matching guard dependency is rejected the same way
+// (its slot is outside the entry's guard_deps segment):
+// RUN: sed 's/<var money 0 1/<var money 0 7/' %t.mlir > %t.badguard.mlir
+// RUN: %not %neutrino-opt %t.badguard.mlir 2>&1 | %FileCheck %s --check-prefix=BADGUARD
+// BADGUARD: [expr.slot]{{.*}}dep slot 7
+//
+// A CARRIED dtype that disagrees with the inferred category is rejected (
+// P1) — a `money` var laundered as `string` cannot pass a "typed, verified" IR
+// (structure + deps stay valid; only the dtype lies):
+// RUN: sed 's/<var money 0 0/<var string 0 0/' %t.mlir > %t.baddtype.mlir
+// RUN: %not %neutrino-opt %t.baddtype.mlir 2>&1 | %FileCheck %s --check-prefix=BADDTYPE
+// BADDTYPE: [expr.type]{{.*}}carries dtype 'string' but its inferred category is 'money'
+//
+// The provenance TEXT must parse to the SAME structure as the AST ( P1) —
+// tampering the `when` text while leaving the guard ast intact is rejected:
+// RUN: sed 's/amount >= threshold/amount > threshold/' %t.mlir > %t.badprov.mlir
+// RUN: %not %neutrino-opt %t.badprov.mlir 2>&1 | %FileCheck %s --check-prefix=BADPROV
+// BADPROV: [expr.provenance]{{.*}}does not match the structured ast
+//
+// DUPLICATE dependency operands are rejected ( P2): passing the same value
+// in two guard-dep slots would make canonical identity operand-layout-dependent.
+// RUN: sed 's/, %3, %4)/, %3, %3)/' %t.mlir > %t.dupdep.mlir
+// RUN: %not %neutrino-opt %t.dupdep.mlir 2>&1 | %FileCheck %s --check-prefix=DUPDEP
+// DUPDEP: [expr.slot]{{.*}}more than once

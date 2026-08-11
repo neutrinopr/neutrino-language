@@ -1,0 +1,102 @@
+{
+  "kind": "neutrino.language-coverage",
+  "schemaVersion": "0.1.0",
+  "procedure": "core_sample_installment",
+  "dslVersion": "0.1.0",
+  "levels": [
+    {
+      "level": "L1",
+      "name": "Agreements",
+      "present": true,
+      "evidence": "trigger + ledger entries form a coordination agreement"
+    },
+    {
+      "level": "L2",
+      "name": "State Machines",
+      "present": false,
+      "evidence": "no explicit state/transition construct in the current DSL"
+    },
+    {
+      "level": "L3",
+      "name": "Participants",
+      "present": "partial",
+      "evidence": "typed party inputs and/or party operands; no declared roles yet"
+    },
+    {
+      "level": "L4",
+      "name": "Assets & Value",
+      "present": true,
+      "evidence": "numeric (money/decimal) inputs moved by debit/credit legs"
+    },
+    {
+      "level": "L5",
+      "name": "Settlement",
+      "present": true,
+      "evidence": "balanced atomic multi-leg posting + reconciliation"
+    },
+    {
+      "level": "L6",
+      "name": "Sagas",
+      "present": false,
+      "networkOwned": true,
+      "evidence": null
+    },
+    {
+      "level": "L7",
+      "name": "Compensation",
+      "present": false,
+      "networkOwned": true,
+      "evidence": null
+    },
+    {
+      "level": "L8",
+      "name": "Topology",
+      "present": false,
+      "networkOwned": true,
+      "evidence": null
+    },
+    {
+      "level": "L9",
+      "name": "Capability Discovery",
+      "present": false,
+      "networkOwned": true,
+      "evidence": null
+    },
+    {
+      "level": "L10",
+      "name": "Distributed Coordination",
+      "present": false,
+      "networkOwned": true,
+      "evidence": null
+    }
+  ],
+  "highestLevel": "L5",
+  "networkOwned": [
+    "L6",
+    "L7",
+    "L8",
+    "L9",
+    "L10"
+  ],
+  "targets": [
+    {
+      "target": "solidity",
+      "supportsThrough": "L5",
+      "formallyVerified": false,
+      "maturityCeiling": {
+        "level": 1,
+        "name": "Core Compliant"
+      }
+    },
+    {
+      "target": "postgres",
+      "supportsThrough": "L5",
+      "formallyVerified": false,
+      "maturityCeiling": {
+        "level": 1,
+        "name": "Core Compliant"
+      }
+    }
+  ],
+  "maturityRule": "ceiling = f(highest verifiably-supported level, has-tests, formal-verification); L<=5 + tests + no formal verification => Level 1 'Core Compliant'. Level 2 'Verifiable & Secure' needs stronger runtime/security lifecycle evidence beyond the current translator-local property/mutation hardening."
+}

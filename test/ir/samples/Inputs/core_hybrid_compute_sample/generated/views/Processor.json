@@ -1,0 +1,53 @@
+{
+  "kind": "neutrino.participant-view",
+  "schemaVersion": "0.2.0",
+  "procedure": "core_hybrid_compute_sample",
+  "dslVersion": "1.0.0",
+  "capability": {
+    "capabilityHash": "7bdeabc4830bf4f66967eb7b12b738b32a340ed5c3e9acb3b44dd8e5c3148a64",
+    "specVersion": "1.0.0"
+  },
+  "participant": {
+    "name": "Processor",
+    "role": "processor",
+    "org": "supplyorg",
+    "slotId": "coordinate.core_hybrid_compute_sample#Processor"
+  },
+  "visibleOperations": [
+    "OPEN",
+    "NEGOTIATE",
+    "PROPOSE",
+    "COMMIT",
+    "REJECT",
+    "COMPENSATE",
+    "CLOSE"
+  ],
+  "requiredInputs": [],
+  "permittedCounterparties": [
+    {
+      "org": "requesterorg"
+    },
+    {
+      "org": "hybridinfra"
+    },
+    {
+      "org": "verifierorg"
+    }
+  ],
+  "binding": {
+    "mode": "to_be_bound",
+    "runtimes": [
+      "jvm"
+    ],
+    "minAssurance": "A2",
+    "authorizedBinder": "supplyorg"
+  },
+  "evidenceObligations": [],
+  "provenance": {
+    "derivedFrom": "capability-spec.json",
+    "specContract": {
+      "kind": "neutrino.capability-spec",
+      "schemaVersion": 1
+    }
+  }
+}

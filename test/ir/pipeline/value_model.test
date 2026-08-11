@@ -1,0 +1,5 @@
+// [10] value model: type-aware scenario validation — a well-typed scenario is accepted; money / party /
+// evidence / currency type violations each fail closed with exit 3 + scenario.invalid. See
+// check_value_model.py.
+//
+// RUN: python3 %S/check_value_model.py %neutrino-gen %S/../../value_types.neu %S/../../value_types_good.json %S/../..

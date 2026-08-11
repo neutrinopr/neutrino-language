@@ -1,0 +1,60 @@
+{
+  "kind": "neutrino.cross-rail-fixture-catalog",
+  "schemaVersion": 1,
+  "compatibility": {
+    "_comment": "Toolchain-wide language/artifact compatibility surface (). PINNED to include/Neutrino/VersionInfo.h (the single source of truth); validate_cross_rail_catalog.py / self-test [51] fail closed if these drift from it. Downstream consumers reject artifacts produced by an incompatible translator surface (mlirDialectVersion + schemas exact; toolVersion same-major and >=).",
+    "compatibilityManifestVersion": "v1",
+    "toolVersion": "0.2.0",
+    "mlirDialectVersion": "0.1.0",
+    "schemaBundleVersion": "v1",
+    "conformanceVectorVersion": "envelope-v1",
+    "schemas": {
+      "bindingPolicy": "v1",
+      "bindingReceipt": "v1",
+      "runtimeEvidence": "v1"
+    }
+  },
+  "description": "e2e path-contract fixture ()",
+  "fixtures": [
+    {
+      "fixtureId": "core_promo_campaign",
+      "capabilityId": "coordinate.core_promo_campaign",
+      "capabilityVersion": "1.0.0",
+      "source": "test/ir/samples/Inputs/core_promo_campaign/source/core_promo_campaign.neu",
+      "scenario": "test/ir/samples/Inputs/core_promo_campaign/scenario/core_promo_campaign_happy_path.json",
+      "targets": [
+        "slot"
+      ],
+      "generated": {
+        "slot": [
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/capability.json",
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/capability.lock",
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/binding-topology.json",
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/operations.json",
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/compensation.json",
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/transcript.json",
+          "test/ir/samples/Inputs/core_promo_campaign/generated/slot/envelope.schema.json"
+        ]
+      },
+      "bindingTopology": "test/ir/samples/Inputs/core_promo_campaign/generated/slot/binding-topology.json",
+      "bindingManifest": "examples/binding-manifests/core_promo_campaign.l3.binding.json",
+      "l2": "examples/l2-domain-semantics/core_promo_campaign.l2.json",
+      "selfTest": "[49]",
+      "lateBoundSlots": [
+        {
+          "slotId": "coordinate.core_promo_campaign#Sponsor",
+          "organizationId": "sponsorco",
+          "participantId": "Sponsor",
+          "allowedRuntimes": [
+            "evm"
+          ],
+          "minAssurance": "A2",
+          "authorizedBinder": "sponsorco"
+        }
+      ],
+      "l2v2": "../../../../etc/passwd",
+      "l2v2Hash": "fc7f58f4d5be3e664cd09f329c99e58b9b6e1b83d975d29fc0660a1dd06de006",
+      "imports": []
+    }
+  ]
+}

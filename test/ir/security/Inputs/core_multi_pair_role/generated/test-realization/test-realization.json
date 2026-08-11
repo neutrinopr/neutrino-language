@@ -1,0 +1,35 @@
+{
+  "capabilityHash": "6bb49b59150451a18306909d87f5cddac9df775ac4de1cb0c292d3ad412d424b",
+  "computed": {},
+  "eventChain": [
+    "ThingHappened",
+    "SettleOutDebited",
+    "SettleInCredited",
+    "AuditOutDebited",
+    "AuditInCredited",
+    "CoreMultiPairRoleReconciled"
+  ],
+  "inputs": {
+    "acme_id": "acme-001",
+    "amount": 5000,
+    "auditor_id": "auditor-001",
+    "bank_id": "bank-001",
+    "currency": "EUR",
+    "merchant_id": "merchant-001",
+    "workflow_key": "workflow-001"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "acme.audit_out": -5000,
+    "acme.settlement_out": -5000,
+    "auditorco.audit_in": 5000,
+    "bankco.settlement_in": 5000
+  },
+  "procedure": "core_multi_pair_role",
+  "scenario": "core_multi_pair_role_happy_path",
+  "schemaVersion": 1
+}

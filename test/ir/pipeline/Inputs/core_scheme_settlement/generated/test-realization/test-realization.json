@@ -1,0 +1,40 @@
+{
+  "capabilityHash": "b90fda8311d8fdc72cd36f0c9e3a4d94a4cbfdd406532602e13f42717d573d8d",
+  "computed": {
+    "fee": 2500,
+    "net": 997500
+  },
+  "eventChain": [
+    "SchemePositionFinalized",
+    "FeeComputed",
+    "NetComputed",
+    "SchemePrincipalDebited",
+    "BankPrincipalCredited",
+    "SchemeFeeDebited",
+    "TreasuryFeeCredited",
+    "CoreSchemeSettlementReconciled"
+  ],
+  "inputs": {
+    "bank_id": "bank-001",
+    "currency": "EUR",
+    "fee_bps": 25,
+    "gross_position": 1000000,
+    "scheme_id": "scheme-visa",
+    "settlement_id": "set-001",
+    "treasury_id": "treasury-001"
+  },
+  "invariants": [
+    "replay_safe",
+    "balanced"
+  ],
+  "kind": "neutrino.test-realization",
+  "ledgerDeltas": {
+    "bank.settlement_account": 997500,
+    "scheme.fee_payable": -2500,
+    "scheme.net_payable": -997500,
+    "treasury.fee_income": 2500
+  },
+  "procedure": "core_scheme_settlement",
+  "scenario": "core_scheme_settlement_happy_path",
+  "schemaVersion": 1
+}

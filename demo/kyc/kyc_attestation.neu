@@ -1,0 +1,59 @@
+// KYC-attestation-for-pay: balanced pay-for-work ACCOUNTING. The verifier's
+// compensation is credited IF AND ONLY IF the case checkpoint is present; the
+// fee debit and the compensation credit are one guarded, balanced pair. The
+// ledger named "kyc.escrow" is an accounting ledger name inside the artifact —
+// the contract holds no funds; token settlement is a separate script step.
+// The dossier stays OFF-chain; its digest travels in the case inputs as
+// requester-supplied metadata (a local handoff). The on-chain checkpoint is
+// keyed by the case, NOT bound to the digest.
+
+procedure kyc_attestation {
+    trigger kyc_requested
+    version "1.0.0"
+
+    participant Requester {
+        role = "requester"
+        org  = "acmebank"
+    }
+    participant Verifier {
+        role = "verifier"
+        org  = "kycpro"
+    }
+    allow "acmebank" with "kycpro" {
+        "acmebank" as "requester"
+        "kycpro" as "verifier"
+    }
+
+    input case_id      : string
+    input dossier_sha  : string
+    input requester_id : party
+    input verifier_id  : party
+    input fee          : money
+    input currency     : currency
+    input verified     : number
+
+    // the fee debit is recorded only on a positive verification (accounting
+    // ledger; no funds are held by the contract)
+    debit fee_escrow_debit {
+        ledger          = "kyc.escrow"
+        owner           = "requester"
+        participant     = "Requester"
+        party           = %requester_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = verified == 1
+    }
+    // ... and lands as the verifier's compensation for the attestation work
+    credit verifier_fee_credit {
+        ledger          = "kyc.compensation"
+        owner           = "verifier"
+        participant     = "Verifier"
+        party           = %verifier_id
+        amount          = %fee
+        currency        = %currency
+        idempotency_key = %case_id
+        when            = verified == 1
+    }
+    assert balanced
+}

@@ -1,0 +1,6 @@
+// [10b] expression model (M5 WP1b, ): unsupported / ill-typed compute expressions are rejected at
+// generation (exit 4 + expr.unsupported/expr.type/expr.invalid), and the same gate binds analysis
+// targets (coverage) too — unsupported function / non-numeric arithmetic / bad round arity+scale /
+// malformed syntax, no artifacts. See check_expression_model.py.
+//
+// RUN: python3 %S/check_expression_model.py %neutrino-gen

@@ -1,0 +1,6 @@
+// [52b] M5 R3 (): side-artifact capability-spec version pins — the emitted capabilitySpecVersion is
+// in lockstep with the capability-spec schema $id; every committed target profile + dialect
+// (glob-discovered) declares it; and a wrong/missing pin, an unpinnable kind, and every committed
+// negative fixture fail closed with their code. See check_artifact_pins.py.
+//
+// RUN: python3 %S/check_artifact_pins.py %neutrino-translate %scripts/gates/check_artifact_pins.py %examples

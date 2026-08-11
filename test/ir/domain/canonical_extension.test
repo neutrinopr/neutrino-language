@@ -1,0 +1,9 @@
+// [34] D0: .neu is the one canonical source extension — accepted by gen/emit/translate/bundle (and the
+// bundle records the source path as metadata), while the retired .finproc alias is rejected by BOTH the
+// gen entrypoint and the direct source->IR translate entrypoint (byte-identical content under a .finproc
+// name is treated as textual MLIR and fails to parse, not silently aliased). See check_canonical_ext.py.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: python3 %S/check_canonical_ext.py %neutrino-gen %neutrino-emit %neutrino-translate %neutrino-bundle \
+// RUN:   %{msi}/source/core_sample_installment.neu \
+// RUN:   %{msi}/scenario/core_sample_installment_happy_path.json

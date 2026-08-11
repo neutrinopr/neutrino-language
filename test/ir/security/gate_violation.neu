@@ -1,0 +1,82 @@
+// [26] security gate: --target=security exits non-zero on a hard violation, and the WHOLE bundle
+// (security.json + manifest.json + diagnostics.json) reflects ok:false with a coded diagnostic.
+// RUN: %not %neutrino-gen --target=security --scenario=%S/scenario.json %s -o %t.d
+// RUN: %FileCheck %s < %t.d/security.json
+// RUN: %FileCheck --check-prefix=MANIFEST %s < %t.d/manifest.json
+// RUN: %FileCheck --check-prefix=DIAG %s < %t.d/diagnostics.json
+// [27] lowering gate: every lowering target refuses an insecure capability...
+// RUN: %not %neutrino-gen --target=solidity --scenario=%S/scenario.json %s -o %t.sol
+// RUN: %not %neutrino-gen --target=postgres --scenario=%S/scenario.json %s -o %t.pg
+// RUN: %not %neutrino-gen --target=slot --scenario=%S/scenario.json %s -o %t.slot
+// [27] ...unless --allow-insecure is passed, which overrides the gate for INTERNAL targets only.
+// An EXTERNAL-package target refuses regardless: the flag cannot authorize dispatching an insecure
+// capability across the package boundary (M7_BACKEND_PACKAGE_BOUNDARY_ADR). The check names the
+// external-dispatch reason specifically, so it bites on the security refusal and not on a setup error.
+// RUN: %not %neutrino-gen --target=solidity --allow-insecure --scenario=%S/scenario.json %s -o %t.osol 2>&1 | %FileCheck --check-prefix=EXTSEC %s
+// RUN: test ! -e %t.osol/src
+// EXTSEC: refusing to lower an insecure capability
+// EXTSEC-SAME: External-package dispatch cannot be authorized with --allow-insecure
+// RUN: %neutrino-gen --target=postgres --allow-insecure --scenario=%S/scenario.json %s -o %t.opg
+// RUN: %neutrino-gen --target=slot     --allow-insecure --scenario=%S/scenario.json %s -o %t.oslot
+// CHECK: "ok": false
+// MANIFEST: "ok": false
+// DIAG: "code": "security.violation"
+// DIAG: "ok": false
+
+// Sample domain input for the Neutrino Translator tooling PoC.
+//
+// Domain: financial procedure (merchant-sponsored installment subsidy).
+// NOTE: finance is only the FIRST sample domain. The point of this file is to
+// exercise the deterministic translator pipeline:
+//     source DSL  ->  textual IR (.nir)  ->  verifier  ->  emitted artifacts
+//
+// Syntax notes:
+//   "..."   string literal
+//   %name   reference to a declared input or computed value
+
+procedure core_sample_installment {
+    trigger purchase_financed
+    participant P1 {
+        role = "r1"
+        org = "acme"
+    }
+    participant P2 {
+        role = "r2"
+        org = "bankco"
+    }
+    allow "acme" with "bankco" {
+        "acme" as "wrong"
+        "bankco" as "r2"
+    }
+
+    input transaction_id : string
+    input merchant_id    : string
+    input issuer_id      : string
+    input principal      : money
+    input currency       : string
+    input subsidy_pct    : decimal
+
+    compute subsidy = round(principal * subsidy_pct / 100, 2)
+
+    debit merchant_subsidy {
+        ledger          = "acquirer.merchant_balance"
+        owner           = "acquirer"
+        participant     = "P1"
+        party           = %merchant_id
+        amount          = %subsidy
+        currency        = %currency
+        idempotency_key = %transaction_id
+    }
+
+    credit issuer_receivable {
+        ledger          = "issuer.promotional_receivable"
+        owner           = "issuer"
+        participant     = "P2"
+        party           = %issuer_id
+        amount          = %subsidy
+        currency        = %currency
+        idempotency_key = %transaction_id
+    }
+
+    assert balanced
+}

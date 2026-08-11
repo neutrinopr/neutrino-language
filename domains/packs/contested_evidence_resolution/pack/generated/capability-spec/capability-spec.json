@@ -1,0 +1,283 @@
+{
+  "attestations": [
+    {
+      "canonicalization": {
+        "mode": "exact",
+        "tolerance": null
+      },
+      "fallback": "escalate",
+      "input": "resolution_evidence",
+      "observerSet": {
+        "assurance": "A3",
+        "independence": "independent",
+        "ref": "resolution_oracles",
+        "role": null
+      },
+      "quorum": {
+        "threshold": 2
+      },
+      "timeout": "PT24H"
+    }
+  ],
+  "computes": [],
+  "effects": [],
+  "identity": {
+    "capabilityHash": "6238644ed7ecbab12a88f396e6f9336ee0aeb92dd7183605bc7dbf21c70f8087",
+    "specHash": "fc031951b49b0e9d5561873fa27a7708eeaed7a8d3e4d111e47edd622b0b7862"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "resolution_id",
+      "type": "string"
+    },
+    {
+      "category": "evidence",
+      "name": "resolution_evidence",
+      "type": "evidence"
+    }
+  ],
+  "invariants": [],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "declared": "resolution_id",
+      "fields": []
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_PENDING",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_MET",
+        "terminal": false
+      },
+      {
+        "name": "QUORUM_TIMEOUT",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      },
+      {
+        "name": "ESCALATED",
+        "terminal": true,
+        "terminalKind": "contested"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": "ESCALATED",
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "AWAIT_QUORUM",
+        "to": "QUORUM_PENDING"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REACH_QUORUM",
+        "to": "QUORUM_MET"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_PENDING",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "TIMEOUT",
+        "to": "QUORUM_TIMEOUT"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "QUORUM_MET",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "QUORUM_TIMEOUT",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "ESCALATE",
+        "to": "ESCALATED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [],
+  "procedure": "contested_evidence_resolution",
+  "schemaVersion": 3,
+  "sourceMap": [
+    {
+      "construct": "input resolution_id",
+      "source": {
+        "column": 1,
+        "line": 12
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input resolution_evidence",
+      "source": {
+        "column": 1,
+        "line": 13
+      },
+      "specPath": "inputs[1]"
+    }
+  ],
+  "specVersion": "0.1.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input resolution_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 12
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:evidence",
+        "primitive": "input resolution_evidence",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 13
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "attestation:quorum",
+        "primitive": "attest resolution_evidence",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 17
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": []
+  },
+  "trigger": "evidence_resolution_requested"
+}

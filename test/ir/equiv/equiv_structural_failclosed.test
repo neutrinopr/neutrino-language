@@ -1,0 +1,11 @@
+// Selecting a target absent from the verified package catalog fails before
+// projection or artifact production and still emits the governed early report.
+//
+// DEFINE: %{msi} = %test/ir/pipeline/Inputs/core_sample_installment
+// RUN: %not %neutrino-equiv --target=postgres --scenario=%{msi}/scenario/core_sample_installment_happy_path.json %{msi}/source/core_sample_installment.neu --report=%t.r
+// RUN: %FileCheck --check-prefix=REPORT %s < %t.r/equivalence.json
+// RUN: %FileCheck --check-prefix=DIAG %s < %t.r/diagnostics.json
+//
+// REPORT: "ok": false
+// REPORT: "resultCode": 2
+// DIAG: equivalence.backend_environment_failed

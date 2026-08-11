@@ -1,0 +1,21 @@
+{
+  "scenario": "accepted_unbound_policy",
+  "procedure": "accepted_unbound_policy",
+  "inputs": {
+    "settlement_id": "settlement-001",
+    "payer_id": "payer-a",
+    "payee_id": "payee-b",
+    "amount": 1000,
+    "currency": "EUR",
+    "alpha_proof": "sha256:00aa",
+    "beta_proof": "sha256:00bb"
+  },
+  "expect": {
+    "computed": {},
+    "ledger": {
+      "payer.alpha": -1000,
+      "payee.alpha": 1000
+    },
+    "invariants": ["balanced"]
+  }
+}

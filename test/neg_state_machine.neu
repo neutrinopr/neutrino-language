@@ -1,0 +1,10 @@
+// M3 language-boundary negative (): state-machine / lifecycle source syntax is
+// FUTURE (L2 in docs/language/LANGUAGE_LEVELS.md), not core grammar. The frontend must reject
+// `state` / `transition` with "unexpected statement", not partially accept it.
+// See docs/language/LANGUAGE_BOUNDARY.md §3. Pinned by self-test [56].
+procedure order_lifecycle {
+    input amount : money
+
+    state Open
+    transition Open -> Settled on settle
+}

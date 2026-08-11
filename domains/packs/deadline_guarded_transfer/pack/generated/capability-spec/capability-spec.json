@@ -1,0 +1,448 @@
+{
+  "computes": [],
+  "effects": [
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "transfer_id"
+      },
+      "kind": "debit",
+      "ledger": "payer.wallet",
+      "name": "payer_out",
+      "owner": "payer",
+      "participant": null,
+      "party": {
+        "kind": "ref",
+        "value": "payer"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "extension",
+            "kind": "var",
+            "name": "now"
+          },
+          "op": ">=",
+          "rhs": {
+            "dtype": "extension",
+            "kind": "var",
+            "name": "deadline"
+          }
+        },
+        "expr": "now >= deadline"
+      }
+    },
+    {
+      "amount": {
+        "kind": "ref",
+        "value": "amount"
+      },
+      "currency": {
+        "kind": "ref",
+        "value": "currency"
+      },
+      "idempotencyKey": {
+        "kind": "ref",
+        "value": "transfer_id"
+      },
+      "kind": "credit",
+      "ledger": "payee.wallet",
+      "name": "payee_in",
+      "owner": "payee",
+      "participant": null,
+      "party": {
+        "kind": "ref",
+        "value": "payee"
+      },
+      "when": {
+        "ast": {
+          "dtype": "extension",
+          "kind": "cmp",
+          "lhs": {
+            "dtype": "extension",
+            "kind": "var",
+            "name": "now"
+          },
+          "op": ">=",
+          "rhs": {
+            "dtype": "extension",
+            "kind": "var",
+            "name": "deadline"
+          }
+        },
+        "expr": "now >= deadline"
+      }
+    }
+  ],
+  "identity": {
+    "capabilityHash": "427df0154acb60ba3c6964d2a7e0e40e4589e661729f4f20a0103c259ac15cdd",
+    "specHash": "cc87c86935858c0065876159cc7c223a7a9d8664ec2316e15a3960b9f370490c"
+  },
+  "inputs": [
+    {
+      "category": "string",
+      "name": "transfer_id",
+      "type": "string"
+    },
+    {
+      "category": "party",
+      "name": "payer",
+      "type": "party"
+    },
+    {
+      "category": "party",
+      "name": "payee",
+      "type": "party"
+    },
+    {
+      "category": "money",
+      "name": "amount",
+      "type": "money"
+    },
+    {
+      "category": "currency",
+      "name": "currency",
+      "type": "currency"
+    },
+    {
+      "category": "extension",
+      "name": "now",
+      "type": "timestamp"
+    },
+    {
+      "category": "extension",
+      "name": "deadline",
+      "type": "timestamp"
+    }
+  ],
+  "invariants": [
+    {
+      "kind": "balanced"
+    }
+  ],
+  "kind": "neutrino.capability-spec",
+  "lifecycle": {
+    "initialState": "INITIAL",
+    "instanceKey": {
+      "declared": "transfer_id",
+      "fields": [
+        "transfer_id"
+      ]
+    },
+    "states": [
+      {
+        "name": "INITIAL",
+        "terminal": false
+      },
+      {
+        "name": "NEW",
+        "terminal": false
+      },
+      {
+        "name": "NEGOTIATED",
+        "terminal": false
+      },
+      {
+        "name": "PROPOSED",
+        "terminal": false
+      },
+      {
+        "name": "COMMITTED",
+        "terminal": false
+      },
+      {
+        "name": "REJECTED",
+        "terminal": true,
+        "terminalKind": "aborted"
+      },
+      {
+        "name": "COMPENSATED",
+        "terminal": false
+      },
+      {
+        "name": "CLOSED",
+        "terminal": true,
+        "terminalKind": "success"
+      }
+    ],
+    "terminalStates": {
+      "aborted": "REJECTED",
+      "contested": null,
+      "success": "CLOSED"
+    },
+    "transitions": [
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "INITIAL",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "OPEN",
+        "to": "NEW"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEW",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "NEGOTIATE",
+        "to": "NEGOTIATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "NEGOTIATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "PROPOSE",
+        "to": "PROPOSED"
+      },
+      {
+        "effects": [
+          "post"
+        ],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMMIT",
+        "to": "COMMITTED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "PROPOSED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "REJECT",
+        "to": "REJECTED"
+      },
+      {
+        "effects": [
+          "compensate"
+        ],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "COMPENSATE",
+        "to": "COMPENSATED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMMITTED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      },
+      {
+        "effects": [],
+        "evidence": null,
+        "from": "COMPENSATED",
+        "guards": [],
+        "idempotency": "reject",
+        "name": "CLOSE",
+        "to": "CLOSED"
+      }
+    ]
+  },
+  "participants": [],
+  "procedure": "deadline_guarded_transfer",
+  "schemaVersion": 2,
+  "sourceMap": [
+    {
+      "construct": "input transfer_id",
+      "source": {
+        "column": 1,
+        "line": 10
+      },
+      "specPath": "inputs[0]"
+    },
+    {
+      "construct": "input payer",
+      "source": {
+        "column": 1,
+        "line": 11
+      },
+      "specPath": "inputs[1]"
+    },
+    {
+      "construct": "input payee",
+      "source": {
+        "column": 1,
+        "line": 12
+      },
+      "specPath": "inputs[2]"
+    },
+    {
+      "construct": "input amount",
+      "source": {
+        "column": 1,
+        "line": 13
+      },
+      "specPath": "inputs[3]"
+    },
+    {
+      "construct": "input currency",
+      "source": {
+        "column": 1,
+        "line": 14
+      },
+      "specPath": "inputs[4]"
+    },
+    {
+      "construct": "input now",
+      "source": {
+        "column": 1,
+        "line": 15
+      },
+      "specPath": "inputs[5]"
+    },
+    {
+      "construct": "input deadline",
+      "source": {
+        "column": 1,
+        "line": 16
+      },
+      "specPath": "inputs[6]"
+    },
+    {
+      "construct": "debit payer_out",
+      "source": {
+        "column": 1,
+        "line": 20
+      },
+      "specPath": "effects[0]"
+    },
+    {
+      "construct": "credit payee_in",
+      "source": {
+        "column": 1,
+        "line": 29
+      },
+      "specPath": "effects[1]"
+    },
+    {
+      "construct": "assert balanced",
+      "source": {
+        "column": 1,
+        "line": 38
+      },
+      "specPath": "invariants[0]"
+    }
+  ],
+  "specVersion": "0.1.0",
+  "targetRequirements": {
+    "evidenceStyle": "single_hash",
+    "requirements": [
+      {
+        "fallback": null,
+        "feature": "value_category:string",
+        "primitive": "input transfer_id",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 10
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:party",
+        "primitive": "input payer",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 11
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:money",
+        "primitive": "input amount",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 13
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_category:currency",
+        "primitive": "input currency",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 14
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "value_extension:temporal",
+        "primitive": "input now",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 15
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:debit",
+        "primitive": "debit payer_out",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 20
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "effect:credit",
+        "primitive": "credit payee_in",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 29
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "guard:conditional",
+        "primitive": "when payer_out",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 20
+        }
+      },
+      {
+        "fallback": null,
+        "feature": "invariant:balanced",
+        "primitive": "assert balanced",
+        "requirement": "required",
+        "source": {
+          "column": 1,
+          "line": 38
+        }
+      }
+    ],
+    "unsupportedConstructs": []
+  },
+  "topology": {
+    "allowedOrgPairs": []
+  },
+  "trigger": "transfer_released"
+}

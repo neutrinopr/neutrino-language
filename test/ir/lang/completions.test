@@ -1,0 +1,7 @@
+// [47] D8: completions — static grammar affordances (scope=static: keywords + value types + snippets
+// from metadata) plus, with a file, source-specific %references pulled from the front-end outline; a
+// non-lowering source fails closed (ok:false, empty completions, diagnostics). See check_completions.py.
+//
+// RUN: python3 %S/check_completions.py %scripts/generators/neutrino_lang.py %neutrino-emit \
+// RUN:   %test/ir/domain/Inputs/core_flexible_binding/source/core_flexible_binding.neu \
+// RUN:   %S/../neg_missing_field.neu

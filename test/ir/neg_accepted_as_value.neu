@@ -1,0 +1,41 @@
+// Frontend NEGATIVE ( slice 1): accepted() is a quorum-acceptance PREDICATE,
+// valid only inside a `when` guard — never as a value / compute expression (the
+// value model stays closed, no Boolean value type). neutrino-gen fails closed.
+//
+// RUN: %not %neutrino-gen --target=capability-spec %s -o %t.d 2>&1 | %FileCheck %s
+// RUN: test ! -e %t.d/capability-spec.json
+// CHECK: [expr.type] accepted() is a quorum-acceptance predicate, valid only inside a `when` guard, not as a value
+procedure neg_accepted_as_value {
+    input flow_id  : string
+    input amount   : money
+    input currency : currency
+    input payer    : party
+    input proof    : evidence
+
+    attest proof {
+        quorum           = 2
+        observer_set     = "oracles"
+        canonicalization = "exact"
+        fallback         = "abort"
+    }
+
+    compute bad = accepted(proof)
+
+    debit d {
+        ledger          = "a.src"
+        owner           = "a"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    credit c {
+        ledger          = "b.dst"
+        owner           = "b"
+        party           = %payer
+        amount          = %amount
+        currency        = %currency
+        idempotency_key = %flow_id
+    }
+    assert balanced
+}
