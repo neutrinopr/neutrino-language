@@ -169,7 +169,7 @@ add_dependencies(NeutrinoBackendPostgres postgres-recipes-inc
 # is transitively read by several sources through PostgresModel.h, so the
 # object graph itself must wait for the paired generator rather than relying on
 # the archive target's later dependency edge.
-add_dependencies(obj.NeutrinoBackendPostgres postgres-recipe-builders-inc)
+add_dependencies(obj.NeutrinoBackendPostgres postgres-recipes-inc postgres-target-registry-inc postgres-recipe-adapter-inc postgres-projection-inc postgres-ddl-builders-inc postgres-recipe-builders-inc)
 target_include_directories(NeutrinoBackendPostgres PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}

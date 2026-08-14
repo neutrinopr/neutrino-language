@@ -88,6 +88,9 @@ add_custom_target(finalized-projection-generated
     ${_backend_projection_codec_fields})
 
 add_dependencies(NeutrinoSpecContract finalized-projection-generated)
+if(TARGET obj.NeutrinoSpecContract)
+  add_dependencies(obj.NeutrinoSpecContract finalized-projection-generated)
+endif()
 target_include_directories(NeutrinoSpecContract PRIVATE
   ${_finalized_projection_generated_dir})
 set_source_files_properties(BackendProjectionCodec.cpp PROPERTIES
