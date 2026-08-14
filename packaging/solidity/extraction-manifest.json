@@ -342,12 +342,12 @@
         "sha256": "sha256:fc655fd715c56c1654411eadb4d767fd3eb7627f5fefd00a7f52076e30727322"
       },
       {
-        "byteLen": 25710,
+        "byteLen": 26238,
         "licenseDisposition": "project-authored-apache-2.0",
         "ownership": "neutrino.solidity-package/1",
         "path": "lib/backends/solidity/CMakeLists.txt",
         "provenance": "neutrino-translator:lib/backends/solidity/CMakeLists.txt",
-        "sha256": "sha256:bbcf9c0e6f34da96809bcabb8115b98c7d16c0f716abd0f4d84d581cf2af1e81"
+        "sha256": "sha256:a38a5c23747244765df9701749c79a4b465f1fe5f2e5d9a31cba27a064f1b376"
       },
       {
         "byteLen": 9140,
