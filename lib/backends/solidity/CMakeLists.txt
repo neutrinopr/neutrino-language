@@ -161,6 +161,15 @@ add_mlir_library(NeutrinoBackendSolidity
 add_dependencies(NeutrinoBackendSolidity solidity-recipes-inc
   solidity-target-registry-inc solidity-recipe-builders-inc
   solidity-projection-inc solidity-emit-builders-inc)
+#  add_mlir_library compiles through the obj.* OBJECT target, which does not
+# inherit umbrella-target ordering: without this edge, parallel builds can
+# compile provider sources before the generated .inc exist (first observed on
+# the 4-core CI runner; local builds passed by scheduling luck).
+if(TARGET obj.NeutrinoBackendSolidity)
+  add_dependencies(obj.NeutrinoBackendSolidity solidity-recipes-inc
+    solidity-target-registry-inc solidity-recipe-builders-inc
+    solidity-projection-inc solidity-emit-builders-inc)
+endif()
 # Structural subdirs ( R1): the generated .inc live under generated/, the
 # provider/harness .cpp/.h under provider/ and harness/, and the two
 # carve-out .sol.inc stay at the backend root. Put all of them plus the build
