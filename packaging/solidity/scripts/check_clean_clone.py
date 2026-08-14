@@ -758,7 +758,7 @@ def package_descriptor(binary: Path, package: Path) -> dict:
         },
         "entry": "bin/neutrino-solidity-backend",
         "kind": "neutrino.backend-package/1",
-        "licenseIdentity": "pending:",
+        "licenseIdentity": "spdx:Apache-2.0",
         "profileSummary": profile,
         "protocolMajor": 1,
         "protocolMinor": 0,

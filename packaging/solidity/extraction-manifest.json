@@ -374,12 +374,12 @@
         "sha256": "sha256:2e6c7aba33f96a10ca4692a4730f20f5c642e7153cfeeb635bce6875a2fd58c4"
       },
       {
-        "byteLen": 48542,
+        "byteLen": 48549,
         "licenseDisposition": "project-authored-apache-2.0",
         "ownership": "neutrino.solidity-package/1",
         "path": "packaging/solidity/scripts/check_clean_clone.py",
         "provenance": "neutrino-translator:packaging/solidity/scripts/check_clean_clone.py",
-        "sha256": "sha256:741ad520c7836fe0f0d207282f2fa2bc3ecb1b99230d003a9590cd2f9a057697"
+        "sha256": "sha256:73df322f1c835c37455d27d9c8cbbb7bbbe04df20e940d3fbda2a22fdc3188d8"
       },
       {
         "byteLen": 6165,
