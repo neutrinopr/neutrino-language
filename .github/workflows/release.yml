@@ -30,6 +30,13 @@ jobs:
           BIN=$(find out -type f -name neutrino-gen -perm -u+x | head -1)
           "$BIN" --version
           cp "$BIN" dist/neutrino-gen-${GITHUB_REF_NAME}-linux-x64
+          # Backend packages are external to the compiler by design: ship the
+          # built, verified Solidity package so demos can pass
+          # --backend-package-dir against a pinned public coordinate.
+          PKGDIR=$(dirname "$(find out -type f -name backend-package.json -path '*solidity*' | head -1)")
+          test -n "$PKGDIR" || { echo "solidity backend package not found in build tree"; exit 1; }
+          test -x "$PKGDIR/bin/neutrino-solidity-backend"
+          tar -C "$(dirname "$PKGDIR")" -czf dist/neutrino-solidity-backend-package-${GITHUB_REF_NAME}-linux-x64.tar.gz "$(basename "$PKGDIR")"
           cd dist && sha256sum * > SHA256SUMS
       - name: Publish release assets
         uses: softprops/action-gh-release@v2

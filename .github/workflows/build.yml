@@ -26,6 +26,9 @@ jobs:
         run: |
           BIN=$(find out -type f -name neutrino-gen -perm -u+x | head -1)
           echo "binary: $BIN"; "$BIN" --version && "$BIN" --version-json
+          PKG=$(find out -type f -name backend-package.json -path '*solidity*' | head -1)
+          echo "solidity backend package: $PKG"; test -n "$PKG"
+          test -x "$(dirname "$PKG")/bin/neutrino-solidity-backend"
       - uses: actions/upload-artifact@v4
         with:
           name: neutrino-gen-linux-x64
