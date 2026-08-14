@@ -50,6 +50,7 @@ mutation must fail before invocation. A declared CMake input is also mutated
 to read the source checkout; both the declared-input audit and the checkout-
 denying sandbox must reject it.
 
-`licenseIdentity` remains `pending:`. This candidate must not be published
-and  must not be declared complete until  resolves every license and
-provenance row.
+`licenseIdentity` is `spdx:Apache-2.0` — the repository's published license,
+asserted by the package descriptor since the v0.1.4 release. (Earlier
+candidates carried `pending:` by design until the license row was resolved
+at publication.)

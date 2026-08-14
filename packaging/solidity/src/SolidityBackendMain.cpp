@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
       static_cast<uint32_t>(projection::kProjectionSchemaVersion),
       *packageManifestDigest,
       {"emit", "stream"},
-      "pending:"};
+      "spdx:Apache-2.0"};
   Frame capabilitiesFrame = take(encodeCapabilities(capabilities));
   if (llvm::Error error =
           session.consume(Direction::BackendToCore, capabilitiesFrame)) {
