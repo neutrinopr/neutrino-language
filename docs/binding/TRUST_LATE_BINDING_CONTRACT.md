@@ -7,10 +7,10 @@ needs **Network + Agents review** before it is final. Field names, assurance
 tiers, the capability-hash bridge, and the four artifact schemas are intended to be
 stable: additive extension is allowed, renames require a schema version bump.
 
-**Source debates (in `neutrino-strategy/09-debates/`):**
+**Source: internal design records (pre-publication):**
 `verification-trust-model-runtime-compliance.md`,
 `verification-trust-model-implementation-spec.md`. **Boundary:**
-`neutrino-strategy/04-architecture/capability-to-slot-boundary.md`.
+an internal architecture record.
 
 This is the **T0 freeze** the spec requires *before* trust/binding work fans out
 across the three repos — so an implementor can open one file and know exactly which

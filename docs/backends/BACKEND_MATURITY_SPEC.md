@@ -5,12 +5,12 @@ coverage, property + mutation verification hardening, DSL versioning, and
 capability-fork scaffolding.
 **Date:** June 22, 2026
 **Owner:** Track 2 (translator & runtime engineering)
-**Source:** `neutrino-strategy/09-debates/backend-maturity-language-evolution-framework.md`
+**Source:** internal design record (pre-publication)
 (the framework) and `…/backend-maturity-review.md` (the current-state review).
 
 This is the **translator-owned execution slice** of the Backend Maturity framework.
 Track 5 defines the rules/models; this document records how Track 2 landed them
-inside `neutrino-translator` without reopening the completed phases 1–13.
+inside the translator implementation without reopening the completed phases 1–13.
 
 ---
 
@@ -48,7 +48,7 @@ pipeline plus these shipped artifacts.
    network-owned, not claimed here.
 3. **Maturity Level 2 favors low/mid-cost verification over formal methods.**
    Property-based + mutation testing of the invariants we already assert (see
-   `neutrino-strategy/09-debates/verification-implementation-spec.md`) is the core
+   an internal design record) is the core
    evidence — not theorem proving. But that translator-local hardening is
    necessary, not sufficient: Level 2 ("Verifiable & Secure") also needs broader
    runtime/security lifecycle evidence, so the backends stay Level 1 until it

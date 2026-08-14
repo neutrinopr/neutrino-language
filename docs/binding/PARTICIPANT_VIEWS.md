@@ -1,7 +1,7 @@
 # Per-Participant Narrowed Views (Trust lane — T5)
 
 **Status:** translator emission (`neutrino-gen --target=views`). Source:
-`neutrino-strategy/09-debates/verification-trust-model-implementation-spec.md`
+an internal design record
 (Translator track step 4 / per-slot views). See the contract
 [`TRUST_LATE_BINDING_CONTRACT.md`](TRUST_LATE_BINDING_CONTRACT.md).
 

@@ -1,7 +1,7 @@
 # Late-Binding Policy (Trust lane — T1)
 
 **Status:** T1 slice 2 (translator emission). Source:
-`neutrino-strategy/09-debates/verification-trust-model-runtime-compliance.md`
+an internal design record
 (agreement-centric trust model, late slot binding).
 
 A participant whose concrete runtime is decided **at realization time** (not fixed

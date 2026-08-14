@@ -8,7 +8,7 @@ the self-test generality slice and `make equivalence-scheme`.
 **M2 language-evolution promotion ():** upgraded from a bare procedure to the
 participant / org / org-pair-policy / leg-participant form, with the
 `SettlementBank` slot late-bound (`binding = "to_be_bound"`). Derived from
-`neutrino-strategy/09-debates/m2-language-evolution-examples.md` (Example 2). Now
+an internal design record (Example 2). Now
 carries committed `slot`, `security`, and `postgres` fixtures and is pinned by
 self-test `[50]`.
 

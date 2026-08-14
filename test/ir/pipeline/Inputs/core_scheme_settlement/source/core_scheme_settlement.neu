@@ -6,7 +6,7 @@
 // M2 language-evolution promotion (): upgraded to the participant / org /
 // org-pair-policy / leg-participant form, with the SettlementBank slot late-bound
 // (`binding = "to_be_bound"`). Derived from
-// neutrino-strategy/09-debates/m2-language-evolution-examples.md (Example 2).
+// an internal design record (Example 2).
 // SWIFT / ISO 20022 message semantics (pacs.008/009/002) stay lower-layer /
 // domain-dialect / translation-map concerns — not invented as core .neu here
 // (see README "Gaps").

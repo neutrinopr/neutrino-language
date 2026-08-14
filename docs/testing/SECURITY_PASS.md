@@ -2,7 +2,7 @@
 
 **Status:** Phase 20 (first increment — report). Spec:
 [`PARTIES_TOPOLOGY_SPEC.md`](../binding/PARTIES_TOPOLOGY_SPEC.md). Source:
-`neutrino-strategy/09-debates/security-validation-architecture.md`.
+an internal design record.
 
 A domain-aware, **business-semantics** security report computed from the frozen
 **capability-spec** (`capability-spec.json`, the  contract) — the report and

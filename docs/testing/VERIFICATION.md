@@ -1,7 +1,7 @@
 # Verification Hardening
 
 **Status:** Phase 16. Spec: [`BACKEND_MATURITY_SPEC.md`](../backends/BACKEND_MATURITY_SPEC.md).
-Methodology companion: `neutrino-strategy/09-debates/verification-implementation-spec.md`.
+Methodology companion: an internal design record.
 
 Beyond happy-path scenarios and cross-backend equivalence, two low/mid-cost layers
 raise confidence in the coordination semantics. Both are deterministic, need no new

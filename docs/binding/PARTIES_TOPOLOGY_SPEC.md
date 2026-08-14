@@ -5,7 +5,7 @@ boundaries, `allow` org-pair + per-org-pair role policies, the Capability Securi
 Pass (gating on hard violations + on lowering), and the `agreement … between`
 surface sugar all shipped. This document describes the **implemented** translator
 slice and the **remaining follow-ups**.
-**Source vision:** `neutrino-strategy/09-debates/dsl-parties-topology-and-identity.md`
+**Source vision:** an internal design record
 and `…/security-validation-architecture.md` (the Capability Security Pass).
 
 Concrete cryptographic identity and slot wiring are **not** here — see the

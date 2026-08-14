@@ -1,0 +1,40 @@
+name: release
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install LLVM/MLIR 15 toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build llvm-15-dev libmlir-15-dev mlir-15-tools clang-15
+      - name: Configure and build (Release)
+        run: |
+          cmake -S . -B out -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 \
+            -DMLIR_DIR=/usr/lib/llvm-15/lib/cmake/mlir \
+            -DLLVM_DIR=/usr/lib/llvm-15/lib/cmake/llvm
+          cmake --build out
+      - name: Package with checksum
+        run: |
+          mkdir -p dist
+          BIN=$(find out -type f -name neutrino-gen -perm -u+x | head -1)
+          "$BIN" --version
+          cp "$BIN" dist/neutrino-gen-${GITHUB_REF_NAME}-linux-x64
+          cd dist && sha256sum * > SHA256SUMS
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/neutrino-gen-*
+            dist/SHA256SUMS
+          generate_release_notes: false
